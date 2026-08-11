@@ -1,0 +1,133 @@
+/* Al-Mujtaba HR — shared theme.
+   Single source of truth for the palette, the fixed sidebar and the shell
+   chrome (topbar, buttons, cards, tables, badges, toasts) used by every page.
+   Page files may add their own layout rules on top, but must not restyle the
+   sidebar. */
+
+:root{
+  --hr-red-900:#5C0A15; --hr-red-800:#7A1020; --hr-red-700:#8C1320;
+  --hr-red-600:#A81726; --hr-red-500:#C01C2C; --hr-red-100:#F5E6E8; --hr-red-50:#FAF7F7;
+  --hr-ink:#2A1218; --hr-ink-soft:#5C3840; --hr-ink-faint:#9C7078;
+  --hr-paper:#FAF7F7; --hr-surface:#FFFFFF; --hr-line:#EDD8DB; --hr-line-strong:#DFC0C5;
+  --hr-green:#2E8B57; --hr-green-bg:#E8F5EE;
+  --hr-amber:#B8860B; --hr-amber-bg:#FEF9E7;
+  --hr-blue:#1A6FA0;  --hr-blue-bg:#E6F3FA;
+  --hr-shadow:0 2px 8px rgba(92,10,21,.06);
+  --hr-shadow-lg:0 10px 30px rgba(92,10,21,.14);
+  --hr-radius:14px;
+  --hr-sidebar-w:230px;
+  --hr-font-ar:'Tajawal','Cairo','Segoe UI',Arial,sans-serif;
+  --hr-font-en:'Inter','Segoe UI',Arial,sans-serif;
+}
+
+/* ---------- shell ---------- */
+body{
+  background:var(--hr-paper);
+  color:var(--hr-ink);
+  font-family:var(--hr-font-ar);
+}
+/* `html body` so pages that reset `html,body{margin:0}` still leave room. */
+html body{margin-inline-start:var(--hr-sidebar-w)}
+html[lang="en"] body, body.en{font-family:var(--hr-font-en)}
+
+/* Fixed sidebar, always on the reading-start side (right in RTL, left in LTR). */
+.hr-sidebar{
+  position:fixed; top:0; inset-inline-start:0; z-index:200;
+  width:var(--hr-sidebar-w); height:100vh;
+  background:linear-gradient(180deg,var(--hr-red-900) 0%,var(--hr-red-700) 45%,var(--hr-red-500) 100%);
+  display:flex; flex-direction:column; overflow-y:auto; overflow-x:hidden;
+  box-shadow:0 0 20px rgba(92,10,21,.28);
+}
+.hr-sidebar-logo{
+  padding:1.1rem .9rem .85rem; display:flex; align-items:center; gap:.6rem;
+  border-bottom:1px solid rgba(255,255,255,.1); flex-shrink:0;
+}
+.hr-sidebar-logo img{width:42px;height:42px;object-fit:contain;flex-shrink:0;border-radius:6px;background:#fff;padding:2px}
+.hr-logo-name{color:#fff;font-size:.68rem;font-weight:800;line-height:1.35}
+.hr-logo-sys{color:rgba(255,255,255,.55);font-size:.58rem;margin-top:2px}
+.hr-lang-btn{
+  margin:.6rem .9rem; width:calc(100% - 1.8rem);
+  background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22);
+  border-radius:8px; color:#fff; font-family:inherit; font-size:.74rem; font-weight:700;
+  padding:.38rem .75rem; cursor:pointer; display:flex; align-items:center; gap:.4rem;
+  transition:background .15s;
+}
+.hr-lang-btn:hover{background:rgba(255,255,255,.22)}
+.hr-sidebar nav{flex:1;padding:.5rem 0}
+.hr-nav-sect{
+  font-size:.58rem; text-transform:uppercase; letter-spacing:.1em;
+  color:rgba(255,255,255,.32); padding:.55rem .9rem .22rem; font-weight:700;
+}
+.hr-nav-item{
+  display:flex; align-items:center; gap:.55rem; padding:.52rem .9rem;
+  color:rgba(255,255,255,.75); text-decoration:none; font-size:.8rem; font-weight:500;
+  border-inline-start:3px solid transparent; transition:background .15s,color .15s,border-color .15s;
+}
+.hr-nav-item:hover{background:rgba(255,255,255,.1);color:#fff;border-inline-start-color:rgba(255,255,255,.4)}
+.hr-nav-item.active{background:rgba(255,255,255,.15);color:#fff;border-inline-start-color:#fff;font-weight:700}
+.hr-nav-icon{font-size:.9rem;width:18px;text-align:center;flex-shrink:0}
+.hr-sidebar-foot{
+  padding:.7rem .9rem; border-top:1px solid rgba(255,255,255,.1);
+  font-size:.62rem; color:rgba(255,255,255,.28); text-align:center; flex-shrink:0; margin-top:auto;
+}
+
+/* The attendance system page pins its own topbar; keep it clear of the sidebar. */
+.app-topbar{inset-inline-start:var(--hr-sidebar-w) !important; inset-inline-end:0 !important}
+
+/* ---------- shared chrome ---------- */
+.topbar{
+  background:var(--hr-surface); border-bottom:1px solid var(--hr-line);
+  padding:.75rem 1.4rem; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(92,10,21,.07);
+}
+.topbar-title{font-size:.98rem;font-weight:800;color:var(--hr-red-900)}
+.topbar-meta{font-size:.73rem;color:var(--hr-ink-faint);margin-top:1px}
+.topbar-actions{display:flex;gap:.55rem;align-items:center}
+.page-content{padding:1.3rem 1.5rem}
+
+.btn{
+  font-family:inherit; font-weight:700; font-size:.82rem; padding:.48rem 1rem;
+  border-radius:8px; border:none; cursor:pointer; display:inline-flex; align-items:center;
+  gap:.3rem; text-decoration:none; transition:transform .15s,background .15s; white-space:nowrap;
+}
+.btn-primary{background:linear-gradient(135deg,var(--hr-red-500),var(--hr-red-700));color:#fff;box-shadow:0 3px 10px rgba(192,28,44,.25)}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-ghost{background:#fff;color:var(--hr-red-700);border:1px solid var(--hr-line-strong)}
+.btn-ghost:hover{background:var(--hr-red-100)}
+.btn-sm{font-size:.74rem;padding:.33rem .75rem}
+
+.card{
+  background:var(--hr-surface); border:1px solid var(--hr-line); border-radius:var(--hr-radius);
+  box-shadow:var(--hr-shadow); padding:1rem 1.25rem; margin-bottom:1rem;
+}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;padding-bottom:.6rem;border-bottom:1px solid var(--hr-line)}
+.card-title{font-size:.9rem;font-weight:800;color:var(--hr-red-700)}
+
+.badge{display:inline-block;padding:.14rem .5rem;border-radius:999px;font-size:.68rem;font-weight:700}
+.badge-success{background:var(--hr-green-bg);color:var(--hr-green)}
+.badge-danger{background:var(--hr-red-100);color:var(--hr-red-500)}
+.badge-warning{background:var(--hr-amber-bg);color:var(--hr-amber)}
+.badge-info{background:var(--hr-blue-bg);color:var(--hr-blue)}
+.badge-muted{background:#EFEAEA;color:var(--hr-ink-faint)}
+
+.empty-state{text-align:center;padding:2.2rem 1rem;color:var(--hr-ink-faint)}
+.empty-icon{font-size:2rem;margin-bottom:.4rem}
+.empty-title{font-weight:800;color:var(--hr-ink-soft);font-size:.9rem}
+.empty-sub{font-size:.76rem;margin-top:.25rem}
+
+.toast{
+  position:fixed; bottom:1.3rem; left:50%; transform:translateX(-50%) translateY(16px);
+  padding:.6rem 1.25rem; border-radius:12px; font-weight:700; font-size:.84rem;
+  opacity:0; transition:all .25s; z-index:9999; pointer-events:none; box-shadow:0 8px 24px rgba(0,0,0,.18);
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast-success{background:var(--hr-green);color:#fff}
+.toast-error{background:var(--hr-red-500);color:#fff}
+.toast-info{background:var(--hr-blue);color:#fff}
+
+@media(max-width:860px){
+  html body{margin-inline-start:0}
+  .hr-sidebar{transform:translateX(-110%)}
+  html[dir="rtl"] .hr-sidebar{transform:translateX(110%)}
+  .app-topbar{inset-inline-start:0 !important}
+}
