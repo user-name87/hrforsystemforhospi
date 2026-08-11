@@ -5,11 +5,15 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Violation;
 use App\Models\DisciplinaryAction;
+use App\Models\Employee;
+use App\Services\WhatsAppNotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ViolationController extends Controller
 {
+    public function __construct(private WhatsAppNotificationService $whatsapp) {}
+
     // Violation table per the spec (Arabic HR policy)
     private const VIOLATION_PENALTIES = [
         // [row][occurrence] => penalty text
@@ -162,5 +166,100 @@ class ViolationController extends Controller
         ]);
 
         return response()->json($action->load('employee'), 201);
+    }
+
+    // POST /api/violations/{id}/notify
+    public function sendViolationNotification(int $id): JsonResponse
+    {
+        $violation = Violation::with('employee')->findOrFail($id);
+        $employee = $violation->employee;
+
+        if (!$employee) {
+            return response()->json(['success' => false, 'message' => 'Employee not found'], 404);
+        }
+
+        $result = $this->whatsapp->sendViolationNotification($employee, $violation);
+
+        return response()->json($result, $result['success'] ? 200 : 422);
+    }
+
+    // POST /api/disciplinary/{id}/notify
+    public function sendDisciplinaryNotification(int $id): JsonResponse
+    {
+        $action = DisciplinaryAction::with('employee')->findOrFail($id);
+        $employee = $action->employee;
+
+        if (!$employee) {
+            return response()->json(['success' => false, 'message' => 'Employee not found'], 404);
+        }
+
+        $result = $this->whatsapp->sendDisciplinaryNotification($employee, $action->toArray());
+
+        return response()->json($result, $result['success'] ? 200 : 422);
+    }
+
+    // POST /api/violations/daily-notify
+    public function sendDailyViolations(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'date' => 'required|date',
+            'department_id' => 'nullable|integer|exists:departments,id',
+            'violation_type' => 'nullable|string|in:absent,late,early_leave,disciplinary',
+        ]);
+
+        $date = $validated['date'];
+        $query = Violation::with('employee')
+            ->whereDate('incident_date', $date);
+
+        if (isset($validated['department_id'])) {
+            $query->whereHas('employee', fn($q) => 
+                $q->where('department_id', $validated['department_id'])
+            );
+        }
+
+        if (isset($validated['violation_type'])) {
+            if ($validated['violation_type'] === 'disciplinary') {
+                // For disciplinary, we need to query DisciplinaryAction instead
+                $disciplinaryQuery = DisciplinaryAction::with('employee')
+                    ->whereDate('created_at', $date);
+                
+                if (isset($validated['department_id'])) {
+                    $disciplinaryQuery->whereHas('employee', fn($q) => 
+                        $q->where('department_id', $validated['department_id'])
+                    );
+                }
+
+                $actions = $disciplinaryQuery->get();
+                $results = [];
+                foreach ($actions as $action) {
+                    if ($action->employee) {
+                        $results[] = $this->whatsapp->sendDisciplinaryNotification($action->employee, $action->toArray());
+                    }
+                }
+
+                return response()->json([
+                    'total' => $actions->count(),
+                    'sent' => count(array_filter($results, fn($r) => $r['success'])),
+                    'failed' => count(array_filter($results, fn($r) => !$r['success'])),
+                    'results' => $results,
+                ]);
+            } else {
+                // Filter by violation type based on the row
+                $typeMapping = [
+                    'absent' => null, // absence is determined by status
+                    'late' => [1, 2, 3, 4], // lateness rows
+                    'early_leave' => [1, 2, 3, 4, 5, 6], // early leave can be multiple rows
+                ];
+
+                if (isset($typeMapping[$validated['violation_type']])) {
+                    $query->whereIn('violation_row', $typeMapping[$validated['violation_type']]);
+                }
+            }
+        }
+
+        $violations = $query->get();
+        $result = $this->whatsapp->sendDailyViolationNotifications($violations->toArray());
+
+        return response()->json($result);
     }
 }

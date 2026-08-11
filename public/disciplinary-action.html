@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إجراء تأديبي — تسجيل مخالفة وعقوبة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/hr-theme.css">
+<script defer src="assets/hr-shell.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--accent:#b54a5a;--navy:#5c2a35;--teal:#c45a6a;--danger:#c85a6f;--warning:#d49b4a;--success:#3a9e82;--surface:#fff;--bg:#faf5f5;--border:#f0e0e0;--muted:#8a6a6e}
+  body{font-family:'Tajawal','Segoe UI',Arial,sans-serif;color:#4a3035;direction:rtl;
+    background:
+      radial-gradient(1200px 560px at 96% -10%, rgba(181,74,90,0.06), transparent 60%),
+      radial-gradient(950px 500px at -10% 10%, rgba(200,90,111,0.06), transparent 55%),
+      linear-gradient(180deg,#faf5f5 0%,#f7f0f1 100%);
+    min-height:100vh;padding:1.5rem}
+  .wrap{max-width:900px;margin:0 auto}
+  header.pg{background:linear-gradient(135deg,var(--navy) 0%,var(--accent) 50%,var(--teal) 100%);color:#fff;padding:1.4rem 1.75rem;border-radius:18px;box-shadow:0 18px 36px -18px rgba(92,42,53,.45);margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  header.pg h1{font-size:1.3rem;font-weight:800;margin-bottom:4px}
+  header.pg p{opacity:.9;font-size:.85rem}
+  .back-btn{background:rgba(255,255,255,.18);color:#fff;border:none;padding:8px 16px;border-radius:10px;cursor:pointer;font-weight:700;font-size:.85rem;font-family:inherit}
+  .back-btn:hover{background:rgba(255,255,255,.32)}
+  .card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:1.3rem 1.5rem;box-shadow:0 8px 24px -18px rgba(92,42,53,.22);margin-bottom:1.1rem}
+  .card h2{font-size:1.02rem;font-weight:800;margin-bottom:.9rem;color:var(--navy)}
+  .emp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem}
+  .info{background:linear-gradient(135deg,#fdfbfc 0%,#f8f4f5 100%);border:1px solid var(--border);border-radius:12px;padding:.7rem .85rem}
+  .info label{display:block;font-size:.72rem;color:var(--muted);font-weight:600;margin-bottom:3px}
+  .info span{font-size:.92rem;font-weight:700;color:#3a2a30}
+  form .row{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:.9rem}
+  form .full{grid-column:1/-1}
+  label.fld{display:block;font-size:.8rem;color:var(--navy);font-weight:700;margin-bottom:6px}
+  select,textarea,input[type=text]{width:100%;font-family:inherit;font-size:.92rem;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#3a2a30;transition:border .15s,box-shadow .15s}
+  select:focus,textarea:focus,input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(181,74,90,.12)}
+  textarea{min-height:100px;resize:vertical}
+  .sev-group{display:flex;gap:.5rem;flex-wrap:wrap}
+  .sev-opt{flex:1;min-width:120px;border:2px solid var(--border);border-radius:12px;padding:.7rem .9rem;cursor:pointer;text-align:center;font-weight:700;font-size:.88rem;transition:all .15s;background:#fff}
+  .sev-opt input{display:none}
+  .sev-opt:hover{border-color:var(--accent)}
+  .sev-opt.sel-low.on{background:linear-gradient(135deg,#fdf2f4,#fce8eb);border-color:#9e4a5a;color:#7a2f3d}
+  .sev-opt.sel-medium.on{background:linear-gradient(135deg,#fef9f0,#fdf2d9);border-color:var(--warning);color:#7a5a2e}
+  .sev-opt.sel-high.on{background:linear-gradient(135deg,#fdf2f4,#fce8eb);border-color:var(--danger);color:#7a2f3d}
+  .actions{display:flex;gap:.7rem;justify-content:flex-end;flex-wrap:wrap;margin-top:.5rem}
+  .btn{font-family:inherit;font-weight:700;font-size:.9rem;padding:11px 22px;border-radius:12px;border:none;cursor:pointer;transition:transform .1s,box-shadow .15s}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;box-shadow:0 8px 20px -8px rgba(181,74,90,.45)}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 26px -8px rgba(181,74,90,.5)}
+  .btn-ghost{background:linear-gradient(135deg,#fdfbfc,#f8f4f5);color:var(--navy);border:1px solid var(--border)}
+  .btn-ghost:hover{background:linear-gradient(135deg,#f8f4f5,#f3ecee)}
+  .empty{padding:2rem;text-align:center;color:var(--muted);background:linear-gradient(135deg,#fdfbfc,#f8f4f5);border-radius:14px}
+  .toast{position:fixed;top:1rem;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--success),#4db89a);color:#fff;padding:12px 22px;border-radius:12px;font-weight:700;box-shadow:0 14px 30px -10px rgba(58,158,130,.45);z-index:999;opacity:0;transition:opacity .25s,transform .25s}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(6px)}
+  .prev{background:linear-gradient(135deg,#fdfbfc,#f8f4f5);border:1px dashed var(--border);border-radius:12px;padding:.85rem 1rem;margin-top:.75rem;font-size:.85rem;color:var(--muted);line-height:1.7}
+  .prev b{color:var(--navy)}
+  @media(max-width:640px){body{padding:.8rem}form .row{grid-template-columns:1fr}header.pg{padding:1rem 1.1rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="pg">
+    <div>
+      <h1>📋 تسجيل إجراء تأديبي</h1>
+      <p id="hdr-sub">أدخل تفاصيل المخالفة السلوكية / الإدارية والعقوبة المقترحة</p>
+    </div>
+    <button class="back-btn" onclick="window.close()">✕ إغلاق</button>
+  </header>
+
+  <div id="root"></div>
+</div>
+
+<div class="toast" id="toast">✓ تم حفظ الإجراء التأديبي</div>
+
+<script src="supabase.js"></script>
+<script>
+// Uses hrApi from supabase.js
+
+const DISCIPLINARY_TYPES = {
+  manager_noncompliance: 'عدم الالتزام بتعليمات المدير المباشر',
+  negligence: 'إهمال في أداء العمل',
+  policy_violation: 'مخالفة سياسات وأنظمة المؤسسة',
+  behavior: 'سلوك غير لائق / إساءة معاملة',
+  other: 'مخالفة أخرى',
+};
+
+function showToast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg||'✓ تم الحفظ';
+  t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),2200);
+}
+
+function renderNoData(){
+  document.getElementById('root').innerHTML = `
+    <div class="card"><div class="empty">
+      <h2 style="margin-bottom:.5rem">لا توجد بيانات موظف</h2>
+      <p>يرجى فتح هذه الصفحة من خلال زر "+ إضافة إجراء تأديبي" داخل تفاصيل الموظف في النظام الرئيسي.</p>
+      <p style="margin-top:.9rem"><a class="btn btn-primary" href="employees.html">👥 اختيار موظف</a></p>
+    </div></div>`;
+}
+
+function render(payload){
+  document.getElementById('hdr-sub').textContent =
+    `الموظف: ${payload.empName} — ${payload.department||'—'}`;
+
+  document.getElementById('root').innerHTML = `
+    <div class="card">
+      <h2>👤 معلومات الموظف</h2>
+      <div class="emp-grid">
+        <div class="info"><label>الاسم</label><span>${payload.empName}</span></div>
+        <div class="info"><label>الرقم الوظيفي</label><span>${String(payload.empId).startsWith('NOID')?'—':payload.empId}</span></div>
+        <div class="info"><label>القسم</label><span>${payload.department||'—'}</span></div>
+        <div class="info"><label>الجنسية</label><span>${payload.nationality||'—'}</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>⚖️ تفاصيل المخالفة والعقوبة</h2>
+      <form id="frm">
+        <div class="row">
+          <div>
+            <label class="fld">نوع المخالفة</label>
+            <select id="type" required>
+              ${Object.entries(DISCIPLINARY_TYPES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label class="fld">تاريخ الواقعة</label>
+            <input type="text" id="incidentDate" placeholder="مثال: 2026-05-19" value="${new Date().toISOString().slice(0,10)}">
+          </div>
+        </div>
+
+        <div class="row"><div class="full">
+          <label class="fld">وصف المخالفة / تفاصيل الواقعة</label>
+          <textarea id="detail" required placeholder="اذكر الواقعة بوضوح: ماذا حدث، متى، وأي شواهد أو ملاحظات..."></textarea>
+        </div></div>
+
+        <div class="row"><div class="full">
+          <label class="fld">درجة الخطورة</label>
+          <div class="sev-group" id="sev-group">
+            <label class="sev-opt sel-low"><input type="radio" name="sev" value="low"> بسيطة</label>
+            <label class="sev-opt sel-medium on"><input type="radio" name="sev" value="medium" checked> متوسطة</label>
+            <label class="sev-opt sel-high"><input type="radio" name="sev" value="high"> جسيمة</label>
+          </div>
+        </div></div>
+
+        <div class="row"><div class="full">
+          <label class="fld">الإجراء / العقوبة المقترحة</label>
+          <input type="text" id="punishment" required value="إنذار كتابي">
+          <div class="prev" id="prev">سيتم إنشاء إشعار تأديبي للموظف <b id="p-name"></b> بحالة "لم يُقرأ بعد"، وسيظهر في قائمة إشعارات الموظف في النظام الرئيسي.</div>
+        </div></div>
+
+        <div class="actions">
+          <button type="button" class="btn btn-ghost" onclick="window.close()">إلغاء</button>
+          <button type="submit" class="btn btn-primary">💾 حفظ الإجراء التأديبي</button>
+        </div>
+      </form>
+    </div>
+  `;
+
+  document.getElementById('p-name').textContent = payload.empName;
+
+  // severity visual toggle + default punishment
+  const group = document.getElementById('sev-group');
+  const punishmentInput = document.getElementById('punishment');
+  const defaults = {low:'تنبيه شفوي', medium:'إنذار كتابي', high:'إنذار كتابي + خصم يوم عمل'};
+  let lastDefault = 'إنذار كتابي';
+  group.addEventListener('change', e=>{
+    if(e.target.name!=='sev') return;
+    group.querySelectorAll('.sev-opt').forEach(el=>el.classList.remove('on'));
+    e.target.parentElement.classList.add('on');
+    const d = defaults[e.target.value];
+    if(punishmentInput.value===lastDefault || !punishmentInput.value){ punishmentInput.value=d; }
+    lastDefault = d;
+  });
+
+  document.getElementById('frm').addEventListener('submit', async ev=>{
+    ev.preventDefault();
+    const type = document.getElementById('type').value;
+    const detail = document.getElementById('detail').value.trim();
+    const incidentDate = document.getElementById('incidentDate').value.trim();
+    const severity = document.querySelector('input[name=sev]:checked').value;
+    const punishment = punishmentInput.value.trim();
+    if(!detail || !punishment){ alert('يرجى إكمال تفاصيل المخالفة والعقوبة'); return; }
+    if(String(payload.empId).startsWith('NOID')){ alert('لا يمكن حفظ الإجراء: هذا الموظف بلا رقم وظيفي مسجّل في قاعدة البيانات.'); return; }
+
+    const submitBtn = document.querySelector('#frm button[type=submit]');
+    submitBtn.disabled = true; submitBtn.textContent = '⏳ جاري الحفظ...';
+
+    const noteText = incidentDate ? `[${incidentDate}] ${detail}` : detail;
+
+    try {
+      await hrApi.saveDisciplinary({
+        employee_id: payload.empId,
+        action_type: DISCIPLINARY_TYPES[type],
+        severity,
+        note: noteText,
+        created_by: 'dashboard',
+      });
+
+      try{ if(window.opener && !window.opener.closed){ window.opener.postMessage({type:'disciplinary_saved', empId: payload.empId}, '*'); } }catch(e){}
+
+      showToast('✓ تم حفظ الإجراء التأديبي');
+      setTimeout(()=>{
+        try{ if(window.opener && !window.opener.closed){ window.opener.focus(); } }catch(e){}
+        window.close();
+      }, 900);
+    } catch(err){
+      console.error(err);
+      alert('فشل الحفظ في قاعدة البيانات: ' + (err.message||err));
+      submitBtn.disabled = false; submitBtn.textContent = '💾 حفظ الإجراء التأديبي';
+    }
+  });
+}
+
+(function init(){
+  let raw=null; try{ raw=sessionStorage.getItem('disciplinaryActionPayload'); }catch(e){}
+  if(!raw){ renderNoData(); return; }
+  let payload; try{ payload=JSON.parse(raw); }catch(e){ renderNoData(); return; }
+  if(!payload || !payload.empId){ renderNoData(); return; }
+  render(payload);
+})();
+</script>
+</body>
+</html>

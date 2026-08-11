@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم — مستشفى الإمام الحسن المجتبى (ع)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/hr-theme.css">
+<script defer src="assets/hr-shell.js"></script>
+<style>
+/* LAYOUT — fixed sidebar + offset come from assets/hr-theme.css */
+
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal','Segoe UI',Arial,sans-serif;background:#FAF7F7;color:#2A1218;min-height:100vh}
+body.en{font-family:'Inter','Segoe UI',Arial,sans-serif}
+
+/* LAYOUT — the fixed sidebar and its offset live in assets/hr-theme.css */
+
+
+/* TOPBAR */
+.topbar{background:#fff;border-bottom:1px solid #EDD8DB;padding:.75rem 1.4rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(92,10,21,.07)}
+body.en .topbar{direction:ltr}
+.topbar-title{font-size:.98rem;font-weight:800;color:#5C0A15}
+.topbar-meta{font-size:.73rem;color:#9C7078;margin-top:1px}
+.topbar-actions{display:flex;gap:.55rem;align-items:center}
+
+/* PAGE */
+.page-content{padding:1.3rem 1.5rem}
+body.en .page-content{direction:ltr}
+
+/* BUTTONS */
+.btn{font-family:inherit;font-weight:700;font-size:.82rem;padding:.48rem 1rem;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;text-decoration:none;transition:all .15s;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,#C01C2C,#8C1320);color:#fff;box-shadow:0 3px 10px rgba(192,28,44,.25)}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-ghost{background:#fff;color:#8C1320;border:1px solid #DFC0C5}
+.btn-ghost:hover{background:#F5E6E8}
+.btn-sm{font-size:.74rem;padding:.33rem .75rem}
+
+/* WELCOME */
+.welcome{background:linear-gradient(135deg,#5C0A15 0%,#8C1320 50%,#C01C2C 100%);border-radius:16px;padding:1.75rem;margin-bottom:1.5rem;color:#fff;display:flex;align-items:center;justify-content:space-between;box-shadow:0 10px 32px rgba(92,10,21,.2);position:relative;overflow:hidden;flex-wrap:wrap;gap:1rem}
+.welcome::after{content:'🏥';position:absolute;left:1rem;top:50%;transform:translateY(-50%);font-size:5rem;opacity:.07;pointer-events:none}
+body.en .welcome::after{left:auto;right:1rem}
+.welcome-title{font-size:1.35rem;font-weight:900;margin-bottom:.3rem;line-height:1.3}
+.welcome-sub{font-size:.82rem;opacity:.8}
+.welcome-date{background:rgba(255,255,255,.12);border-radius:10px;padding:.7rem 1.1rem;text-align:center;font-size:.78rem;opacity:.9;min-width:160px}
+.welcome-date .dv{font-size:1rem;font-weight:800;display:block;margin-top:.18rem}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:1.5rem}
+.kpi-card{background:#fff;border:1px solid #EDD8DB;border-radius:12px;padding:1rem 1.1rem;box-shadow:0 2px 8px rgba(92,10,21,.06)}
+.kpi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.kpi-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.kpi-icon.red{background:#F5E6E8}
+.kpi-icon.grn{background:#E8F5EE}
+.kpi-icon.wrn{background:#FEF9E7}
+.kpi-icon.inf{background:#E6F3FA}
+.kpi-val{font-size:1.9rem;font-weight:900;color:#8C1320;line-height:1}
+.kpi-lbl{font-size:.7rem;color:#9C7078;font-weight:600;margin-top:.15rem}
+.kpi-sub{font-size:.68rem;color:#9C7078;border-top:1px solid #EDD8DB;padding-top:.45rem;margin-top:.45rem}
+
+/* DASH CARDS */
+.dash-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
+.dash-card{background:#fff;border:1px solid #EDD8DB;border-radius:16px;padding:1.4rem;cursor:pointer;text-decoration:none;display:block;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;box-shadow:0 2px 8px rgba(92,10,21,.06)}
+.dash-card::before{content:'';position:absolute;top:0;right:0;width:4px;height:100%;background:linear-gradient(180deg,#C01C2C,#8C1320)}
+body.en .dash-card::before{right:auto;left:0}
+.dash-card:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(92,10,21,.14);border-color:#E8C5CA}
+.dash-card-icon{width:46px;height:46px;background:linear-gradient(135deg,#F5E6E8,#E8C5CA);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.35rem;margin-bottom:.85rem}
+.dash-card-lbl{font-size:.66rem;font-weight:700;color:#9C7078;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem}
+.dash-card-title{font-size:1.05rem;font-weight:900;color:#8C1320;margin-bottom:.3rem}
+.dash-card-desc{font-size:.78rem;color:#9C7078;line-height:1.5}
+.dash-card-arrow{position:absolute;bottom:1rem;left:1.1rem;font-size:.95rem;color:#C01C2C;opacity:.38;transition:all .2s}
+body.en .dash-card-arrow{left:auto;right:1.1rem}
+.dash-card:hover .dash-card-arrow{opacity:1;transform:translateX(-4px)}
+body.en .dash-card:hover .dash-card-arrow{transform:translateX(4px)}
+
+/* ACTIVITY */
+.activity-row{display:grid;grid-template-columns:1fr 300px;gap:1rem}
+.card{background:#fff;border:1px solid #EDD8DB;border-radius:14px;box-shadow:0 2px 8px rgba(92,10,21,.06);padding:1rem 1.25rem;margin-bottom:1rem}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;padding-bottom:.6rem;border-bottom:1px solid #EDD8DB}
+.card-title{font-size:.9rem;font-weight:800;color:#8C1320}
+.alert-item{display:flex;align-items:flex-start;gap:.55rem;padding:.55rem .75rem;border-radius:7px;margin-bottom:.42rem;font-size:.8rem}
+.alert-item.warn{background:#FEF9E7;color:#B8860B;border:1px solid #F0D080}
+.alert-item.info{background:#E6F3FA;color:#1A6FA0;border:1px solid #BDE0F5}
+.alert-item.ok{background:#E8F5EE;color:#2E8B57;border:1px solid #A8DFC4}
+.alert-icon{font-size:.92rem;flex-shrink:0;margin-top:2px}
+.alert-text{font-weight:700}
+.alert-meta{font-size:.68rem;opacity:.72;margin-top:1px}
+.quick-link{display:flex;align-items:center;gap:.65rem;padding:.65rem .9rem;border-radius:8px;background:#FAF7F7;border:1px solid #EDD8DB;text-decoration:none;color:#5C3840;font-size:.84rem;font-weight:600;transition:all .15s;cursor:pointer;margin-bottom:.5rem}
+.quick-link:hover{background:#F5E6E8;border-color:#E8C5CA;color:#8C1320}
+.ql-arrow{margin-right:auto;opacity:.38;font-size:.82rem}
+body.en .ql-arrow{margin-right:0;margin-left:auto}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.3rem;left:50%;transform:translateX(-50%) translateY(16px);padding:.6rem 1.25rem;border-radius:12px;font-weight:700;font-size:.84rem;opacity:0;transition:all .25s;z-index:9999;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast-success{background:#2E8B57;color:#fff}
+
+@media(max-width:1100px){.kpi-row{grid-template-columns:repeat(2,1fr)}.activity-row{grid-template-columns:1fr}}
+@media(max-width:860px){
+  
+  .dash-cards{grid-template-columns:1fr}.kpi-row{grid-template-columns:1fr 1fr}
+  body.en .content-cell{direction:ltr}}</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+  <!-- CONTENT -->
+  <div class="content-cell">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="t-page-title">لوحة التحكم الرئيسية</div>
+        <div class="topbar-meta" id="topbar-date">—</div>
+      </div>
+      <div class="topbar-actions">
+        <a href="Al-Mujtaba_HR_Attendance_System.html" class="btn btn-primary btn-sm" id="t-btn-reports">📊 التقارير والرفع</a>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- WELCOME -->
+      <div class="welcome">
+        <div>
+          <div class="welcome-title" id="t-welcome-title">أهلاً بك في نظام الموارد البشرية</div>
+          <div class="welcome-sub" id="t-welcome-sub">مستشفى الإمام الحسن المجتبى (ع) — لأمراض الدم</div>
+        </div>
+        <div class="welcome-date">
+          <span id="t-date-label" style="opacity:.7">التاريخ اليوم</span>
+          <span class="dv" id="today-date">—</span>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div><div class="kpi-val" id="kpi-emp">—</div><div class="kpi-lbl" id="t-kpi-emp">إجمالي الموظفين</div></div>
+            <div class="kpi-icon red">👥</div>
+          </div>
+          <div class="kpi-sub" id="kpi-emp-sub">يتم التحميل...</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div><div class="kpi-val" id="kpi-dep">—</div><div class="kpi-lbl" id="t-kpi-dep">الأقسام</div></div>
+            <div class="kpi-icon inf">🏢</div>
+          </div>
+          <div class="kpi-sub" id="kpi-dep-sub">يتم التحميل...</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div><div class="kpi-val" id="kpi-sched">—</div><div class="kpi-lbl" id="t-kpi-sched">جداول مرفوعة</div></div>
+            <div class="kpi-icon grn">📅</div>
+          </div>
+          <div class="kpi-sub" id="kpi-sched-sub">يتم التحميل...</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div><div class="kpi-val" id="kpi-viol">—</div><div class="kpi-lbl" id="t-kpi-viol">مخالفات الشهر</div></div>
+            <div class="kpi-icon wrn">⚠️</div>
+          </div>
+          <div class="kpi-sub" id="kpi-viol-sub">يتم التحميل...</div>
+        </div>
+      </div>
+
+      <!-- 3 MAIN CARDS -->
+      <div class="dash-cards">
+        <a class="dash-card" href="departments.html">
+          <div class="dash-card-icon">🏢</div>
+          <div class="dash-card-lbl" id="t-card1-lbl">إدارة الأقسام</div>
+          <div class="dash-card-title" id="t-card1-title">الأقسام</div>
+          <div class="dash-card-desc" id="t-card1-desc">عرض الأقسام ورؤسائها ومتابعة رفع جداول الدوام الشهرية.</div>
+          <div class="dash-card-arrow">←</div>
+        </a>
+        <a class="dash-card" href="forms.html">
+          <div class="dash-card-icon">📋</div>
+          <div class="dash-card-lbl" id="t-card2-lbl">النماذج الرسمية</div>
+          <div class="dash-card-title" id="t-card2-title">النماذج</div>
+          <div class="dash-card-desc" id="t-card2-desc">الوصول إلى جميع النماذج الرسمية المعتمدة في المستشفى.</div>
+          <div class="dash-card-arrow">←</div>
+        </a>
+        <a class="dash-card" href="employees.html">
+          <div class="dash-card-icon">👤</div>
+          <div class="dash-card-lbl" id="t-card3-lbl">ملفات الموظفين</div>
+          <div class="dash-card-title" id="t-card3-title">الموظفون</div>
+          <div class="dash-card-desc" id="t-card3-desc">البحث عن موظف وعرض بياناته من حضور وإجازات ومخالفات.</div>
+          <div class="dash-card-arrow">←</div>
+        </a>
+      </div>
+
+      <!-- ACTIVITY + QUICK LINKS -->
+      <div class="activity-row">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" id="t-alerts-title">⚠️ تنبيهات هذا الشهر</div>
+            <a href="departments.html" class="btn btn-ghost btn-sm" id="t-view-all">عرض الكل</a>
+          </div>
+          <div id="alerts-container">
+            <div class="alert-item info"><span class="alert-icon">⏳</span><div><div class="alert-text" id="t-loading">جاري تحميل التنبيهات...</div></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title" id="t-quick-title">🔗 روابط سريعة</div></div>
+          <a class="quick-link" href="Al-Mujtaba_HR_Attendance_System.html"><span>📤</span> <span id="t-ql1">رفع جداول وبصمات الشهر</span><span class="ql-arrow">←</span></a>
+          <a class="quick-link" href="Al-Mujtaba_HR_Attendance_System.html"><span>📊</span> <span id="t-ql2">تقرير الحضور والانصراف</span><span class="ql-arrow">←</span></a>
+          <a class="quick-link" href="employees.html"><span>⚖️</span> <span id="t-ql3">تسجيل مخالفة موظف</span><span class="ql-arrow">←</span></a>
+          <a class="quick-link" href="departments.html"><span>📅</span> <span id="t-ql4">متابعة جداول الأقسام</span><span class="ql-arrow">←</span></a>
+          <a class="quick-link" href="forms.html"><span>📋</span> <span id="t-ql5">النماذج الرسمية</span><span class="ql-arrow">←</span></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="supabase.js"></script>
+<script>
+// =============================================
+// TRANSLATIONS
+// =============================================
+const I18N = {
+  ar: {
+    dir: 'rtl', lang: 'ar',
+    'hosp-name':      'مستشفى الإمام الحسن المجتبى (ع)',
+    'sys-name':       'نظام الموارد البشرية',
+    'nav-home':       'الرئيسية',
+    'nav-dashboard':  'لوحة التحكم',
+    'nav-admin':      'الإدارة',
+    'nav-deps':       'الأقسام',
+    'nav-emps':       'الموظفون',
+    'nav-ops':        'العمليات',
+    'nav-reports':    'التقارير والرفع',
+    'nav-daily':      'الموقف اليومي',
+    'nav-forms':      'النماذج الرسمية',
+    'footer':         'نظام HR © 2026',
+    'page-title':     'لوحة التحكم الرئيسية',
+    'btn-reports':    '📊 التقارير والرفع',
+    'welcome-title':  'أهلاً بك في نظام الموارد البشرية',
+    'welcome-sub':    'مستشفى الإمام الحسن المجتبى (ع) — لأمراض الدم',
+    'date-label':     'التاريخ اليوم',
+    'kpi-emp':        'إجمالي الموظفين',
+    'kpi-dep':        'الأقسام',
+    'kpi-sched':      'جداول مرفوعة',
+    'kpi-viol':       'مخالفات الشهر',
+    'card1-lbl':      'إدارة الأقسام',
+    'card1-title':    'الأقسام',
+    'card1-desc':     'عرض الأقسام ورؤسائها ومتابعة رفع جداول الدوام الشهرية.',
+    'card2-lbl':      'النماذج الرسمية',
+    'card2-title':    'النماذج',
+    'card2-desc':     'الوصول إلى جميع النماذج الرسمية المعتمدة في المستشفى.',
+    'card3-lbl':      'ملفات الموظفين',
+    'card3-title':    'الموظفون',
+    'card3-desc':     'البحث عن موظف وعرض بياناته من حضور وإجازات ومخالفات.',
+    'alerts-title':   '⚠️ تنبيهات هذا الشهر',
+    'view-all':       'عرض الكل',
+    'quick-title':    '🔗 روابط سريعة',
+    'ql1': 'رفع جداول وبصمات الشهر',
+    'ql2': 'تقرير الحضور والانصراف',
+    'ql3': 'تسجيل مخالفة موظف',
+    'ql4': 'متابعة جداول الأقسام',
+    'ql5': 'النماذج الرسمية',
+    'lang-label': 'English',
+    'loading': 'جاري تحميل التنبيهات...',
+    'months': ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],
+    'all-uploaded': m => `✅ جميع الأقسام رفعت جداولها لشهر ${m}`,
+    'not-uploaded': (dep, m) => `${dep.name} — لم يُرفع جدول ${m}`,
+    'violation-alert': (id, date) => `مخالفة — الموظف: ${id} · ${date}`,
+    'in-db': 'في قاعدة البيانات',
+    'of-uploaded': (s, d) => `${s} من ${d} رفعت جدولها`,
+    'missing-warn': n => `⚠️ ${n} قسم لم يرفع`,
+    'all-ok': '✅ جميع الأقسام رفعت',
+    'in-month': (m, y) => `في ${m} ${y}`,
+    'today': 'التاريخ اليوم',
+  },
+  en: {
+    dir: 'ltr', lang: 'en',
+    'hosp-name':      'Al-Imam Al-Hassan Al-Mujtaba (A.S.)',
+    'sys-name':       'HR Management System',
+    'nav-home':       'MAIN',
+    'nav-dashboard':  'Dashboard',
+    'nav-admin':      'ADMINISTRATION',
+    'nav-deps':       'Departments',
+    'nav-emps':       'Employees',
+    'nav-ops':        'OPERATIONS',
+    'nav-reports':    'Reports & Upload',
+    'nav-daily':      'Daily Attendance',
+    'nav-forms':      'Official Forms',
+    'footer':         'HR System © 2026',
+    'page-title':     'Main Dashboard',
+    'btn-reports':    '📊 Reports & Upload',
+    'welcome-title':  'Welcome to the HR Management System',
+    'welcome-sub':    'Al-Imam Al-Hassan Al-Mujtaba Hospital — Blood Diseases Center',
+    'date-label':     'Today',
+    'kpi-emp':        'Total Employees',
+    'kpi-dep':        'Departments',
+    'kpi-sched':      'Uploaded Schedules',
+    'kpi-viol':       'This Month Violations',
+    'card1-lbl':      'DEPARTMENT MANAGEMENT',
+    'card1-title':    'Departments',
+    'card1-desc':     'View departments, their heads, and track monthly schedule uploads.',
+    'card2-lbl':      'OFFICIAL FORMS',
+    'card2-title':    'Forms',
+    'card2-desc':     'Access all official forms approved by the hospital.',
+    'card3-lbl':      'EMPLOYEE FILES',
+    'card3-title':    'Employees',
+    'card3-desc':     'Search for an employee and view their attendance, leaves, and violations.',
+    'alerts-title':   '⚠️ This Month Alerts',
+    'view-all':       'View All',
+    'quick-title':    '🔗 Quick Links',
+    'ql1': 'Upload Schedules & Fingerprints',
+    'ql2': 'Attendance Report',
+    'ql3': 'Record Employee Violation',
+    'ql4': 'Track Department Schedules',
+    'ql5': 'Official Forms',
+    'lang-label': 'العربية',
+    'loading': 'Loading alerts...',
+    'months': ['January','February','March','April','May','June','July','August','September','October','November','December'],
+    'all-uploaded': m => `✅ All departments uploaded their schedule for ${m}`,
+    'not-uploaded': (dep, m) => `${dep.name} — schedule for ${m} not uploaded`,
+    'violation-alert': (id, date) => `Violation — Employee: ${id} · ${date}`,
+    'in-db': 'in the database',
+    'of-uploaded': (s, d) => `${s} of ${d} uploaded`,
+    'missing-warn': n => `⚠️ ${n} department(s) missing`,
+    'all-ok': '✅ All departments uploaded',
+    'in-month': (m, y) => `in ${m} ${y}`,
+    'today': 'Today',
+  }
+};
+
+// =============================================
+// LANGUAGE SYSTEM
+// =============================================
+let currentLang = localStorage.getItem('hr-lang') || 'ar';
+
+function applyLang(lang) {
+  const t = I18N[lang];
+  const html = document.getElementById('html-root');
+  html.setAttribute('dir', t.dir);
+  html.setAttribute('lang', t.lang);
+  document.body.classList.toggle('en', lang === 'en');
+
+  // Update all translated elements
+  Object.keys(t).forEach(key => {
+    if (typeof t[key] === 'string') {
+      const el = document.getElementById('t-' + key);
+      if (el) el.textContent = t[key];
+    }
+  });
+
+  currentLang = lang;
+  localStorage.setItem('hr-lang', lang);
+
+  // Re-render date
+  setDate();
+}
+
+function toggleLang() {
+  // The shared shell owns the switch; it echoes back through the hr:lang event.
+  window.hrShell.toggleLang();
+}
+document.addEventListener('hr:lang', e => applyLang(e.detail.lang));
+
+function setDate() {
+  const t = I18N[currentLang];
+  const now = new Date();
+  const locale = currentLang === 'ar' ? 'ar-IQ' : 'en-GB';
+  const dateStr = now.toLocaleDateString(locale, {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+  document.getElementById('today-date').textContent = dateStr;
+  document.getElementById('topbar-date').textContent = dateStr;
+}
+
+// =============================================
+// LOAD KPIs FROM SUPABASE
+// =============================================
+async function loadKPIs() {
+  const now = new Date();
+  const thisMonth = now.getMonth() + 1;
+  const thisYear  = now.getFullYear();
+  const t = I18N[currentLang];
+
+  // Load workspace data AND Laravel KPI in parallel
+  const [snap, kpi] = await Promise.all([
+    getWorkspace().catch(() => null),
+    hrApi.getKpi(thisMonth, thisYear).catch(() => null),
+  ]);
+
+  const wsEmps     = snap?.results || [];
+  const snapMonth  = snap ? parseInt(snap.month) : thisMonth;
+  const snapYear   = snap ? parseInt(snap.year)  : thisYear;
+  const monthName  = t.months[(snapMonth || thisMonth) - 1];
+
+  // Employee count: prefer workspace (live), fall back to Laravel DB count
+  const dbEmpCount  = kpi?.total_employees || 0;
+  const empCount    = Math.max(wsEmps.length, dbEmpCount);
+  const depCount    = kpi?.total_departments || 0;
+  const schedCount  = kpi?.uploaded_schedules || 0;
+  const missing     = kpi?.missing_schedules ?? Math.max(0, depCount - schedCount);
+
+  document.getElementById('kpi-emp').textContent = empCount;
+  document.getElementById('kpi-emp-sub').textContent = wsEmps.length > 0
+    ? `📊 ${currentLang==='ar'?'من نظام الحضور':'from Attendance System'} — ${monthName} ${snapYear}`
+    : `🗄️ ${currentLang==='ar'?'من قاعدة البيانات':'from Database'}`;
+
+  document.getElementById('kpi-dep').textContent     = depCount;
+  document.getElementById('kpi-dep-sub').textContent = t['of-uploaded'](schedCount, depCount);
+  document.getElementById('kpi-sched').textContent   = schedCount;
+  document.getElementById('kpi-sched-sub').textContent = missing > 0 ? t['missing-warn'](missing) : t['all-ok'];
+
+  // Violations count: fetch from Supabase directly (fast, no calculation needed)
+  let violCount = 0;
+  try {
+    const { count } = await (await getSb()).from('violations').select('*', { count: 'exact', head: true })
+      .gte('created_at', `${thisYear}-${String(thisMonth).padStart(2,'0')}-01`);
+    violCount = count || 0;
+  } catch(e) { /* non-critical */ }
+  document.getElementById('kpi-viol').textContent     = violCount;
+  document.getElementById('kpi-viol-sub').textContent = t['in-month'](monthName, snapYear || thisYear);
+
+  let html = '';
+
+  // Workspace summary alert
+  if (snap && wsEmps.length) {
+    const totalOT  = wsEmps.reduce((s,r) => s + (r.totals?.overtimeHours||0), 0);
+    html += `<div class="alert-item ok"><span class="alert-icon">📊</span>
+      <div>
+        <div class="alert-text">${currentLang==='ar'?'بيانات نظام الحضور محملة':'Attendance data loaded'} — ${monthName} ${snapYear}</div>
+        <div class="alert-meta">${wsEmps.length} ${currentLang==='ar'?'موظف':'employees'} · OT: ${totalOT.toFixed(1)}h</div>
+      </div></div>`;
+  } else {
+    html += `<div class="alert-item warn"><span class="alert-icon">⚠️</span>
+      <div>
+        <div class="alert-text">${currentLang==='ar'?'نظام الحضور لم يُحمَّل بعد':'Attendance system not loaded yet'}</div>
+        <div class="alert-meta">${currentLang==='ar'?'افتح صفحة التقارير لتحميل بيانات الشهر':'Open Reports page to load current month data'}</div>
+      </div></div>`;
+  }
+
+  // Missing schedules — use Laravel departments API
+  try {
+    const depsRes = await hrApi.getDepartments(thisMonth, thisYear);
+    (depsRes.data || []).filter(d => !d.schedule_uploaded).forEach(dep => {
+      html += `<div class="alert-item warn"><span class="alert-icon">⚠️</span>
+        <div>
+          <div class="alert-text">${t['not-uploaded'](dep, monthName)}</div>
+          <div class="alert-meta">${dep.chairman_name||'—'} · ${dep.chairman_email||(currentLang==='ar'?'لا يوجد إيميل':'No email')}</div>
+        </div></div>`;
+    });
+  } catch(e) { /* non-critical */ }
+
+  // Recent violations
+  try {
+    const { data: recentViol } = await (await getSb()).from('violations')
+      .select('employee_id,penalty,created_at').order('created_at',{ascending:false}).limit(3);
+    (recentViol||[]).forEach(v => {
+      const locale  = currentLang==='ar'?'ar-IQ':'en-GB';
+      const dateStr = new Date(v.created_at).toLocaleDateString(locale,{month:'short',day:'numeric'});
+      html += `<div class="alert-item info"><span class="alert-icon">⚖️</span>
+        <div>
+          <div class="alert-text">${v.penalty||'—'}</div>
+          <div class="alert-meta">${t['violation-alert'](v.employee_id,dateStr)}</div>
+        </div></div>`;
+    });
+  } catch(e) { /* non-critical */ }
+
+  if (!html) html = `<div class="alert-item ok"><span class="alert-icon">✅</span>
+    <div><div class="alert-text">${currentLang==='ar'?'لا توجد تنبيهات':'No alerts'}</div></div></div>`;
+
+  document.getElementById('alerts-container').innerHTML = html;
+}
+
+// =============================================
+// INIT
+// =============================================
+applyLang(currentLang);
+loadKPIs();
+</script>
+</body>
+</html>

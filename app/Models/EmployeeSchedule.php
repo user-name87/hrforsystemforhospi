@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EmployeeSchedule extends Model
 {
-    protected $table = 'employee_schedules';
+    use HasFactory;
 
     protected $fillable = [
         'employee_id',
@@ -15,24 +16,31 @@ class EmployeeSchedule extends Model
         'month',
         'year',
         'day',
-        'shift_code',   // e.g. 'M' morning | 'E' evening | 'N' night | 'O' off | '12' 12hr
+        'shift_code',
     ];
 
     protected $casts = [
         'month' => 'integer',
-        'year'  => 'integer',
-        'day'   => 'integer',
+        'year' => 'integer',
+        'day' => 'integer',
     ];
 
-    // Codes that mean the employee is scheduled to work (not off/holiday)
-    public static function isWorkingCode(string $code): bool
-    {
-        $offCodes = ['O', 'OFF', 'H', 'HOL', 'V', 'VAC', ''];
-        return !in_array(strtoupper(trim($code)), $offCodes);
-    }
-
+    /**
+     * Get the employee
+     */
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
+    }
+
+    /**
+     * Check if a shift code indicates a working day
+     */
+    public static function isWorkingCode(?string $code): bool
+    {
+        if (!$code) return false;
+        
+        $offCodes = ['O', 'OFF', 'H', 'HOL', 'V', 'VAC', 'R', 'REST'];
+        return !in_array(strtoupper(trim($code)), $offCodes);
     }
 }

@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الموظفون — نظام HR مستشفى الإمام الحسن المجتبى (ع)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/hr-theme.css">
+<script defer src="assets/hr-shell.js"></script>
+<style>
+/* LAYOUT — fixed sidebar + offset come from assets/hr-theme.css */
+
+
+/* ===================== RESET ===================== */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal','Segoe UI',Arial,sans-serif;background:#FAF7F7;color:#2A1218;direction:rtl;min-height:100vh;font-size:15px}
+
+/* ===================== TABLE LAYOUT ===================== */
+
+
+
+/* ===================== SIDEBAR ===================== */
+
+
+
+
+
+
+
+
+
+
+
+/* ===================== TOPBAR ===================== */
+.topbar{background:#fff;border-bottom:1px solid #EDD8DB;padding:.75rem 1.4rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(92,10,21,.07)}
+.topbar-title{font-size:.98rem;font-weight:800;color:#5C0A15}
+.topbar-meta{font-size:.73rem;color:#9C7078;margin-top:1px}
+.topbar-actions{display:flex;gap:.55rem}
+
+/* ===================== PAGE CONTENT ===================== */
+.page-content{padding:1.3rem 1.5rem}
+
+/* ===================== CARDS ===================== */
+.card{background:#fff;border:1px solid #EDD8DB;border-radius:14px;box-shadow:0 2px 8px rgba(92,10,21,.07);padding:1rem 1.25rem;margin-bottom:1rem}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;padding-bottom:.6rem;border-bottom:1px solid #EDD8DB}
+.card-title{font-size:.9rem;font-weight:800;color:#8C1320;display:flex;align-items:center;gap:.38rem}
+
+/* ===================== BUTTONS ===================== */
+.btn{font-family:'Tajawal',sans-serif;font-weight:700;font-size:.82rem;padding:.48rem 1rem;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;text-decoration:none;transition:all .15s;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,#C01C2C,#8C1320);color:#fff;box-shadow:0 3px 10px rgba(192,28,44,.25)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(192,28,44,.35)}
+.btn-ghost{background:#fff;color:#8C1320;border:1px solid #DFC0C5}
+.btn-ghost:hover{background:#F5E6E8;border-color:#E8C5CA}
+.btn-sm{font-size:.74rem;padding:.33rem .75rem}
+
+/* ===================== FORMS ===================== */
+.form-label{display:block;font-size:.75rem;font-weight:700;color:#8C1320;margin-bottom:.3rem}
+.form-control{width:100%;font-family:'Tajawal',sans-serif;font-size:.84rem;padding:.48rem .78rem;border:1px solid #DFC0C5;border-radius:8px;background:#fff;color:#2A1218;transition:border .15s,box-shadow .15s;direction:rtl}
+.form-control:focus{outline:none;border-color:#C01C2C;box-shadow:0 0 0 3px rgba(192,28,44,.1)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.form-group{margin-bottom:.8rem}
+
+/* ===================== SEARCH BAR ===================== */
+.search-bar{display:flex;gap:.65rem;align-items:flex-end;flex-wrap:wrap}
+.search-bar .form-group{margin:0;flex:1;min-width:160px}
+
+/* ===================== TABLE ===================== */
+.table-wrap{overflow-x:auto;border-radius:10px;border:1px solid #EDD8DB}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+thead th{background:linear-gradient(135deg,#5C0A15,#8C1320);color:#fff;padding:.58rem .8rem;text-align:right;font-weight:700;font-size:.72rem;white-space:nowrap}
+tbody tr{border-bottom:1px solid #EDD8DB;transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#F5E6E8}
+tbody td{padding:.58rem .8rem;color:#5C3840;vertical-align:middle;white-space:nowrap}
+.loading-row td{text-align:center;color:#9C7078;padding:2.5rem!important;font-size:.86rem}
+
+/* ===================== SKELETON LOADING ===================== */
+@keyframes skeleton-shine{
+  0%{background-position:-200px}
+  100%{background-position:calc(200px + 100%)}
+}
+.skeleton-tbody tr{border-bottom:1px solid #EDD8DB;pointer-events:none}
+.skeleton-tbody td{padding:.65rem .8rem;vertical-align:middle}
+.sk{
+  display:inline-block;border-radius:6px;
+  background:linear-gradient(90deg,#EDD8DB 0px,#F5E6E8 80px,#EDD8DB 160px);
+  background-size:600px 100%;
+  animation:skeleton-shine 1.6s infinite linear;
+}
+.sk-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(90deg,#EDD8DB 0px,#F5E6E8 80px,#EDD8DB 160px);background-size:600px 100%;animation:skeleton-shine 1.6s infinite linear;display:inline-block}
+.sk-sm{width:60px; height:14px}
+.sk-md{width:110px;height:14px}
+.sk-lg{width:160px;height:14px}
+.sk-xl{width:90px; height:22px;border-radius:100px}
+.sk-badge{width:70px;height:20px;border-radius:100px}
+
+/* ===================== BADGES ===================== */
+.badge{display:inline-flex;align-items:center;padding:.17rem .52rem;border-radius:100px;font-size:.68rem;font-weight:700;white-space:nowrap}
+.badge-info{background:#E6F3FA;color:#1A6FA0}
+.badge-muted{background:#F0ECF0;color:#9C7078}
+.badge-success{background:#E8F5EE;color:#2E8B57}
+.badge-danger{background:#F5E6E8;color:#C01C2C}
+.badge-warning{background:#FEF9E7;color:#B8860B}
+
+/* ===================== PROFILE ===================== */
+.profile-hero{background:linear-gradient(135deg,#5C0A15,#8C1320 55%,#C01C2C);border-radius:16px;padding:1.4rem;color:#fff;display:flex;align-items:center;gap:1.1rem;margin-bottom:1rem;box-shadow:0 10px 32px rgba(92,10,21,.2);flex-wrap:wrap;position:relative;overflow:hidden}
+.profile-hero::after{content:'👤';position:absolute;left:1rem;top:50%;transform:translateY(-50%);font-size:4.5rem;opacity:.05;pointer-events:none}
+.profile-avatar{width:56px;height:56px;background:rgba(255,255,255,.18);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.7rem;border:2px solid rgba(255,255,255,.25);flex-shrink:0}
+.profile-name{font-size:1.15rem;font-weight:900;margin-bottom:.18rem}
+.profile-meta{font-size:.8rem;opacity:.8}
+.profile-id{font-size:.72rem;opacity:.55;margin-top:.12rem;font-family:monospace}
+.profile-actions{margin-right:auto;display:flex;gap:.45rem;flex-wrap:wrap}
+.btn-white{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.3);font-family:'Tajawal',sans-serif;font-weight:700;font-size:.76rem;padding:.38rem .85rem;border-radius:8px;border:1px solid rgba(255,255,255,.28);cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;transition:all .15s}
+.btn-white:hover{background:rgba(255,255,255,.28)}
+
+/* ===================== INFO GRID ===================== */
+.info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:.6rem;margin-bottom:1rem}
+.info-item{background:#FAF7F7;border:1px solid #EDD8DB;border-radius:8px;padding:.6rem .75rem}
+.info-lbl{font-size:.64rem;color:#9C7078;font-weight:700;margin-bottom:.12rem;text-transform:uppercase;letter-spacing:.03em}
+.info-val{font-size:.88rem;font-weight:700;color:#2A1218}
+
+/* ===================== MONTH ROW ===================== */
+.month-row{display:flex;align-items:center;gap:.55rem;margin-bottom:.95rem;flex-wrap:wrap;background:#fff;border:1px solid #EDD8DB;border-radius:8px;padding:.55rem .85rem}
+.month-row label{font-size:.76rem;font-weight:700;color:#8C1320}
+.month-row select{font-family:'Tajawal',sans-serif;font-size:.8rem;padding:.32rem .6rem;border:1px solid #DFC0C5;border-radius:7px;background:#fff;color:#2A1218}
+
+/* ===================== TABS ===================== */
+.tabs-bar{display:flex;border-bottom:2px solid #EDD8DB;margin-bottom:1rem;overflow-x:auto}
+.tab-btn{background:none;border:none;padding:.52rem .95rem;font-family:'Tajawal',sans-serif;font-size:.8rem;font-weight:600;color:#9C7078;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .15s}
+.tab-btn:hover{color:#C01C2C}
+.tab-btn.active{color:#8C1320;border-bottom-color:#C01C2C;font-weight:800}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ===================== KPI MINI ===================== */
+.kpi-mini{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:.6rem;margin-bottom:1rem}
+.kpi-box{background:#fff;border:1px solid #EDD8DB;border-radius:12px;padding:.72rem .9rem;text-align:center}
+.kpi-val{font-size:1.5rem;font-weight:900;color:#8C1320;line-height:1}
+.kpi-lbl{font-size:.66rem;color:#9C7078;margin-top:.18rem;font-weight:600}
+
+/* ===================== SHIFT CALENDAR ===================== */
+.shift-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;font-size:.7rem}
+.shift-cal-hdr{text-align:center;font-size:.58rem;font-weight:800;color:#9C7078;padding:.18rem}
+.shift-day{border-radius:5px;padding:.26rem .12rem;text-align:center;border:1px solid #EDD8DB;background:#FAF7F7}
+.sd-n{font-weight:700;color:#9C7078;font-size:.6rem}
+.sd-code{font-weight:800;font-size:.7rem;margin-top:1px}
+.s-off{background:#FAF7F7;color:#9C7078}
+.s-am{background:#EBF5FB;color:#1A6FA0;border-color:#BDE0F5}
+.s-pm{background:#FEF9E7;color:#B8860B;border-color:#F0D080}
+.s-night{background:#F0E8F8;color:#7B2DA0;border-color:#D4B0EC}
+.s-d12{background:#E8F5EE;color:#2E8B57;border-color:#A8DFC4}
+.s-leave{background:#E6F3FA;color:#1A6FA0;border-color:#BDE0F5}
+
+/* ===================== ALERT ITEMS ===================== */
+.alert-item{display:flex;align-items:flex-start;gap:.55rem;padding:.55rem .75rem;border-radius:7px;margin-bottom:.42rem;font-size:.8rem}
+.alert-item.warn{background:#FEF9E7;color:#B8860B;border:1px solid #F0D080}
+.alert-icon{font-size:.92rem;flex-shrink:0;margin-top:2px}
+.alert-text{font-weight:700}
+.alert-meta{font-size:.68rem;opacity:.7;margin-top:1px}
+
+/* ===================== EMPTY STATE ===================== */
+.empty-state{text-align:center;padding:2.2rem 1rem;color:#9C7078}
+.empty-icon{font-size:2.4rem;margin-bottom:.55rem;opacity:.32}
+.empty-title{font-size:.9rem;font-weight:700;color:#5C3840}
+.empty-sub{font-size:.76rem;margin-top:.2rem}
+.empty-sub a{color:#C01C2C}
+
+/* ===================== TOAST ===================== */
+.toast{position:fixed;bottom:1.3rem;left:50%;transform:translateX(-50%) translateY(16px);padding:.6rem 1.25rem;border-radius:12px;font-weight:700;font-size:.84rem;opacity:0;transition:all .25s;z-index:9999;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast-success{background:#2E8B57;color:#fff}
+.toast-danger{background:#C01C2C;color:#fff}
+
+/* ===================== MODAL ===================== */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(42,18,24,.55);z-index:500;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:18px;padding:1.45rem;width:100%;max-width:520px;box-shadow:0 20px 60px rgba(92,10,21,.22);max-height:90vh;overflow-y:auto}
+.modal-title{font-size:.98rem;font-weight:800;color:#8C1320;margin-bottom:.95rem}</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+  <!-- SIDEBAR CELL -->
+  <!-- CONTENT CELL -->
+  <div class="content-cell">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">الموظفون</div>
+        <div class="topbar-meta" id="emp-count-lbl">جاري التحميل...</div>
+      </div>
+      <div class="topbar-actions">
+<button class="btn btn-primary btn-sm" onclick="openEmpModal()">+ إضافة موظف</button>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- SEARCH -->
+      <div class="card" id="search-section">
+        <div class="search-bar">
+          <div class="form-group" style="min-width:180px">
+            <label class="form-label">القسم</label>
+            <select class="form-control" id="search-dep">
+              <option value="">-- جميع الأقسام --</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:2;min-width:200px">
+            <label class="form-label">الاسم أو الرقم الوظيفي</label>
+            <input type="text" class="form-control" id="search-q" placeholder="ابحث...">
+          </div>
+          <button class="btn btn-primary" style="margin-bottom:.8rem" onclick="doSearch()">🔍 بحث</button>
+        </div>
+      </div>
+
+      <!-- LIST -->
+      <div id="list-section">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">👥 قائمة الموظفين</div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>الرقم الوظيفي</th><th>الاسم</th><th>القسم</th>
+                  <th>المسمى الوظيفي</th><th>الشيفت</th><th>الجنسية</th><th></th>
+                </tr>
+              </thead>
+              <tbody id="emp-tbody" class="skeleton-tbody">
+                <!-- 8 skeleton rows matching the 7 columns: رقم، اسم، قسم، مسمى، شيفت، جنسية، زر -->
+                <tr><td><div class="sk sk-sm"></div></td><td><div class="sk sk-lg"></div></td><td><div class="sk sk-badge"></div></td><td><div class="sk sk-md"></div></td><td><div class="sk sk-xl"></div></td><td><div class="sk sk-sm"></div></td><td></td></tr>
+                <tr><td><div class="sk sk-sm"></div></td><td><div class="sk sk-xl"></div></td><td><div class="sk sk-badge"></div></td><td><div class="sk sk-lg"></div></td><td><div class="sk sk-xl"></div></td><td><div class="sk sk-sm"></div></td><td></td></tr>
+                <tr><td><div class="sk sk-sm"></div></td><td><div class="sk sk-md"></div></td><td><div class="sk sk-badge"></div></td><td><div class="sk sk-sm"></div></td><td><div class="sk sk-xl"></div></td><td><div class="sk sk-sm"></div></td><td></td></tr>
+                <tr><td><div class="sk sk-sm"></div></td><td><div class="sk sk-lg"></div></td><td><div class="sk sk-badge"></div></td><td><div class="sk sk-md"></div></td><td><div class="sk sk-xl"></div></td><td><div class="sk sk-sm"></div></td><td></td></tr>
+                <tr><td><div class="sk sk-sm"></div></td><td><div class="sk sk-xl"></div></td><td><div class="sk sk-badge"></div></td><td><div class="sk sk-lg"></div></td><td><div class="sk sk-xl"></div></td><td><div class="sk sk-sm"></div></td><td></td></tr>
+                <tr><td><div class="sk sk-sm"></div></td><td><div class="sk sk-md"></div></td><td><div class="sk sk-badge"></div></td><td><div class="sk sk-sm"></div></td><td><div class="sk sk-xl"></div></td><td><div class="sk sk-sm"></div></td><td></td></tr>
+                <tr><td><div class="sk sk-sm"></div></td><td><div class="sk sk-lg"></div></td><td><div class="sk sk-badge"></div></td><td><div class="sk sk-md"></div></td><td><div class="sk sk-xl"></div></td><td><div class="sk sk-sm"></div></td><td></td></tr>
+                <tr><td><div class="sk sk-sm"></div></td><td><div class="sk sk-xl"></div></td><td><div class="sk sk-badge"></div></td><td><div class="sk sk-lg"></div></td><td><div class="sk sk-xl"></div></td><td><div class="sk sk-sm"></div></td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div id="profile-section" style="display:none">
+        <button class="btn btn-ghost btn-sm" onclick="backToList()" style="margin-bottom:.85rem">← العودة للقائمة</button>
+
+        <div class="profile-hero">
+          <div class="profile-avatar">👤</div>
+          <div>
+            <div class="profile-name" id="prof-name">—</div>
+            <div class="profile-meta" id="prof-dept">—</div>
+            <div class="profile-id"   id="prof-id">—</div>
+          </div>
+          <div class="profile-actions">
+            <button class="btn-white" onclick="editCurrentEmp()">✏️ تعديل</button>
+            <button class="btn-white" onclick="openDisciplinary()">⚖️ إجراء تأديبي</button>
+          </div>
+        </div>
+
+        <div class="info-grid" id="info-grid"></div>
+
+        <div class="month-row">
+          <label>📅 الشهر:</label>
+          <select id="prof-month"></select>
+          <select id="prof-year"></select>
+          <button class="btn btn-primary btn-sm" onclick="loadMonthData()">عرض</button>
+          <span id="att-src" style="font-size:.7rem;color:#9C7078;margin-right:auto"></span>
+        </div>
+
+        <div class="tabs-bar">
+          <button class="tab-btn active" data-tab="summary">📋 ملخص</button>
+          <button class="tab-btn" data-tab="schedule">📅 الجدول</button>
+          <button class="tab-btn" data-tab="attendance">🕐 الحضور</button>
+          <button class="tab-btn" data-tab="overtime">⏱️ الدوام الإضافي</button>
+          <button class="tab-btn" data-tab="leaves">🌴 الإجازات</button>
+          <button class="tab-btn" data-tab="violations">⚖️ المخالفات</button>
+          <button class="tab-btn" data-tab="disciplinary">📋 التأديبية</button>
+        </div>
+
+        <div id="tab-summary"      class="tab-panel active"></div>
+        <div id="tab-schedule"     class="tab-panel"></div>
+        <div id="tab-attendance"   class="tab-panel"></div>
+        <div id="tab-overtime"     class="tab-panel"></div>
+        <div id="tab-leaves"       class="tab-panel"></div>
+        <div id="tab-violations"   class="tab-panel"></div>
+        <div id="tab-disciplinary" class="tab-panel"></div>
+      </div>
+
+    </div><!-- /page-content -->
+  </div><!-- /content-cell -->
+</div><!-- /page-wrapper -->
+
+<!-- ADD/EDIT EMPLOYEE MODAL -->
+<div class="modal-overlay" id="emp-modal">
+  <div class="modal">
+    <div class="modal-title" id="emp-modal-title">👤 إضافة موظف جديد</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">الرقم الوظيفي *</label>
+        <input type="text" class="form-control" id="em-id" placeholder="مثال: 3055">
+      </div>
+      <div class="form-group">
+        <label class="form-label">الاسم الكامل *</label>
+        <input type="text" class="form-control" id="em-name">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">القسم</label>
+        <select class="form-control" id="em-dept"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">المسمى الوظيفي</label>
+        <input type="text" class="form-control" id="em-title">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">نوع الشيفت</label>
+        <select class="form-control" id="em-shift">
+          <option value="8hr">8 ساعات</option>
+          <option value="7hr">7 ساعات</option>
+          <option value="12hr">12 ساعة</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">الجنسية</label>
+        <input type="text" class="form-control" id="em-nat">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">الراتب الأساسي (دينار)</label>
+        <input type="number" class="form-control" id="em-salary" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">نوع العمل</label>
+        <select class="form-control" id="em-fullpart">
+          <option value="full">دوام كامل</option>
+          <option value="part">دوام جزئي</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">التصنيف / التخصص</label>
+      <input type="text" class="form-control" id="em-class">
+    </div>
+    <div style="display:flex;gap:.55rem;justify-content:flex-end;margin-top:.85rem">
+      <button class="btn btn-ghost" onclick="closeEmpModal()">إلغاء</button>
+      <button class="btn btn-primary" id="save-emp-btn" onclick="saveEmployee()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIOLATION MODAL -->
+<div class="modal-overlay" id="viol-modal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">⚖️ تسجيل مخالفة</div>
+    <div class="form-group">
+      <label class="form-label">نوع المخالفة</label>
+      <select class="form-control" id="vt" onchange="updatePenalty()">
+        <option value="1">1. التأخير لغاية 15 دقيقة</option>
+        <option value="2">2. التأخير 15–30 دقيقة</option>
+        <option value="3">3. التأخير 30–60 دقيقة</option>
+        <option value="4">4. التأخير أكثر من 60 دقيقة</option>
+        <option value="5">5. التأثير على سير العمل</option>
+        <option value="6">6. الخروج دون إذن</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">رقم المخالفة (المرة)</label>
+        <select class="form-control" id="vo" onchange="updatePenalty()">
+          <option value="1">المرة الأولى</option>
+          <option value="2">المرة الثانية</option>
+          <option value="3">المرة الثالثة</option>
+          <option value="4">المرة الرابعة</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">تاريخ الواقعة</label>
+        <input type="date" class="form-control" id="vd">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">العقوبة المقترحة</label>
+      <input type="text" class="form-control" id="vp" style="background:#FAF7F7">
+    </div>
+    <div class="form-group">
+      <label class="form-label">ملاحظات</label>
+      <textarea class="form-control" id="vn" rows="2" placeholder="تفاصيل إضافية..."></textarea>
+    </div>
+    <div style="display:flex;gap:.55rem;justify-content:flex-end;margin-top:.85rem">
+      <button class="btn btn-ghost" onclick="closeViolModal()">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveViolation()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="supabase.js"></script>
+<script>
+const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const VT=[
+  {r:1,d:'التأخير لغاية 15 دقيقة',p:['تنبيه شفوي','إنذار كتابي','خصم ربع يوم','خصم نصف يوم']},
+  {r:2,d:'التأخير 15–30 دقيقة',p:['تنبيه+خصم مدة التأخير','خصم ربع يوم','خصم نصف يوم','خصم يوم']},
+  {r:3,d:'التأخير 30–60 دقيقة',p:['تنبيه+خصم مدة التأخير','خصم نصف يوم','خصم يوم','إنذار نهائي+خصم يومان']},
+  {r:4,d:'التأخير أكثر من 60 دقيقة',p:['إنذار+خصم مدة التأخير','خصم يوم','إنذار نهائي+خصم 3 أيام','خصم 5 أيام+توصية إنهاء خدمة']},
+  {r:5,d:'التأثير على سير العمل',p:['خصم يوم','خصم يومان','خصم 3 أيام','خصم 4 أيام']},
+  {r:6,d:'الخروج دون إذن',p:['خصم يوم','خصم يومان','إنذار نهائي+خصم 3 أيام','خصم 5 أيام+توصية إنهاء خدمة']},
+];
+
+const now=new Date();
+let allEmployees=[],allDepts=[],currentEmp=null,editingEmpId=null;
+
+/* ---- SESSION CACHE ---- */
+const SESSION_KEY = 'hr_ws_cache';
+const SESSION_TTL = 5 * 60 * 1000; // 5 minutes
+
+function getCachedWorkspace() {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts > SESSION_TTL) { sessionStorage.removeItem(SESSION_KEY); return null; }
+    return data;
+  } catch(e) { return null; }
+}
+
+function setCachedWorkspace(data) {
+  try { sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ts: Date.now(), data })); } catch(e) {}
+}
+
+/* ---- INIT ---- */
+async function init(){
+  // ── Load from hr_workspace (attendance system) first ──
+  // Try sessionStorage cache before hitting Supabase
+  let snap = getCachedWorkspace();
+  if (!snap) {
+    try { snap = await getWorkspace(); if (snap) setCachedWorkspace(snap); }
+    catch(e) { console.error('getWorkspace error:', e); }
+  } else {
+    console.log('Workspace loaded from session cache');
+  }
+  
+  console.log('Workspace snap:', snap ? 'loaded' : 'null');
+  if (snap) console.log('Results count:', snap.results?.length, '| month:', snap.month, snap.year);
+
+  const wsEmps = snap?.results || [];
+
+  if (wsEmps.length) {
+    // Map workspace employees using EXACT field names confirmed from debug:
+    // sn, nat, days, name, type, deptRaw, deptNorm, deviceId, nameNorm, classification
+    const depSet = new Set();
+    allEmployees = wsEmps.map(r => {
+      const emp  = r.employee || {};
+      const dept = (emp.deptNorm || emp.deptRaw || '—').trim();
+      if (dept && dept !== '—') depSet.add(dept);
+      return {
+        employee_id:    String(emp.deviceId || emp.sn || '?'),
+        name:           emp.name || emp.nameNorm || '—',
+        department_id:  dept,
+        departments:    { name: dept },
+        job_title:      emp.classification || emp.type || '—',
+        shift_type:     detectShiftTypeFromResult(r),
+        nationality:    emp.nat || '—',
+        basic_salary:   0,
+        classification: emp.classification || '—',
+        full_or_part:   'full',
+        _wsResult:      r,
+      };
+    }).sort((a,b) => (a.name||'').localeCompare(b.name||'', 'ar'));
+
+    // Merge with DB departments to get email/chairman info
+    const { data: dbDeps } = await (await getSb()).from('departments').select('*').order('name');
+    const dbDepMap = {};
+    (dbDeps||[]).forEach(d => { dbDepMap[d.name] = d; });
+    allDepts = Array.from(depSet).map(name => dbDepMap[name] || { id: name, name });
+
+    const snapMonth = snap.month ? MONTHS[parseInt(snap.month)-1] : '';
+    const snapYear  = snap.year  || '';
+    document.getElementById('emp-count-lbl').textContent =
+      `${allEmployees.length} موظف — ${snapMonth} ${snapYear} (نظام الحضور)`;
+
+  } else {
+    // Fallback to our employees table
+    const [{data:deps},{data:emps}] = await Promise.all([
+      (await getSb()).from('departments').select('*').order('name'),
+      (await getSb()).from('employees').select('*,departments(name)').order('name'),
+    ]);
+    allDepts = deps||[]; allEmployees = emps||[];
+    document.getElementById('emp-count-lbl').textContent =
+      allEmployees.length
+        ? `${allEmployees.length} موظف في قاعدة البيانات`
+        : '⚠️ لا توجد بيانات — افتح نظام الحضور أولاً';
+  }
+
+  // Populate dept selects
+  const dSel  = document.getElementById('search-dep');
+  const eDept = document.getElementById('em-dept');
+  // Clear existing options (keep first placeholder)
+  while(dSel.options.length > 1) dSel.remove(1);
+  while(eDept.options.length > 1) eDept.remove(1);
+  allDepts.forEach(d=>{
+    dSel.appendChild(new Option(d.name, d.id || d.name));
+    eDept.appendChild(new Option(d.name, d.id || d.name));
+  });
+
+  renderTable(allEmployees);
+
+  const pM=document.getElementById('prof-month');
+  const pY=document.getElementById('prof-year');
+  MONTHS.forEach((m,i)=>{const o=new Option(m,i+1);if(i+1===now.getMonth()+1)o.selected=true;pM.appendChild(o);});
+  [2024,2025,2026].forEach(y=>{const o=new Option(y,y);if(y===now.getFullYear())o.selected=true;pY.appendChild(o);});
+
+  // Auto-select workspace month/year if available
+  if (snap?.month) document.getElementById('prof-month').value = parseInt(snap.month);
+  if (snap?.year)  document.getElementById('prof-year').value  = parseInt(snap.year);
+}
+
+// detectShiftTypeFromResult is defined in supabase.js
+
+/* ---- TABLE ---- */
+function renderTable(emps){
+  const tb=document.getElementById('emp-tbody');
+  tb.classList.remove('skeleton-tbody');
+  if(!emps.length){tb.innerHTML='<tr class="loading-row"><td colspan="7">لا توجد نتائج</td></tr>';return;}
+  tb.innerHTML=emps.map(e=>`
+    <tr style="cursor:pointer" onclick="openEmployee('${e.employee_id}')">
+      <td style="font-weight:800;color:#8C1320;font-family:monospace">${e.employee_id}</td>
+      <td style="font-weight:700">${e.name}</td>
+      <td><span class="badge badge-info">${e.departments?.name||'—'}</span></td>
+      <td style="color:#9C7078">${e.job_title||'—'}</td>
+      <td><span class="badge badge-muted">${e.shift_type||'—'}</span></td>
+      <td>${e.nationality||'—'}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openEmployee('${e.employee_id}')">عرض ←</button></td>
+    </tr>`).join('');
+}
+
+function doSearch(){
+  const dep=document.getElementById('search-dep').value;
+  const q=document.getElementById('search-q').value.toLowerCase().trim();
+  let f=allEmployees;
+  if(dep) f=f.filter(e=>
+    String(e.department_id)===dep ||
+    e.departments?.name===dep ||
+    String(e.department_id)===dep
+  );
+  if(q) f=f.filter(e=>
+    e.name?.toLowerCase().includes(q) ||
+    e.employee_id?.toLowerCase().includes(q) ||
+    e.job_title?.toLowerCase().includes(q)
+  );
+  renderTable(f);
+}
+document.getElementById('search-q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
+
+/* ---- OPEN PROFILE ---- */
+async function openEmployee(empId){
+  currentEmp=allEmployees.find(e=>e.employee_id===empId);
+  if(!currentEmp)return;
+  document.getElementById('list-section').style.display='none';
+  document.getElementById('search-section').style.display='none';
+  document.getElementById('profile-section').style.display='block';
+  document.getElementById('prof-name').textContent=currentEmp.name;
+  document.getElementById('prof-dept').textContent=`${currentEmp.departments?.name||'—'}  —  ${currentEmp.job_title||'—'}`;
+  document.getElementById('prof-id').textContent=`الرقم الوظيفي: ${currentEmp.employee_id}`;
+  document.getElementById('info-grid').innerHTML=[
+    {l:'الرقم الوظيفي',v:currentEmp.employee_id},
+    {l:'القسم',v:currentEmp.departments?.name||'—'},
+    {l:'المسمى الوظيفي',v:currentEmp.job_title||'—'},
+    {l:'نوع الشيفت',v:currentEmp.shift_type||'—'},
+    {l:'نوع العمل',v:currentEmp.full_or_part==='full'?'دوام كامل':'دوام جزئي'},
+    {l:'الجنسية',v:currentEmp.nationality||'—'},
+    {l:'الراتب الأساسي',v:currentEmp.basic_salary?(+currentEmp.basic_salary).toLocaleString()+' دينار':'—'},
+    {l:'التصنيف',v:currentEmp.classification||'—'},
+  ].map(i=>`<div class="info-item"><div class="info-lbl">${i.l}</div><div class="info-val">${i.v}</div></div>`).join('');
+  document.getElementById('vd').value=new Date().toISOString().slice(0,10);
+  updatePenalty();
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.querySelectorAll('.tab-panel').forEach((p,i)=>{p.classList.toggle('active',i===0);if(i!==0)p.innerHTML='';});
+  await loadMonthData();
+}
+
+function backToList(){
+  currentEmp=null;
+  document.getElementById('profile-section').style.display='none';
+  document.getElementById('list-section').style.display='block';
+  document.getElementById('search-section').style.display='block';
+}
+
+/* ---- TABS ---- */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ---- LOAD MONTH DATA ---- */
+async function loadMonthData(){
+  if(!currentEmp)return;
+  const month=+document.getElementById('prof-month').value;
+  const year=+document.getElementById('prof-year').value;
+  const empId=currentEmp.employee_id;
+  document.getElementById('tab-summary').innerHTML='<div style="padding:1.5rem;text-align:center;color:#9C7078">⏳ جاري تحميل البيانات...</div>';
+  const src=document.getElementById('att-src');
+
+  // Try workspace data first
+  const wsResult = currentEmp._wsResult || await getWsEmployee(empId, month, year);
+
+  // Also load from our Supabase tables
+  const [{data:shifts},{data:attendance},{data:leaves},{data:violations},{data:disciplinary},{data:empDbRow}]=await Promise.all([
+    (await getSb()).from('employee_shifts').select('*').eq('employee_id',empId).eq('month',month).eq('year',year).order('shift_date'),
+    (await getSb()).from('daily_attendance').select('*').eq('employee_id',empId).eq('month',month).eq('year',year).order('att_date'),
+    (await getSb()).from('leaves').select('*').eq('employee_id',empId).eq('month',month).eq('year',year).order('from_date',{ascending:false}),
+    (await getSb()).from('violations').select('*').eq('employee_id',empId).order('created_at',{ascending:false}),
+    (await getSb()).from('disciplinary_actions').select('*').eq('employee_id',empId).order('created_at',{ascending:false}),
+    (await getSb()).from('employees').select('basic_salary').eq('employee_id',empId).maybeSingle(),
+  ]);
+  // Enrich currentEmp salary from DB if not already set
+  if(empDbRow?.basic_salary && !currentEmp.basic_salary) currentEmp.basic_salary = empDbRow.basic_salary;
+
+  if(wsResult){
+    src.textContent='✅ بيانات محملة من نظام الحضور';
+    renderSummaryFromWs(wsResult, violations||[], month, year);
+    renderScheduleFromWs(wsResult, month, year);
+    renderAttFromWs(wsResult);
+    renderOvertimeFromWs(wsResult, month, year);
+  } else {
+    src.textContent=(attendance&&attendance.length)?'✅ بيانات موجودة':'💡 افتح نظام الحضور لرفع البصمات';
+    renderSummary(shifts||[],attendance||[],leaves||[],violations||[],month,year);
+    renderScheduleTab(shifts||[],leaves||[],month,year);
+    renderAttTab(attendance||[],leaves||[]);
+    renderOvertimeTab(attWorkedDays(attendance||[]), currentEmp.shift_type||'8hr', month, year);
+  }
+
+  renderLeavesTab(leaves||[]);
+  renderViolTab(violations||[]);
+  renderDiscTab(disciplinary||[]);
+}
+
+/* ---- OVERTIME ----
+   7/8hr shifts : every minute past the base shift is OT, capped so that
+                  base + OT never exceeds MAX_DAILY_HOURS per day.
+   12hr shifts  : 17 duty shifts a month are the quota; shift 18 onwards is OT.
+   Cash payout  : OT hours / 8 = OT days; OT days x (basic salary / 30). */
+const MAX_DAILY_HOURS = 12;
+const DUTY_QUOTA_12HR = 17;
+
+function baseShiftHours(shiftType){
+  return shiftType==='12hr' ? 12 : shiftType==='7hr' ? 7 : shiftType==='6hr' ? 6 : 8;
+}
+
+function otPayout(otHours, salary){
+  if (!(salary > 0) || !(otHours > 0)) return 0;
+  return Math.round((otHours / 8) * (salary / 30));
+}
+
+function otBreakdown(shiftType, otHours, dutyCount, salary){
+  const base  = baseShiftHours(shiftType);
+  const is12  = shiftType === '12hr';
+  const otDays = otHours > 0 ? otHours / 8 : 0;
+  const daily  = salary > 0 ? salary / 30 : 0;
+  const pay    = otPayout(otHours, salary);
+  const rule = is12
+    ? `كوتا الشهر ${DUTY_QUOTA_12HR} مناوبة · المناوبات المنجزة ${dutyCount||0} · كل مناوبة بعد الـ${DUTY_QUOTA_12HR} تُحتسب إضافياً (12 ساعة)`
+    : `الوردية الأساسية ${base} ساعة · كل دقيقة بعد الأساس إضافي · بحد أقصى ${MAX_DAILY_HOURS} ساعة لليوم (أساس + إضافي)`;
+  const payRow = is12 && salary > 0
+    ? `<div style="font-size:.8rem;color:#5C3840;line-height:1.9;margin-top:.4rem">
+         ${otHours.toFixed(1)} ساعة ÷ 8 = <strong>${otDays.toFixed(2)} يوم</strong> ·
+         الراتب الأساسي ${salary.toLocaleString()} ÷ 30 = <strong>${Math.round(daily).toLocaleString()} دينار/يوم</strong> ·
+         الاستحقاق النقدي = <strong style="color:#2E8B57">${pay.toLocaleString()} دينار</strong>
+       </div>`
+    : is12
+      ? `<div style="font-size:.78rem;color:#9C7078;margin-top:.4rem">أضف الراتب الأساسي للموظف لحساب الاستحقاق النقدي بدلاً من الإجازة التعويضية.</div>`
+      : '';
+  return `
+    <div class="card" style="margin-bottom:.85rem">
+      <div class="card-header"><div class="card-title">⏱️ احتساب الدوام الإضافي</div></div>
+      <div style="font-size:.82rem;color:#5C3840;line-height:1.9">
+        <div>${rule}</div>
+        <div>إجمالي الساعات الإضافية: <strong style="color:#8C1320">${otHours>0?otHours.toFixed(1):0} ساعة</strong></div>
+        ${payRow}
+      </div>
+    </div>`;
+}
+
+/* ---- RENDER FROM WORKSPACE RESULT ---- */
+function renderSummaryFromWs(r, violations, month, year){
+  // Exact totals fields from hr_workspace snapshot:
+  // off, leave, absent, present, lateDays, earlyDays, leaveHours,
+  // leaveTypes, noSchedule, lateMinutes, workedHours, duty12hCount,
+  // earlyMinutes, missingPunch, overtimeHours, scheduledHours
+  const t   = r.totals   || {};
+  const emp = r.employee || {};
+  const shiftType = detectShiftTypeFromResult(r);
+
+  // OT is derived from the day records with the hospital's own rules (quota for
+  // 12hr, base+12h cap otherwise) so this KPI matches the الدوام الإضافي tab.
+  const ot = otRowsFor(wsWorkedDays(r), shiftType);
+  const dutyCount = ot.dutyCount;
+  const otH = ot.otMin / 60;
+
+  // OT payout — cash instead of time off, 12hr shift employees only
+  const salary = currentEmp?.basic_salary || 0;
+  const otPay = shiftType === '12hr' ? otPayout(otH, salary) : 0;
+
+  // Attendance rate
+  const totalDays = (t.present||0) + (t.absent||0) + (t.leave||0) + (t.off||0);
+  const attendRate = totalDays > 0 ? Math.round((t.present||0)/totalDays*100) : 0;
+
+  document.getElementById('tab-summary').innerHTML=`
+    <div class="kpi-mini">
+      <div class="kpi-box">
+        <div class="kpi-val" style="color:#2E8B57">${t.present??0}</div>
+        <div class="kpi-lbl">أيام حضور</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-val" style="color:#C01C2C">${t.absent??0}</div>
+        <div class="kpi-lbl">أيام غياب</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-val" style="color:#1A6FA0">${t.leave??0}</div>
+        <div class="kpi-lbl">أيام إجازة</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-val">${t.off??0}</div>
+        <div class="kpi-lbl">أيام إجازة رسمية</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-val">${t.workedHours!=null?t.workedHours.toFixed(1):'—'}</div>
+        <div class="kpi-lbl">ساعات العمل</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-val" style="color:${(t.lateMinutes||0)>0?'#B8860B':'inherit'}">
+          ${(t.lateMinutes||0)>0?Math.round(t.lateMinutes)+'د':'—'}
+        </div>
+        <div class="kpi-lbl">دقائق التأخير (${t.lateDays||0} يوم)</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-val" style="color:${otH>0?'#8C1320':'inherit'}">${otH>0?otH.toFixed(1)+'h':'—'}</div>
+        <div class="kpi-lbl">ساعات إضافية</div>
+      </div>
+      ${otPay>0?`<div class="kpi-box">
+        <div class="kpi-val" style="color:#2E8B57;font-size:1.1rem">${otPay.toLocaleString()}</div>
+        <div class="kpi-lbl">مكافأة إضافي (دينار)</div>
+      </div>`:''}
+      ${shiftType==='12hr'?`
+      <div class="kpi-box">
+        <div class="kpi-val">${dutyCount}</div>
+        <div class="kpi-lbl">شيفتات الدوام (كوتا ${DUTY_QUOTA_12HR})</div>
+      </div>`:''}
+      <div class="kpi-box">
+        <div class="kpi-val" style="color:${violations.length>0?'#C01C2C':'inherit'}">${violations.length}</div>
+        <div class="kpi-lbl">مخالفات مسجلة</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-val">${attendRate}%</div>
+        <div class="kpi-lbl">معدل الحضور</div>
+      </div>
+    </div>
+
+    ${otBreakdown(shiftType, otH, dutyCount, salary)}
+
+    ${(t.lateMinutes||0)>0?`
+    <div class="card" style="margin-bottom:.85rem">
+      <div class="card-header"><div class="card-title">⏰ تفاصيل التأخير</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem;font-size:.84rem">
+        <div><span style="color:#9C7078">أيام التأخير:</span> <strong>${t.lateDays||0}</strong></div>
+        <div><span style="color:#9C7078">إجمالي الدقائق:</span> <strong>${Math.round(t.lateMinutes||0)}</strong></div>
+        <div><span style="color:#9C7078">خروج مبكر:</span> <strong>${t.earlyDays||0} يوم (${Math.round(t.earlyMinutes||0)}د)</strong></div>
+      </div>
+    </div>`:''}
+
+    ${(t.noSchedule||0)>0?`
+    <div class="alert-item warn" style="margin-bottom:.85rem">
+      <span class="alert-icon">📅</span>
+      <div><div class="alert-text">أيام بدون جدول: ${t.noSchedule}</div>
+      <div class="alert-meta">لم يُرفع جدول لهذه الأيام</div></div>
+    </div>`:''}
+
+    ${violations.length>0?`
+    <div class="card" style="margin-bottom:.85rem">
+      <div class="card-header"><div class="card-title">⚠️ آخر المخالفات</div></div>
+      ${violations.slice(0,3).map(v=>`
+        <div class="alert-item warn"><span class="alert-icon">⚖️</span>
+          <div>
+            <div class="alert-text">${v.penalty||'—'}</div>
+            <div class="alert-meta">${fDate(v.incident_date||v.created_at)} · المرة ${v.occurrence_number||1}</div>
+          </div>
+        </div>`).join('')}
+    </div>`:''}
+
+    <div style="display:flex;gap:.55rem;flex-wrap:wrap;margin-top:.5rem">
+      <button class="btn btn-primary" onclick="openViolModal()">+ تسجيل مخالفة</button>
+      <button class="btn btn-ghost" onclick="openDisciplinary()">⚖️ إجراء تأديبي</button>
+      <a class="btn btn-ghost" href="Al-Mujtaba_HR_Attendance_System.html">📊 نظام الحضور</a>
+    </div>`;
+}
+
+function renderScheduleFromWs(r, month, year){
+  const days=r.employee?.days||{};
+  const getDayCode=(d)=> days[d] || days[String(d)] || null;
+  const SHIFT_CODES={
+    A1:{s:'08:00',e:'16:00',h:8},A2:{s:'07:00',e:'15:00',h:8},
+    K:{s:'13:00',e:'21:00',h:8},D:{s:'07:00',e:'19:00',h:12},
+    N:{s:'19:00',e:'07:00',h:12},M1:{s:'08:00',e:'20:00',h:12},
+    M2:{s:'20:00',e:'08:00',h:12},N1:{s:'21:00',e:'07:00',h:10},
+    N2:{s:'22:00',e:'06:00',h:8},M5:{s:'08:00',e:'14:00',h:6},
+    P4:{s:'08:00',e:'12:00',h:4},L:{s:'06:00',e:'18:00',h:12},
+    L1:{s:'06:00',e:'14:00',h:8}
+  };
+  const daysInMonth=new Date(year,month,0).getDate();
+  const firstDay=new Date(year,month-1,1).getDay();
+  const DOW=['أحد','اثن','ثلا','أرب','خمس','جمع','سبت'];
+
+  let h=`<div class="card"><div class="card-header"><div class="card-title">📅 جدول ${MONTHS[month-1]} ${year}</div></div>
+    <div class="shift-cal" style="margin-bottom:.35rem">${DOW.map(d=>`<div class="shift-cal-hdr">${d}</div>`).join('')}</div>
+    <div class="shift-cal">`;
+  for(let i=0;i<firstDay;i++) h+='<div></div>';
+  for(let d=1;d<=daysInMonth;d++){
+    const code=getDayCode(d);
+    const codeUp=code?String(code).toUpperCase():null;
+    const sd=codeUp?SHIFT_CODES[codeUp]:null;
+    let cls='s-off',display='OFF';
+    if(codeUp==='OFF'||!code){cls='s-off';display='OFF';}
+    else if(['إجازة','LEAVE','L.'].includes(codeUp)){cls='s-leave';display='اج';}
+    else{
+      display=codeUp;
+      if(sd&&sd.h>=12) cls='s-d12';
+      else if(['N','N1','N2','N3','N4','M2'].includes(codeUp)) cls='s-night';
+      else if(['K'].includes(codeUp)) cls='s-pm';
+      else cls='s-am';
+    }
+    h+=`<div class="shift-day ${cls}" title="${sd?(sd.s+'–'+sd.e):code||''}"><div class="sd-n">${d}</div><div class="sd-code">${display}</div></div>`;
+  }
+  h+=`</div>
+    <div style="display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.65rem;font-size:.7rem">
+      <span class="badge" style="background:#EBF5FB;color:#1A6FA0">صباحي</span>
+      <span class="badge" style="background:#FEF9E7;color:#B8860B">مسائي</span>
+      <span class="badge" style="background:#F0E8F8;color:#7B2DA0">ليلي</span>
+      <span class="badge" style="background:#E8F5EE;color:#2E8B57">12 ساعة</span>
+      <span class="badge badge-info">إجازة</span>
+      <span class="badge badge-muted">OFF</span>
+    </div></div>`;
+  document.getElementById('tab-schedule').innerHTML=h;
+}
+
+function renderAttFromWs(r){
+  // r.days is an ARRAY of day records: [{day:1, status, firstPunch, lastPunch, workedHours, lateMinutes, earlyMinutes, ...}, ...]
+  // day.day is the day-of-month integer (1-31)
+  const daysArr = Array.isArray(r.days) ? r.days : [];
+  const month = +document.getElementById('prof-month').value;
+  const year  = +document.getElementById('prof-year').value;
+
+  // Build rows — skip pure OFF days (no punches, no info to show)
+  const rows = daysArr
+    .filter(day => day && String(day.status||'').toLowerCase() !== 'off')
+    .sort((a, b) => (a.day||0) - (b.day||0));
+
+  if (!rows.length) {
+    document.getElementById('tab-attendance').innerHTML = `
+      <div class="card"><div class="empty-state">
+        <div class="empty-icon">🕐</div>
+        <div class="empty-title">لا توجد بيانات حضور لهذا الشهر</div>
+        <div class="empty-sub">تأكد من رفع بصمات هذا الشهر في <a href="Al-Mujtaba_HR_Attendance_System.html">نظام الحضور</a></div>
+      </div></div>`;
+    return;
+  }
+
+  // Status values from attendance system (capitalized with spaces)
+  const sL = {
+    'Present':'حاضر', 'Absent':'غائب', 'Leave':'إجازة', 'Off':'إجازة رسمية',
+    'No Schedule':'اوف', 'Missing Punch':'نقص بصمة', 'Unscheduled':'غير مجدول',
+    // lowercase fallbacks
+    'present':'حاضر', 'absent':'غائب', 'leave':'إجازة', 'off':'إجازة رسمية'
+  };
+  const sB = {
+    'Present':'badge-success', 'Absent':'badge-danger', 'Leave':'badge-info', 'Off':'badge-muted',
+    'No Schedule':'badge-warning', 'Missing Punch':'badge-warning', 'Unscheduled':'badge-muted',
+    'present':'badge-success', 'absent':'badge-danger', 'leave':'badge-info', 'off':'badge-muted'
+  };
+
+  document.getElementById('tab-attendance').innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🕐 الحضور والانصراف — ${rows.length} يوم</div>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>التاريخ</th><th>الكود</th><th>الحالة</th><th>الدخول</th><th>الخروج</th>
+          <th>ساعات العمل</th><th>التأخير</th><th>الخروج المبكر</th>
+        </tr></thead>
+        <tbody>${rows.map(day => {
+          // Build a proper JS Date from year/month/day integers — NO string parsing risk
+          const dateObj = new Date(year, month - 1, day.day);
+          const dateStr = dateObj.toLocaleDateString('ar-IQ', { weekday:'short', year:'numeric', month:'short', day:'numeric' });
+          const ci = day.firstPunch
+            ? new Date(day.firstPunch).toLocaleTimeString('ar', { hour:'2-digit', minute:'2-digit' }) : '—';
+          const co = day.lastPunch
+            ? new Date(day.lastPunch).toLocaleTimeString('ar', { hour:'2-digit', minute:'2-digit' })  : '—';
+          // workedHours is in HOURS in the workspace result
+          const wh = day.workedHours || 0;
+          const worked = wh > 0 ? (Math.floor(wh) + ':' + String(Math.round((wh % 1) * 60)).padStart(2,'0')) : '—';
+          const late   = (day.lateMinutes||0)  > 0 ? Math.round(day.lateMinutes)  + 'د' : '—';
+          const early  = (day.earlyMinutes||0) > 0 ? Math.round(day.earlyMinutes) + 'د' : '—';
+          const statusRaw = day.status || 'absent';
+          const statusKey = statusRaw.toLowerCase();
+          return `<tr>
+            <td style="font-weight:700">${dateStr}</td>
+            <td style="font-family:monospace;color:#8C1320;font-size:.76rem">${day.code||'—'}</td>
+            <td><span class="badge ${sB[statusKey]||sB[statusRaw]||'badge-muted'}">${sL[statusKey]||sL[statusRaw]||statusRaw}</span></td>
+            <td>${ci}</td><td>${co}</td><td>${worked}</td>
+            <td style="color:${(day.lateMinutes||0)>0?'#B8860B':'inherit'}">${late}</td>
+            <td style="color:${(day.earlyMinutes||0)>0?'#C01C2C':'inherit'}">${early}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table></div>
+    </div>`;
+}
+
+// Worked days of the daily_attendance rows, oldest first, in the OT tab's shape.
+function attWorkedDays(att){
+  return (att||[])
+    .filter(a => a.status === 'present')
+    .sort((a,b) => String(a.att_date).localeCompare(String(b.att_date)))
+    .map(a => ({ dayNum:+String(a.att_date).slice(-2), code:a.shift_code,
+                 workedMin:a.worked_minutes||0, inAt:a.clock_in||null, outAt:a.clock_out||null }));
+}
+
+// Worked days of a workspace result, oldest first, in the shape the OT tab wants.
+function wsWorkedDays(r){
+  return (Array.isArray(r.days) ? r.days : [])
+    .filter(d => d && (d.workedHours||0) > 0)
+    .sort((a,b) => (a.day||0) - (b.day||0))
+    .map(d => ({ dayNum:d.day, code:d.code, workedMin:Math.round((d.workedHours||0)*60),
+                 inAt:d.firstPunch||null, outAt:d.lastPunch||null }));
+}
+
+function renderOvertimeFromWs(r, month, year){
+  renderOvertimeTab(wsWorkedDays(r), detectShiftTypeFromResult(r), month, year);
+}
+
+/* ---- OVERTIME TAB ----
+   days: [{dayNum, code, workedMin}] already filtered to worked days.
+   The day records are the single source of truth: for 12hr employees each worked
+   day is one duty shift, so the rows, the total and the duty count all come from
+   the same sequence and can never disagree. */
+function otRowsFor(days, shiftType){
+  const base = baseShiftHours(shiftType) * 60;
+  const cap  = MAX_DAILY_HOURS * 60;
+
+  if (shiftType === '12hr'){
+    // Every duty shift counts; the ones past the quota are the overtime ones.
+    const rows = days.map((d, i) => {
+      const n = i + 1;
+      const isOt = n > DUTY_QUOTA_12HR;
+      return { ...d, otMin: isOt ? 12*60 : 0,
+               note:`المناوبة رقم ${n}${isOt?' — بعد الكوتا':''}` };
+    });
+    return { rows, dutyCount: days.length, otMin: rows.reduce((s,r)=>s+r.otMin, 0) };
+  }
+
+  const rows = days.map(d => {
+    const ot = Math.max(0, Math.min(d.workedMin||0, cap) - base);
+    return { ...d, otMin: ot,
+             note:(d.workedMin||0) > cap ? `تجاوز حد ${MAX_DAILY_HOURS} ساعة — احتُسب ${MAX_DAILY_HOURS} فقط` : '' };
+  });
+  return { rows, dutyCount: days.length, otMin: rows.reduce((s,r)=>s+r.otMin, 0) };
+}
+
+// Punch timestamp -> HH:MM, or a dash when the punch is missing.
+function otClock(ts){
+  if (!ts) return '—';
+  const d = new Date(ts);
+  return isNaN(d) ? '—' : d.toLocaleTimeString('ar', { hour:'2-digit', minute:'2-digit' });
+}
+
+function renderOvertimeTab(days, shiftType, month, year){
+  const el = document.getElementById('tab-overtime');
+  const salary = currentEmp?.basic_salary || 0;
+  const is12   = shiftType === '12hr';
+  const { rows, otMin, dutyCount } = otRowsFor(days, shiftType);
+  const otRows = rows.filter(r => r.otMin > 0);
+
+  el.innerHTML = `
+    ${otBreakdown(shiftType, otMin/60, dutyCount, salary)}
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">⏱️ تفاصيل الدوام الإضافي — ${MONTHS[month-1]} ${year}</div>
+      </div>
+      ${otRows.length ? `<div class="table-wrap"><table>
+        <thead><tr><th>التاريخ</th><th>الكود</th><th>الدخول</th><th>الخروج</th><th>ساعات العمل</th><th>الإضافي</th><th>ملاحظة</th></tr></thead>
+        <tbody>${otRows.map(r => `<tr>
+          <td style="font-weight:700">${new Date(year, month-1, r.dayNum).toLocaleDateString('ar-IQ',{weekday:'short',year:'numeric',month:'short',day:'numeric'})}</td>
+          <td style="font-family:monospace;color:#8C1320;font-size:.76rem">${r.code||'—'}</td>
+          <td>${otClock(r.inAt)}</td>
+          <td>${otClock(r.outAt)}</td>
+          <td>${mHHMM(r.workedMin)}</td>
+          <td style="font-weight:800;color:#8C1320">${mHHMM(r.otMin)}</td>
+          <td style="color:#9C7078;font-size:.76rem">${r.note||'—'}</td>
+        </tr>`).join('')}</tbody>
+        <tfoot><tr>
+          <td colspan="5" style="font-weight:800;text-align:left">الإجمالي</td>
+          <td style="font-weight:800;color:#8C1320">${mHHMM(otMin)}</td><td></td>
+        </tr></tfoot>
+      </table></div>`
+      : `<div class="empty-state"><div class="empty-icon">⏱️</div>
+           <div class="empty-title">لا يوجد دوام إضافي هذا الشهر</div>
+           <div class="empty-sub">${is12
+             ? `المناوبات المنجزة ${dutyCount||0} من كوتا ${DUTY_QUOTA_12HR}`
+             : `لم يتجاوز الموظف ${baseShiftHours(shiftType)} ساعات في أي يوم`}</div>
+         </div>`}
+    </div>`;
+}
+
+/* ---- SUMMARY ---- */
+function renderSummary(shifts,att,leaves,viols,month,year){
+  const st=currentEmp.shift_type||'8hr';
+  let workedMin=0,lateMin=0,presentDays=0,absentDays=0,leaveDays=0,dutyCount=0;
+  att.forEach(a=>{
+    if(a.status==='present'){presentDays++;dutyCount++;workedMin+=a.worked_minutes||0;lateMin+=a.late_minutes||0;}
+    if(a.status==='absent')absentDays++;
+    if(a.status==='leave'){leaveDays++;workedMin+=(st==='12hr'?12:st==='7hr'?7:8)*60;}
+  });
+  if(!att.length)leaveDays=leaves.reduce((s,l)=>s+(l.total_days||0),0);
+  const otMin=otRowsFor(attWorkedDays(att), st).otMin;
+  const salary=currentEmp.basic_salary||0;
+  const otPay=st==='12hr'?otPayout(otMin/60,salary):0;
+  document.getElementById('tab-summary').innerHTML=`
+    <div class="kpi-mini">
+      <div class="kpi-box"><div class="kpi-val" style="color:#2E8B57">${presentDays}</div><div class="kpi-lbl">أيام حضور</div></div>
+      <div class="kpi-box"><div class="kpi-val" style="color:#C01C2C">${absentDays}</div><div class="kpi-lbl">أيام غياب</div></div>
+      <div class="kpi-box"><div class="kpi-val" style="color:#1A6FA0">${leaveDays}</div><div class="kpi-lbl">أيام إجازة</div></div>
+      <div class="kpi-box"><div class="kpi-val">${mHHMM(workedMin)}</div><div class="kpi-lbl">ساعات العمل</div></div>
+      <div class="kpi-box"><div class="kpi-val" style="color:${lateMin>0?'#B8860B':'inherit'}">${lateMin>0?mHHMM(lateMin):'—'}</div><div class="kpi-lbl">التأخير</div></div>
+      <div class="kpi-box"><div class="kpi-val" style="color:#8C1320">${otMin>0?mHHMM(otMin):'—'}</div><div class="kpi-lbl">ساعات إضافية</div></div>
+      ${otPay>0?`<div class="kpi-box"><div class="kpi-val" style="color:#2E8B57;font-size:1.1rem">${otPay.toLocaleString()}</div><div class="kpi-lbl">قيمة الإضافي (دينار)</div></div>`:''}
+      <div class="kpi-box"><div class="kpi-val" style="color:${viols.length>0?'#C01C2C':'inherit'}">${viols.length}</div><div class="kpi-lbl">مخالفات</div></div>
+    </div>
+    ${otBreakdown(st, otMin/60, dutyCount, salary)}
+    ${viols.length?`<div class="card"><div class="card-header"><div class="card-title">⚠️ آخر المخالفات</div></div>
+      ${viols.slice(0,3).map(v=>`<div class="alert-item warn"><span class="alert-icon">⚖️</span><div>
+        <div class="alert-text">${v.penalty||'—'}</div>
+        <div class="alert-meta">${fDate(v.incident_date||v.created_at)} · المرة ${v.occurrence_number||1}</div>
+      </div></div>`).join('')}</div>`:''}
+    <div style="display:flex;gap:.55rem;flex-wrap:wrap;margin-top:.5rem">
+      <button class="btn btn-primary" onclick="openViolModal()">+ تسجيل مخالفة</button>
+      <button class="btn btn-ghost" onclick="openDisciplinary()">⚖️ إجراء تأديبي</button>
+      <a class="btn btn-ghost" href="Al-Mujtaba_HR_Attendance_System.html">📊 نظام الحضور</a>
+    </div>`;
+}
+
+/* ---- SCHEDULE ---- */
+function renderScheduleTab(shifts,leaves,month,year){
+  const lMap={};leaves.forEach(l=>getDates(l.from_date,l.to_date).forEach(d=>lMap[d]=l.leave_type||'إجازة'));
+  const sMap={};shifts.forEach(s=>sMap[s.shift_date]=s);
+  const days=new Date(year,month,0).getDate();
+  const fd=new Date(year,month-1,1).getDay();
+  const DOW=['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
+  if(!shifts.length&&!Object.keys(lMap).length){
+    document.getElementById('tab-schedule').innerHTML=`<div class="card"><div class="empty-state"><div class="empty-icon">📅</div><div class="empty-title">لا يوجد جدول</div><div class="empty-sub">يرجى رفع ملف الجدول من <a href="Al-Mujtaba_HR_Attendance_System.html">نظام الحضور</a></div></div></div>`;
+    return;
+  }
+  let h=`<div class="card"><div class="card-header"><div class="card-title">📅 جدول ${MONTHS[month-1]} ${year}</div></div>
+    <div class="shift-cal" style="margin-bottom:.35rem">${DOW.map(d=>`<div class="shift-cal-hdr">${d}</div>`).join('')}</div>
+    <div class="shift-cal">`;
+  for(let i=0;i<fd;i++)h+='<div></div>';
+  for(let d=1;d<=days;d++){
+    const ds=`${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const s=sMap[ds],lv=lMap[ds];
+    let cls='s-off',code='OFF';
+    if(lv){cls='s-leave';code='اج';}
+    else if(s?.shift_code){
+      code=s.shift_code;
+      const h2=s.shift_hours||0;
+      if(h2>=12)cls='s-d12';
+      else if(['N','N1','N2','N3','N4','M2'].includes(code))cls='s-night';
+      else if(['K','k'].includes(code))cls='s-pm';
+      else cls='s-am';
+    }
+    h+=`<div class="shift-day ${cls}" title="${s?(s.shift_start||'')+'–'+(s.shift_end||''):lv||''}"><div class="sd-n">${d}</div><div class="sd-code">${code}</div></div>`;
+  }
+  h+=`</div>
+    <div style="display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.65rem;font-size:.7rem">
+      <span class="badge" style="background:#EBF5FB;color:#1A6FA0">صباحي</span>
+      <span class="badge" style="background:#FEF9E7;color:#B8860B">مسائي</span>
+      <span class="badge" style="background:#F0E8F8;color:#7B2DA0">ليلي</span>
+      <span class="badge" style="background:#E8F5EE;color:#2E8B57">12 ساعة</span>
+      <span class="badge badge-info">إجازة</span>
+      <span class="badge badge-muted">OFF</span>
+    </div></div>`;
+  document.getElementById('tab-schedule').innerHTML=h;
+}
+
+/* ---- ATTENDANCE ---- */
+function renderAttTab(att,leaves){
+  if(!att.length){document.getElementById('tab-attendance').innerHTML=`<div class="card"><div class="empty-state"><div class="empty-icon">🕐</div><div class="empty-title">لا توجد بيانات حضور</div><div class="empty-sub">افتح <a href="Al-Mujtaba_HR_Attendance_System.html">نظام الحضور</a> وعالج البيانات</div></div></div>`;return;}
+  const sL={present:'حاضر',absent:'غائب',leave:'إجازة',off:'يوم إجازة'};
+  const sB={present:'badge-success',absent:'badge-danger',leave:'badge-info',off:'badge-muted'};
+  document.getElementById('tab-attendance').innerHTML=`<div class="card"><div class="card-header"><div class="card-title">🕐 الحضور والانصراف</div></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>التاريخ</th><th>الحالة</th><th>الدخول</th><th>الخروج</th><th>ساعات العمل</th><th>التأخير</th><th>الخروج المبكر</th></tr></thead>
+      <tbody>${att.map(a=>{
+        const ci=a.clock_in?new Date(a.clock_in).toLocaleTimeString('ar',{hour:'2-digit',minute:'2-digit'}):'—';
+        const co=a.clock_out?new Date(a.clock_out).toLocaleTimeString('ar',{hour:'2-digit',minute:'2-digit'}):'—';
+        return`<tr><td style="font-weight:700">${fDate(a.att_date)}</td>
+          <td><span class="badge ${sB[a.status]||'badge-muted'}">${sL[a.status]||a.status}</span></td>
+          <td>${ci}</td><td>${co}</td>
+          <td>${mHHMM(a.worked_minutes)}</td>
+          <td style="color:${a.late_minutes>0?'#B8860B':'inherit'}">${a.late_minutes>0?mHHMM(a.late_minutes):'—'}</td>
+          <td style="color:${a.early_leave_minutes>0?'#C01C2C':'inherit'}">${a.early_leave_minutes>0?mHHMM(a.early_leave_minutes):'—'}</td>
+        </tr>`;}).join('')}</tbody>
+    </table></div></div>`;
+}
+
+/* ---- LEAVES ---- */
+function renderLeavesTab(lv){
+  document.getElementById('tab-leaves').innerHTML=`<div class="card"><div class="card-header"><div class="card-title">🌴 الإجازات</div></div>
+    ${!lv.length?'<div class="empty-state"><div class="empty-icon">🌴</div><div class="empty-title">لا توجد إجازات</div></div>':`
+    <div class="table-wrap"><table><thead><tr><th>نوع الإجازة</th><th>من</th><th>إلى</th><th>عدد الأيام</th><th>الحالة</th></tr></thead>
+    <tbody>${lv.map(l=>`<tr><td style="font-weight:700">${l.leave_type||'—'}</td><td>${fDate(l.from_date)}</td><td>${fDate(l.to_date)}</td><td><strong>${l.total_days}</strong></td><td><span class="badge badge-info">${l.status||'—'}</span></td></tr>`).join('')}</tbody>
+    </table></div>`}</div>`;
+}
+
+/* ---- VIOLATIONS ---- */
+function renderViolTab(viols){
+  document.getElementById('tab-violations').innerHTML=`<div class="card"><div class="card-header"><div class="card-title">⚖️ المخالفات والعقوبات</div>
+    <button class="btn btn-primary btn-sm" onclick="openViolModal()">+ إضافة</button></div>
+    ${!viols.length?'<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">لا توجد مخالفات</div></div>':`
+    <div class="table-wrap"><table><thead><tr><th>التاريخ</th><th>المخالفة</th><th>المرة</th><th>العقوبة</th><th>ملاحظات</th></tr></thead>
+    <tbody>${viols.map(v=>`<tr><td>${fDate(v.incident_date||v.created_at)}</td>
+      <td style="max-width:180px;white-space:normal;font-size:.76rem">${v.violation_category||'—'}</td>
+      <td><span class="badge badge-warning">المرة ${v.occurrence_number||1}</span></td>
+      <td style="font-weight:700;color:#C01C2C">${v.penalty||'—'}</td>
+      <td style="font-size:.74rem;color:#9C7078;max-width:150px;white-space:normal">${v.notes||'—'}</td>
+    </tr>`).join('')}</tbody></table></div>`}</div>`;
+}
+
+/* ---- DISCIPLINARY ---- */
+function renderDiscTab(acts){
+  document.getElementById('tab-disciplinary').innerHTML=`<div class="card"><div class="card-header"><div class="card-title">📋 الإجراءات التأديبية</div>
+    <button class="btn btn-primary btn-sm" onclick="openDisciplinary()">+ إضافة</button></div>
+    ${!acts.length?'<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">لا توجد إجراءات تأديبية</div></div>':`
+    <div class="table-wrap"><table><thead><tr><th>التاريخ</th><th>النوع</th><th>الخطورة</th><th>التفاصيل</th></tr></thead>
+    <tbody>${acts.map(a=>{
+      const sm={low:'بسيطة',medium:'متوسطة',high:'جسيمة'};
+      const sb2={low:'badge-warning',medium:'badge-danger',high:'badge-danger'};
+      return`<tr><td>${fDate(a.created_at)}</td><td style="font-weight:700">${a.action_type||'—'}</td>
+        <td><span class="badge ${sb2[a.severity]||'badge-muted'}">${sm[a.severity]||'—'}</span></td>
+        <td style="font-size:.76rem;max-width:240px;white-space:normal;color:#9C7078">${a.note||'—'}</td></tr>`;
+    }).join('')}</tbody></table></div>`}</div>`;
+}
+
+/* ---- EMPLOYEE MODAL ---- */
+function openEmpModal(emp=null){
+  editingEmpId=emp?emp.id:null;
+  document.getElementById('emp-modal-title').textContent=emp?'✏️ تعديل بيانات الموظف':'👤 إضافة موظف جديد';
+  document.getElementById('em-id').value=emp?.employee_id||'';
+  document.getElementById('em-name').value=emp?.name||'';
+  document.getElementById('em-dept').value=emp?.department_id||'';
+  document.getElementById('em-title').value=emp?.job_title||'';
+  document.getElementById('em-shift').value=emp?.shift_type||'8hr';
+  document.getElementById('em-nat').value=emp?.nationality||'';
+  document.getElementById('em-salary').value=emp?.basic_salary||'';
+  document.getElementById('em-fullpart').value=emp?.full_or_part||'full';
+  document.getElementById('em-class').value=emp?.classification||'';
+  document.getElementById('emp-modal').classList.add('open');
+}
+function closeEmpModal(){document.getElementById('emp-modal').classList.remove('open');}
+function editCurrentEmp(){if(currentEmp)openEmpModal(currentEmp);}
+
+async function saveEmployee(){
+  const empId = document.getElementById('em-id').value.trim();
+  const name  = document.getElementById('em-name').value.trim();
+  if(!empId||!name){alert('الرقم الوظيفي والاسم مطلوبان');return;}
+
+  const deptVal  = document.getElementById('em-dept').value||null;
+  const shiftType = document.getElementById('em-shift').value;
+  const natVal   = document.getElementById('em-nat').value.trim();
+  const salaryVal = +document.getElementById('em-salary').value||0;
+  const partVal  = document.getElementById('em-fullpart').value;
+  const titleVal = document.getElementById('em-title').value.trim();
+  const classVal = document.getElementById('em-class').value.trim();
+
+  // Try to get numeric department_id if dept is a name not an id
+  let deptId = null;
+  const matchDept = allDepts.find(d => d.name === deptVal || String(d.id) === deptVal);
+  if (matchDept && typeof matchDept.id === 'number') deptId = matchDept.id;
+
+  const payload = {
+    employee_id:    empId,
+    name,
+    department_id:  deptId,
+    job_title:      titleVal,
+    shift_type:     shiftType,
+    nationality:    natVal,
+    basic_salary:   salaryVal,
+    full_or_part:   partVal,
+    classification: classVal,
+  };
+
+  const btn = document.getElementById('save-emp-btn');
+  btn.disabled = true; btn.textContent = '⏳ جاري الحفظ...';
+
+  let error;
+  if(editingEmpId){
+    ({error} = await (await getSb()).from('employees').update(payload).eq('id', editingEmpId));
+  } else {
+    ({error} = await (await getSb()).from('employees').insert(payload));
+  }
+
+  btn.disabled = false; btn.textContent = '💾 حفظ';
+
+  if(error){ alert('خطأ في الحفظ: '+error.message); return; }
+
+  // If salary was entered, update the workspace employee's display too
+  if(salaryVal > 0 && !editingEmpId) {
+    // Store salary note in notifications for reference
+    await (await getSb()).from('notifications').insert({
+      employee_id: empId, kind:'salary_note',
+      title:`راتب ${name}`, detail:`${salaryVal} دينار`, status:'info'
+    }).catch(()=>{});
+  }
+
+  closeEmpModal();
+  toast('✅ تم الحفظ بنجاح', 'success');
+  // Invalidate both in-memory and session cache so init() re-reads fresh data
+  _wsCache = null;
+  try { sessionStorage.removeItem(SESSION_KEY); } catch(e) {}
+  await init();
+  if(editingEmpId && currentEmp) openEmployee(currentEmp.employee_id);
+}
+
+/* ---- VIOLATION MODAL ---- */
+function openViolModal(){document.getElementById('viol-modal').classList.add('open');}
+function closeViolModal(){document.getElementById('viol-modal').classList.remove('open');}
+function updatePenalty(){
+  const r=+document.getElementById('vt').value,o=+document.getElementById('vo').value-1;
+  const v=VT.find(x=>x.r===r);
+  document.getElementById('vp').value=v?(v.p[o]||'—'):'—';
+}
+async function saveViolation(){
+  if(!currentEmp)return;
+  const r=+document.getElementById('vt').value,o=+document.getElementById('vo').value;
+  const v=VT.find(x=>x.r===r);
+  const {error}=await (await getSb()).from('violations').insert({
+    employee_id:currentEmp.employee_id,violation_category:v?.d||'—',
+    violation_row:r,occurrence_number:o,penalty:document.getElementById('vp').value,
+    incident_date:document.getElementById('vd').value||null,notes:document.getElementById('vn').value.trim()});
+  if(error){alert('خطأ: '+error.message);return;}
+  closeViolModal();document.getElementById('vn').value='';
+  toast('✅ تم تسجيل المخالفة','success');await loadMonthData();
+}
+
+/* ---- DISCIPLINARY ---- */
+function openDisciplinary(){
+  if(!currentEmp)return;
+  sessionStorage.setItem('disciplinaryActionPayload',JSON.stringify({
+    empId:currentEmp.employee_id,empName:currentEmp.name,
+    department:currentEmp.departments?.name||'',nationality:currentEmp.nationality||''}));
+  window.open('disciplinary-action.html','_blank','width=900,height=680');
+}
+window.addEventListener('message',async e=>{if(e.data?.type==='disciplinary_saved')await loadMonthData();});
+
+/* ---- HELPERS ---- */
+function getDates(from,to){
+  const d=[],s=new Date(from),e=new Date(to);
+  for(let x=new Date(s);x<=e;x.setDate(x.getDate()+1))d.push(x.toISOString().slice(0,10));
+  return d;
+}
+
+init();
+</script>
+
+</body>
+</html>

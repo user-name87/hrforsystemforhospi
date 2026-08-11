@@ -45,8 +45,12 @@ class AttendanceCalculatorService
         $carryover     = $this->loadCarryover($employee->employee_id, $month, $year);
 
         // ── 2. Determine effective shift hours ──────────────────────────
+        // Priority: explicit monthly exception → chemo / mixing department rule → base shift.
         $baseShiftHours    = $employee->getBaseShiftHours();
-        $effectiveShiftHours = $exception ? $exception->exception_hours : $baseShiftHours;
+        $chemoShiftHours   = $this->chemoShiftHoursFor($employee);
+        $effectiveShiftHours = $exception
+            ? $exception->exception_hours
+            : ($chemoShiftHours ?? $baseShiftHours);
         $effectiveShiftMin   = (int)($effectiveShiftHours * 60);
 
         // ── 3. Get effective duty quota (for 12hr employees) ────────────
@@ -269,7 +273,8 @@ class AttendanceCalculatorService
             ->where('year', $year)
             ->first();
         if ($chemoDuty && !$employee->isResident()) {
-            $requiredMin = $chemoDuty->reduced_days * $effectiveShiftMin;
+            $reducedDays = $chemoDuty->reduced_days ?: (int) config('app.chemo_duty_reduced_days', 23);
+            $requiredMin = $reducedDays * $effectiveShiftMin;
         }
 
         // ── 7. OT cash payout (for 12hr shift employees) ────────────────
@@ -297,7 +302,11 @@ class AttendanceCalculatorService
                 'original_hours'  => $exception->original_hours,
                 'exception_hours' => $exception->exception_hours,
                 'reason'          => $exception->reason,
-            ] : null,
+            ] : ($chemoShiftHours !== null ? [
+                'original_hours'  => $baseShiftHours,
+                'exception_hours' => $chemoShiftHours,
+                'reason'          => 'قسم الكيمياء / المزج — وردية ' . $chemoShiftHours . ' ساعات',
+            ] : null),
             'carryover'      => $carryover ? [
                 'surplus_shifts'  => $carryover->surplus_shifts,
                 'from_month'      => $carryover->from_month,
@@ -328,6 +337,24 @@ class AttendanceCalculatorService
             'violations'     => $violations,
             'days'           => $days,
         ];
+    }
+
+    /**
+     * Chemo / IV-mixing departments work a shorter shift (7h instead of 8h)
+     * regardless of what the uploaded Excel schedule says.
+     * Returns null when the employee is not in such a department.
+     */
+    private function chemoShiftHoursFor(Employee $employee): ?float
+    {
+        $depName = $employee->department?->name;
+        if (!$depName) return null;
+
+        foreach ((array) config('app.chemo_department_keywords', []) as $keyword) {
+            if (mb_stripos($depName, $keyword) !== false) {
+                return (float) config('app.chemo_shift_hours', 7);
+            }
+        }
+        return null;
     }
 
     // ── Resident day (only count hours, no schedule checking) ────────────

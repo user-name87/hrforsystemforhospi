@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة المدير العام — نظام HR مستشفى الإمام الحسن المجتبى (ع)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/hr-theme.css">
+<script defer src="assets/hr-shell.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal','Segoe UI',Arial,sans-serif;background:#FAF7F7;color:#2A1218;min-height:100vh}
+body.en{font-family:'Inter','Segoe UI',Arial,sans-serif}
+
+.topbar{background:#fff;border-bottom:1px solid #EDD8DB;padding:.75rem 1.4rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(92,10,21,.07)}
+.topbar-title{font-size:.98rem;font-weight:800;color:#5C0A15}
+.topbar-meta{font-size:.73rem;color:#9C7078;margin-top:1px}
+.topbar-actions{display:flex;gap:.55rem;align-items:center}
+
+.page-content{padding:1.3rem 1.5rem}
+body.en .page-content{direction:ltr}
+
+.btn{font-family:inherit;font-weight:700;font-size:.82rem;padding:.48rem 1rem;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;text-decoration:none;transition:all .15s;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,#C01C2C,#8C1320);color:#fff;box-shadow:0 3px 10px rgba(192,28,44,.25)}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-ghost{background:#fff;color:#8C1320;border:1px solid #DFC0C5}
+.btn-ghost:hover{background:#F5E6E8}
+.btn-sm{font-size:.74rem;padding:.33rem .75rem}
+
+.card{background:#fff;border:1px solid #EDD8DB;border-radius:14px;box-shadow:0 2px 8px rgba(92,10,21,.07);padding:1rem 1.25rem;margin-bottom:1rem}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;padding-bottom:.6rem;border-bottom:1px solid #EDD8DB}
+.card-title{font-size:.9rem;font-weight:800;color:#8C1320;display:flex;align-items:center;gap:.38rem}
+
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:1.5rem}
+.kpi-card{background:#fff;border:1px solid #EDD8DB;border-radius:12px;padding:1rem 1.1rem;box-shadow:0 2px 8px rgba(92,10,21,.06)}
+.kpi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.kpi-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.kpi-icon.red{background:#F5E6E8}
+.kpi-icon.grn{background:#E8F5EE}
+.kpi-icon.wrn{background:#FEF9E7}
+.kpi-icon.inf{background:#E6F3FA}
+.kpi-val{font-size:1.9rem;font-weight:900;color:#8C1320;line-height:1}
+.kpi-lbl{font-size:.7rem;color:#9C7078;font-weight:600;margin-top:.15rem}
+.kpi-sub{font-size:.68rem;color:#9C7078;border-top:1px solid #EDD8DB;padding-top:.45rem;margin-top:.45rem}
+
+.table-wrap{overflow-x:auto;border-radius:10px;border:1px solid #EDD8DB}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+thead th{background:linear-gradient(135deg,#5C0A15,#8C1320);color:#fff;padding:.58rem .8rem;text-align:right;font-weight:700;font-size:.72rem;white-space:nowrap}
+tbody tr{border-bottom:1px solid #EDD8DB;transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#F5E6E8}
+tbody td{padding:.58rem .8rem;color:#5C3840;vertical-align:middle;white-space:nowrap}
+
+.badge{display:inline-flex;align-items:center;padding:.17rem .52rem;border-radius:100px;font-size:.68rem;font-weight:700;white-space:nowrap}
+.badge-danger{background:#F5E6E8;color:#C01C2C}
+.badge-warning{background:#FEF9E7;color:#B8860B}
+.badge-success{background:#E8F5EE;color:#2E8B57}
+.badge-info{background:#E6F3FA;color:#1A6FA0}
+
+.filter-bar{display:flex;gap:.65rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:1rem}
+.form-group{margin-bottom:.8rem}
+.form-label{display:block;font-size:.75rem;font-weight:700;color:#8C1320;margin-bottom:.3rem}
+.form-control{width:100%;font-family:'Tajawal',sans-serif;font-size:.84rem;padding:.48rem .78rem;border:1px solid #DFC0C5;border-radius:8px;background:#fff;color:#2A1218;transition:border .15s,box-shadow .15s;direction:rtl}
+.form-control:focus{outline:none;border-color:#C01C2C;box-shadow:0 0 0 3px rgba(192,28,44,.1)}
+
+.toast{position:fixed;bottom:1.3rem;left:50%;transform:translateX(-50%) translateY(16px);padding:.6rem 1.25rem;border-radius:12px;font-weight:700;font-size:.84rem;opacity:0;transition:all .25s;z-index:9999;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast-success{background:#2E8B57;color:#fff}
+.toast-error{background:#C01C2C;color:#fff}
+
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:1000}
+.modal-overlay.active{display:flex}
+.modal{background:#fff;border-radius:16px;max-width:800px;width:90%;max-height:90vh;overflow-y:auto;padding:1.5rem}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:.8rem;border-bottom:1px solid #EDD8DB}
+.modal-title{font-size:1.1rem;font-weight:800;color:#8C1320}
+.modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:#9C7078}
+
+@media(max-width:1100px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div>
+    <div class="topbar-title">لوحة المدير العام</div>
+    <div class="topbar-meta">مستشفى الإمام الحسن المجتبى (ع) — نظام الموارد البشرية</div>
+  </div>
+  <div class="topbar-actions">
+    <select id="dateFilter" class="form-control" style="width:auto">
+      <option value="today">اليوم</option>
+      <option value="yesterday">أمس</option>
+    </select>
+    <button class="btn btn-primary btn-sm" onclick="refreshDashboard()">
+      <span>🔄</span> تحديث
+    </button>
+  </div>
+</div>
+
+<div class="page-content">
+  <!-- KPI Cards -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <div class="kpi-icon red">⚠️</div>
+      </div>
+      <div class="kpi-val" id="dailyViolations">0</div>
+      <div class="kpi-lbl">مخالفات اليوم</div>
+      <div class="kpi-sub">الحضور والسلوك</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <div class="kpi-icon wrn">📹</div>
+      </div>
+      <div class="kpi-val" id="cctvViolations">0</div>
+      <div class="kpi-lbl">مخالفات CCTV</div>
+      <div class="kpi-sub">مراقبة ومخالفات</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <div class="kpi-icon inf">📋</div>
+      </div>
+      <div class="kpi-val" id="disciplinaryActions">0</div>
+      <div class="kpi-lbl">إجراءات تأديبية</div>
+      <div class="kpi-sub">اليوم</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <div class="kpi-icon grn">📊</div>
+      </div>
+      <div class="kpi-val" id="scheduleStatus">0/0</div>
+      <div class="kpi-lbl">الجداول المرفوعة</div>
+      <div class="kpi-sub">هذا الشهر</div>
+    </div>
+  </div>
+
+  <!-- Daily Position Summary -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">📋 الموقف اليومي</div>
+      <div id="positionDate" class="topbar-meta"></div>
+    </div>
+    <div class="kpi-row" style="grid-template-columns:repeat(5,1fr);gap:.5rem;margin-bottom:0">
+      <div class="kpi-card">
+        <div class="kpi-val" id="totalStaff">0</div>
+        <div class="kpi-lbl">إجمالي الموظفين</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-val" id="annualLeaves">0</div>
+        <div class="kpi-lbl">إجازات اعتيادية</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-val" id="sickLeaves">0</div>
+        <div class="kpi-lbl">إجازات مرضية</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-val" id="unpaidLeaves">0</div>
+        <div class="kpi-lbl">بدون راتب</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-val" id="cctvDeductions">0</div>
+        <div class="kpi-lbl">خصم CCTV</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Daily Violations -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">⚠️ مخالفات اليوم</div>
+      <div class="filter-bar" style="margin-bottom:0">
+        <select id="deptFilter" class="form-control" style="width:auto">
+          <option value="">جميع الأقسام</option>
+        </select>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>الرقم الوظيفي</th>
+            <th>الاسم</th>
+            <th>القسم</th>
+            <th>نوع المخالفة</th>
+            <th>التاريخ</th>
+            <th>الجزاء</th>
+            <th>الإجراء</th>
+          </tr>
+        </thead>
+        <tbody id="violationsTable">
+          <tr><td colspan="7" class="loading-row">جاري التحميل...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Employee Search -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">👤 البحث عن موظف</div>
+    </div>
+    <div class="filter-bar">
+      <div class="form-group">
+        <label class="form-label">الرقم الوظيفي أو الاسم</label>
+        <input type="text" id="employeeSearch" class="form-control" placeholder="أدخل الرقم الوظيفي أو الاسم">
+      </div>
+      <button class="btn btn-primary" onclick="searchEmployee()">بحث</button>
+    </div>
+  </div>
+</div>
+
+<!-- Employee Details Modal -->
+<div class="modal-overlay" id="employeeModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">تفاصيل الموظف</div>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div id="employeeDetails">
+      <!-- Employee details will be loaded here -->
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_BASE = 'http://localhost:8000/api';
+
+let currentDate = new Date().toISOString().split('T')[0];
+
+// Load departments
+async function loadDepartments() {
+  try {
+    const res = await fetch(`${API_BASE}/departments`);
+    const data = await res.json();
+    const select = document.getElementById('deptFilter');
+    data.data.forEach(dep => {
+      const option = document.createElement('option');
+      option.value = dep.id;
+      option.textContent = dep.name;
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error('Failed to load departments:', error);
+  }
+}
+
+// Refresh dashboard
+async function refreshDashboard() {
+  const dateInput = document.getElementById('dateFilter').value;
+  if (dateInput === 'yesterday') {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    currentDate = yesterday.toISOString().split('T')[0];
+  } else {
+    currentDate = new Date().toISOString().split('T')[0];
+  }
+
+  await Promise.all([
+    loadDashboardData(),
+    loadDailyViolations(),
+  ]);
+}
+
+// Load dashboard data
+async function loadDashboardData() {
+  try {
+    const res = await fetch(`${API_BASE}/gm/dashboard?date=${currentDate}`);
+    const data = await res.json();
+
+    // Update KPIs
+    document.getElementById('dailyViolations').textContent = data.daily_summary.violations;
+    document.getElementById('cctvViolations').textContent = data.daily_summary.cctv_violations;
+    document.getElementById('disciplinaryActions').textContent = data.daily_summary.disciplinary_actions;
+    document.getElementById('scheduleStatus').textContent = 
+      `${data.schedules_status.uploaded}/${data.schedules_status.total}`;
+
+    // Update daily position
+    document.getElementById('positionDate').textContent = data.date;
+    document.getElementById('totalStaff').textContent = data.daily_position.total_staff;
+    document.getElementById('annualLeaves').textContent = data.daily_position.annual_leaves;
+    document.getElementById('sickLeaves').textContent = data.daily_position.sick_leaves;
+    document.getElementById('unpaidLeaves').textContent = data.daily_position.unpaid_leaves;
+    document.getElementById('cctvDeductions').textContent = data.daily_position.cctv_deductions;
+
+  } catch (error) {
+    console.error('Failed to load dashboard data:', error);
+    showToast('فشل تحميل البيانات', 'error');
+  }
+}
+
+// Load daily violations
+async function loadDailyViolations() {
+  const deptId = document.getElementById('deptFilter').value;
+  let url = `${API_BASE}/gm/daily-violations?date=${currentDate}`;
+  if (deptId) url += `&department_id=${deptId}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    
+    const tbody = document.getElementById('violationsTable');
+    tbody.innerHTML = '';
+
+    const allViolations = [
+      ...data.attendance_violations.map(v => ({...v, source: 'attendance'})),
+      ...data.cctv_violations.map(v => ({...v, source: 'cctv'}))
+    ];
+
+    if (allViolations.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="loading-row">لا توجد مخالفات لهذا اليوم</td></tr>';
+      return;
+    }
+
+    allViolations.forEach(v => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="td-id">${v.employee_id}</td>
+        <td class="td-name">${v.employee?.name || '—'}</td>
+        <td class="td-dept">${v.employee?.department?.name || '—'}</td>
+        <td>
+          <span class="badge ${v.source === 'cctv' ? 'badge-warning' : 'badge-danger'}">
+            ${v.source === 'cctv' ? 'CCTV' : 'حضور'}
+          </span>
+          ${v.violation_type || v.description || '—'}
+        </td>
+        <td>${v.incident_date || v.violation_date || '—'}</td>
+        <td>${v.penalty || (v.penalty_days ? `خصم ${v.penalty_days} يوم` : '—')}</td>
+        <td>
+          <button class="btn btn-ghost btn-sm" onclick="viewEmployee('${v.employee_id}')">عرض</button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+
+  } catch (error) {
+    console.error('Failed to load violations:', error);
+    document.getElementById('violationsTable').innerHTML = 
+      '<tr><td colspan="7" class="loading-row">فشل تحميل المخالفات</td></tr>';
+  }
+}
+
+// Search employee
+async function searchEmployee() {
+  const searchTerm = document.getElementById('employeeSearch').value.trim();
+  if (!searchTerm) {
+    showToast('الرجاء إدخال رقم وظيفي أو اسم', 'error');
+    return;
+  }
+
+  try {
+    // Try to find by employee_id first
+    const res = await fetch(`${API_BASE}/employees?search=${searchTerm}`);
+    const data = await res.json();
+
+    if (data.data && data.data.length > 0) {
+      viewEmployee(data.data[0].employee_id);
+    } else {
+      showToast('لم يتم العثور على الموظف', 'error');
+    }
+  } catch (error) {
+    console.error('Failed to search employee:', error);
+    showToast('فشل البحث عن الموظف', 'error');
+  }
+}
+
+// View employee details
+async function viewEmployee(employeeId) {
+  try {
+    const month = new Date().getMonth() + 1;
+    const year = new Date().getFullYear();
+    
+    const res = await fetch(`${API_BASE}/gm/employee/${employeeId}?month=${month}&year=${year}`);
+    const data = await res.json();
+
+    const details = document.getElementById('employeeDetails');
+    details.innerHTML = `
+      <div style="margin-bottom:1.5rem">
+        <h3 style="font-size:1.2rem;font-weight:800;color:#8C1320;margin-bottom:.5rem">${data.employee.name}</h3>
+        <p style="color:#5C3840;font-size:.9rem;margin:.2rem 0">الرقم الوظيفي: ${data.employee.employee_id}</p>
+        <p style="color:#5C3840;font-size:.9rem;margin:.2rem 0">القسم: ${data.employee.department}</p>
+        <p style="color:#5C3840;font-size:.9rem;margin:.2rem 0">المسمى الوظيفي: ${data.employee.job_title || '—'}</p>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-header">
+          <div class="card-title">📊 ملخص الحضور</div>
+        </div>
+        <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:0">
+          <div class="kpi-card">
+            <div class="kpi-val">${data.attendance_summary.days_present}</div>
+            <div class="kpi-lbl">أيام الحضور</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-val">${data.attendance_summary.days_absent}</div>
+            <div class="kpi-lbl">أيام الغياب</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-val">${data.attendance_summary.total_worked_hrs.toFixed(1)}</div>
+            <div class="kpi-lbl">ساعات العمل</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-header">
+          <div class="card-title">⚠️ المخالفات (${data.violations.length})</div>
+        </div>
+        ${data.violations.length > 0 ? `
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>التاريخ</th><th>النوع</th><th>الجزاء</th></tr></thead>
+              <tbody>
+                ${data.violations.map(v => `
+                  <tr>
+                    <td>${v.incident_date}</td>
+                    <td>${v.violation_category || '—'}</td>
+                    <td>${v.penalty || '—'}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        ` : '<p style="color:#9C7078;padding:1rem;text-align:center">لا توجد مخالفات</p>'}
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-header">
+          <div class="card-title">📹 مخالفات CCTV (${data.cctv_violations.length})</div>
+        </div>
+        ${data.cctv_violations.length > 0 ? `
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>التاريخ</th><th>الوصف</th><th>أيام الخصم</th></tr></thead>
+              <tbody>
+                ${data.cctv_violations.map(v => `
+                  <tr>
+                    <td>${v.violation_date}</td>
+                    <td>${v.description}</td>
+                    <td>${v.penalty_days || 0}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        ` : '<p style="color:#9C7078;padding:1rem;text-align:center">لا توجد مخالفات CCTV</p>'}
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">✅ تأكيد الاستمرارية</div>
+        </div>
+        <div style="padding:1rem">
+          <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+            <span class="badge ${data.continuity_confirmation.eligible ? 'badge-success' : 'badge-danger'}">
+              ${data.continuity_confirmation.eligible ? 'مؤهل' : 'غير مؤهل'}
+            </span>
+            <span style="font-size:.9rem;color:#5C3840">
+              ${data.continuity_confirmation.eligible 
+                ? 'الموظف مؤهل للحصول على تأكيد استمرارية' 
+                : 'الموظف غير مؤهل للحصول على تأكيد استمرارية'}
+            </span>
+          </div>
+          <div style="font-size:.85rem;color:#9C7078">
+            <p>الساعات المطلوبة: ${data.continuity_confirmation.required_hours.toFixed(1)}</p>
+            <p>الساعات الفعلية: ${data.continuity_confirmation.actual_hours.toFixed(1)}</p>
+            <p>أيام الحضور: ${data.continuity_confirmation.days_present}</p>
+            <p>أيام الغياب: ${data.continuity_confirmation.days_absent}</p>
+            <p>عدد المخالفات: ${data.continuity_confirmation.violations_count}</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('employeeModal').classList.add('active');
+
+  } catch (error) {
+    console.error('Failed to load employee details:', error);
+    showToast('فشل تحميل تفاصيل الموظف', 'error');
+  }
+}
+
+// Close modal
+function closeModal() {
+  document.getElementById('employeeModal').classList.remove('active');
+}
+
+// Show toast
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = `toast toast-${type} on`;
+  setTimeout(() => toast.classList.remove('on'), 2800);
+}
+
+// Event listeners
+document.getElementById('dateFilter').addEventListener('change', refreshDashboard);
+document.getElementById('deptFilter').addEventListener('change', loadDailyViolations);
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  loadDepartments();
+  refreshDashboard();
+});
+</script>
+</body>
+</html>

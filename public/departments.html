@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الأقسام — مستشفى الإمام الحسن المجتبى (ع)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/hr-theme.css">
+<script defer src="assets/hr-shell.js"></script>
+<style>
+/* LAYOUT — fixed sidebar + offset come from assets/hr-theme.css */
+
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+/* ── LAYOUT ── */
+
+
+
+/* ── SIDEBAR ── */
+
+
+
+
+
+
+
+
+
+
+
+/* ── TOPBAR ── */
+body{font-family:'Tajawal',sans-serif;background:#FAF7F7;color:#2A1218;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid #EDD8DB;padding:.75rem 1.4rem;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(92,10,21,.07)}
+.topbar-title{font-size:.98rem;font-weight:800;color:#5C0A15}
+.topbar-meta{font-size:.73rem;color:#9C7078;margin-top:1px}
+.topbar-actions{display:flex;gap:.55rem;align-items:center}
+.page-content{padding:1.3rem 1.5rem}
+
+/* ── BUTTONS ── */
+.btn{font-family:inherit;font-weight:700;font-size:.82rem;padding:.48rem 1rem;
+  border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;
+  gap:.3rem;text-decoration:none;transition:all .15s;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,#C01C2C,#8C1320);color:#fff;
+  box-shadow:0 3px 10px rgba(192,28,44,.25)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(192,28,44,.35)}
+.btn-ghost{background:#fff;color:#8C1320;border:1px solid #DFC0C5}
+.btn-ghost:hover{background:#F5E6E8}
+.btn-success{background:linear-gradient(135deg,#2E8B57,#1C6640);color:#fff}
+.btn-success:hover{transform:translateY(-1px)}
+.btn-sm{font-size:.74rem;padding:.33rem .75rem}
+.btn-xs{font-size:.68rem;padding:.22rem .55rem;border-radius:6px}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
+
+/* ── KPI ROW ── */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;margin-bottom:1.25rem}
+.kpi-card{background:#fff;border:1px solid #EDD8DB;border-radius:12px;padding:.9rem 1.1rem;
+  box-shadow:0 2px 8px rgba(92,10,21,.05)}
+.kpi-top{display:flex;align-items:center;justify-content:space-between}
+.kpi-val{font-size:1.8rem;font-weight:900;color:#8C1320;line-height:1}
+.kpi-lbl{font-size:.68rem;color:#9C7078;font-weight:600;margin-top:.18rem}
+.kpi-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:1.2rem;flex-shrink:0}
+.kpi-icon.red{background:#F5E6E8}.kpi-icon.grn{background:#E8F5EE}
+.kpi-icon.amb{background:#FEF9E7}.kpi-icon.inf{background:#E6F3FA}
+.kpi-sub{font-size:.7rem;color:#9C7078;margin-top:.35rem}
+
+/* ── FILTER BAR ── */
+.filter-bar{display:flex;align-items:center;gap:.65rem;margin-bottom:1rem;flex-wrap:wrap}
+.filter-chip{padding:.3rem .8rem;border-radius:100px;border:1px solid #DFC0C5;
+  background:#fff;font-size:.76rem;font-weight:700;cursor:pointer;
+  color:#5C3840;transition:all .15s;font-family:inherit}
+.filter-chip:hover{background:#F5E6E8;border-color:#C01C2C}
+.filter-chip.active{background:#C01C2C;color:#fff;border-color:#C01C2C}
+.search-input{flex:1;max-width:240px;font-family:inherit;font-size:.84rem;
+  padding:.4rem .85rem;border:1px solid #DFC0C5;border-radius:100px;
+  background:#fff;color:#2A1218;direction:rtl}
+.search-input:focus{outline:none;border-color:#C01C2C;box-shadow:0 0 0 3px rgba(192,28,44,.08)}
+
+/* ── DEP GRID ── */
+.dep-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem}
+
+/* ── DEP CARD ── */
+.dep-card{background:#fff;border:1px solid #EDD8DB;border-radius:14px;
+  box-shadow:0 2px 8px rgba(92,10,21,.06);overflow:hidden;
+  transition:box-shadow .2s,transform .2s;cursor:pointer;position:relative}
+.dep-card:hover{box-shadow:0 6px 20px rgba(92,10,21,.13);transform:translateY(-2px)}
+.dep-card-top{padding:.85rem 1rem .6rem;border-left:4px solid #EDD8DB}
+.dep-card.uploaded .dep-card-top{border-left-color:#2E8B57}
+.dep-card.not-uploaded .dep-card-top{border-left-color:#F0C040}
+.dep-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem}
+.dep-card-name{font-size:.92rem;font-weight:800;color:#2A1218;line-height:1.3}
+.dep-badge{display:inline-flex;align-items:center;gap:.22rem;padding:.18rem .55rem;
+  border-radius:100px;font-size:.68rem;font-weight:700;white-space:nowrap;flex-shrink:0}
+.badge-uploaded{background:#E8F5EE;color:#2E8B57;border:1px solid #A8DFC4}
+.badge-pending{background:#FEF9E7;color:#8A6000;border:1px solid #F0D060}
+.dep-chair{font-size:.76rem;color:#9C7078;margin-top:.35rem;display:flex;align-items:center;gap:.3rem}
+.dep-chair-name{color:#5C3840;font-weight:600}
+.dep-stats{display:flex;gap:1.2rem;padding:.55rem 1rem;background:#FAF7F7;
+  border-top:1px solid #EDD8DB;border-bottom:1px solid #EDD8DB}
+.dep-stat{text-align:center}
+.dep-stat-val{font-size:1.15rem;font-weight:900;color:#8C1320}
+.dep-stat-lbl{font-size:.62rem;color:#9C7078;font-weight:600}
+.dep-upload-info{font-size:.7rem;color:#2E8B57;padding:.35rem 1rem;
+  display:flex;align-items:center;gap:.3rem}
+.dep-upload-info.pending{color:#8A6000}
+.dep-card-footer{display:flex;align-items:center;gap:.4rem;padding:.55rem .85rem;
+  border-top:1px solid #EDD8DB;background:#FDFAFA}
+
+/* ── SKELETON ── */
+@keyframes sk-shine{0%{background-position:-200px}100%{background-position:calc(200px + 100%)}}
+.sk{display:inline-block;border-radius:6px;
+  background:linear-gradient(90deg,#EDD8DB 0px,#F5E6E8 80px,#EDD8DB 160px);
+  background-size:600px 100%;animation:sk-shine 1.6s infinite linear}
+.sk-card{background:#fff;border:1px solid #EDD8DB;border-radius:14px;padding:1rem;height:160px}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(42,18,24,.52);
+  z-index:500;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;padding:1.4rem;width:100%;
+  max-width:520px;box-shadow:0 20px 60px rgba(92,10,21,.2);max-height:90vh;overflow-y:auto}
+.modal-title{font-size:1rem;font-weight:800;color:#5C0A15;margin-bottom:1rem;
+  padding-bottom:.75rem;border-bottom:1px solid #EDD8DB}
+.form-group{margin-bottom:.8rem}
+.form-label{display:block;font-size:.76rem;font-weight:700;color:#8C1320;margin-bottom:.3rem}
+.form-control{width:100%;font-family:inherit;font-size:.88rem;padding:.5rem .8rem;
+  border:1px solid #DFC0C5;border-radius:8px;background:#fff;color:#2A1218;
+  transition:border .15s;direction:rtl}
+.form-control:focus{outline:none;border-color:#C01C2C;box-shadow:0 0 0 3px rgba(192,28,44,.08)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.modal-actions{display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem;
+  padding-top:.75rem;border-top:1px solid #EDD8DB}
+
+/* ── DEPT DETAIL VIEW ── */
+.back-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .8rem;
+  border-radius:8px;background:#F5E6E8;color:#8C1320;border:none;cursor:pointer;
+  font-family:inherit;font-size:.82rem;font-weight:700;margin-bottom:1rem;transition:all .15s}
+.back-btn:hover{background:#EDD8DB}
+.dep-detail-header{background:linear-gradient(135deg,#5C0A15,#8C1320,#C01C2C);
+  border-radius:14px;padding:1.25rem 1.4rem;color:#fff;margin-bottom:1rem;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem}
+.dep-detail-name{font-size:1.2rem;font-weight:900}
+.dep-detail-sub{font-size:.8rem;opacity:.75;margin-top:.25rem}
+.dep-detail-actions{display:flex;gap:.5rem}
+.emp-list-card{background:#fff;border:1px solid #EDD8DB;border-radius:12px;
+  box-shadow:0 2px 8px rgba(92,10,21,.05);overflow:hidden;margin-bottom:1rem}
+.emp-list-header{padding:.7rem 1rem;background:linear-gradient(135deg,#5C0A15,#8C1320);
+  color:#fff;display:flex;align-items:center;justify-content:space-between}
+.emp-list-title{font-size:.88rem;font-weight:800}
+table{width:100%;border-collapse:collapse;font-size:.83rem}
+thead th{background:#FAF7F7;color:#5C3840;padding:.52rem .8rem;text-align:right;
+  font-weight:700;font-size:.72rem;border-bottom:1px solid #EDD8DB}
+tbody tr{border-bottom:1px solid #EDD8DB;transition:background .1s;cursor:pointer}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#FBF5F5}
+tbody td{padding:.52rem .8rem;color:#5C3840;vertical-align:middle}
+.emp-name-cell{font-weight:700;color:#2A1218}
+.shift-badge{display:inline-block;padding:.12rem .45rem;border-radius:4px;
+  font-size:.7rem;font-weight:700;font-family:monospace;background:#F5E6E8;color:#8C1320}
+.day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:.5rem}
+.day-cell{background:#FAF7F7;border:1px solid #EDD8DB;border-radius:4px;
+  padding:.15rem .1rem;text-align:center;font-size:.6rem}
+.day-cell.has-shift{background:#F5E6E8;color:#8C1320;font-weight:700}
+.day-cell.off{background:#F0F0F0;color:#bbb}
+
+/* ── SCHEDULE MODAL ── */
+.drop-zone{border:2px dashed #DFC0C5;border-radius:12px;padding:1.5rem;text-align:center;
+  cursor:pointer;background:#FAF7F7;transition:all .2s;margin-bottom:.85rem}
+.drop-zone:hover, .drop-zone.drag-over{border-color:#C01C2C;background:#FBF0F0}
+.drop-zone-icon{font-size:2rem;margin-bottom:.35rem}
+.drop-zone-title{font-size:.88rem;font-weight:700;color:#5C3840}
+.drop-zone-sub{font-size:.73rem;color:#9C7078;margin-top:.22rem}
+.preview-box{background:#FAF7F7;border:1px solid #EDD8DB;border-radius:10px;
+  padding:.75rem 1rem;margin-bottom:.75rem;font-size:.82rem}
+.preview-row{display:flex;justify-content:space-between;margin-bottom:.3rem}
+.preview-label{color:#9C7078;font-weight:600}
+.preview-val{font-weight:700;color:#2A1218}
+.shift-dist{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.5rem}
+.shift-tag{background:#F5E6E8;color:#8C1320;padding:.12rem .45rem;
+  border-radius:6px;font-size:.72rem;font-weight:700;font-family:monospace}
+
+/* ── EMPLOYEE SCHEDULE MODAL ── */
+.sched-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;
+  margin-top:.75rem;max-height:260px;overflow-y:auto}
+.sched-day{border:1px solid #EDD8DB;border-radius:6px;padding:.3rem .2rem;
+  text-align:center;font-size:.65rem}
+.sched-day-num{color:#9C7078;font-weight:600;margin-bottom:2px}
+.sched-day-code{font-weight:800;font-size:.7rem;font-family:monospace;color:#8C1320}
+.sched-day.off .sched-day-code{color:#bbb}
+.sched-day.no-data .sched-day-code{color:#EDD8DB}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.3rem;left:50%;transform:translateX(-50%) translateY(16px);
+  padding:.6rem 1.25rem;border-radius:12px;font-weight:700;font-size:.84rem;
+  opacity:0;transition:all .25s;z-index:9999;pointer-events:none;
+  box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast-success{background:#2E8B57;color:#fff}
+.toast-danger{background:#C01C2C;color:#fff}
+.toast-warning{background:#B8860B;color:#fff}
+
+/* ── MISC ── */
+.empty-state{text-align:center;padding:2.5rem 1rem;color:#9C7078}
+.empty-icon{font-size:2.4rem;opacity:.35;margin-bottom:.5rem}
+.empty-title{font-size:.9rem;font-weight:700;color:#5C3840}
+.alert-box{border-radius:10px;padding:.65rem .9rem;font-size:.82rem;
+  margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem}
+.alert-info{background:#E6F3FA;color:#1A6FA0;border:1px solid #BDE0F5}
+.alert-warn{background:#FEF9E7;color:#7A5A00;border:1px solid #F0D060}
+.alert-ok{background:#E8F5EE;color:#2E8B57;border:1px solid #A8DFC4}
+.sep{height:1px;background:#EDD8DB;margin:.75rem 0}
+@media(max-width:860px){
+  
+  .dep-grid{grid-template-columns:1fr}.kpi-row{grid-template-columns:1fr 1fr}}</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- SIDEBAR -->
+  <!-- CONTENT -->
+  <div class="content-cell">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="topbar-title">الأقسام</div>
+        <div class="topbar-meta" id="topbar-meta">جاري التحميل...</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openAddDepModal()">➕ إضافة قسم</button>
+        <button class="btn btn-ghost btn-sm" id="btn-send-all" onclick="sendAllReminders()">📧 إرسال تذكيرات</button>
+        <select class="form-control btn-sm" id="month-sel" style="width:auto;padding:.3rem .6rem;border-radius:8px" onchange="onMonthChange()"></select>
+        <select class="form-control btn-sm" id="year-sel" style="width:auto;padding:.3rem .6rem;border-radius:8px" onchange="onMonthChange()">
+          <option value="2025">2025</option>
+          <option value="2026" selected>2026</option>
+          <option value="2027">2027</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="page-content" id="main-view">
+
+      <!-- KPIs -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div><div class="kpi-val" id="kpi-total">—</div><div class="kpi-lbl">إجمالي الأقسام</div></div>
+            <div class="kpi-icon inf">🏢</div>
+          </div>
+          <div class="kpi-sub" id="kpi-total-sub"></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div><div class="kpi-val" id="kpi-uploaded" style="color:#2E8B57">—</div><div class="kpi-lbl">رفعوا الجدول</div></div>
+            <div class="kpi-icon grn">✅</div>
+          </div>
+          <div class="kpi-sub" id="kpi-uploaded-sub"></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div><div class="kpi-val" id="kpi-pending" style="color:#B8860B">—</div><div class="kpi-lbl">لم يرفعوا</div></div>
+            <div class="kpi-icon amb">⏳</div>
+          </div>
+          <div class="kpi-sub" id="kpi-pending-sub"></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div><div class="kpi-val" id="kpi-emps">—</div><div class="kpi-lbl">إجمالي الموظفين</div></div>
+            <div class="kpi-icon red">👥</div>
+          </div>
+          <div class="kpi-sub" id="kpi-emps-sub"></div>
+        </div>
+      </div>
+
+      <!-- FILTER -->
+      <div class="filter-bar">
+        <button class="filter-chip active" data-filter="all" onclick="setFilter('all',this)">الكل</button>
+        <button class="filter-chip" data-filter="uploaded" onclick="setFilter('uploaded',this)">✅ رفعوا</button>
+        <button class="filter-chip" data-filter="pending" onclick="setFilter('pending',this)">⏳ لم يرفعوا</button>
+        <input type="text" class="search-input" placeholder="🔍 بحث عن قسم..." id="search-input" oninput="renderGrid()">
+      </div>
+
+      <!-- GRID -->
+      <div class="dep-grid" id="dep-grid">
+        <!-- skeleton -->
+        ${Array(6).fill('<div class="sk-card"></div>').join('')}
+      </div>
+    </div>
+
+    <!-- DEPT DETAIL VIEW (hidden by default) -->
+    <div class="page-content" id="detail-view" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ── ADD / EDIT DEP MODAL ── -->
+<div class="modal-overlay" id="dep-modal">
+  <div class="modal">
+    <div class="modal-title" id="dep-modal-title">➕ إضافة قسم</div>
+    <input type="hidden" id="dep-modal-id">
+    <div class="form-group">
+      <label class="form-label">اسم القسم</label>
+      <input type="text" class="form-control" id="dep-modal-name" placeholder="مثال: قسم الاحصاء و الأرشيف الطبي">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">اسم رئيس القسم</label>
+        <input type="text" class="form-control" id="dep-modal-chair" placeholder="د. محمد أحمد">
+      </div>
+      <div class="form-group">
+        <label class="form-label">البريد الإلكتروني</label>
+        <input type="email" class="form-control" id="dep-modal-email" placeholder="head@hospital.iq" dir="ltr">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeDepModal()">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveDepModal()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── UPLOAD SCHEDULE MODAL ── -->
+<div class="modal-overlay" id="upload-modal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-title" id="upload-modal-title">📤 رفع جدول القسم</div>
+
+    <div id="upload-dep-pill" style="display:none;background:linear-gradient(135deg,#5C0A15,#8C1320);
+      color:#fff;border-radius:10px;padding:.6rem 1rem;margin-bottom:.85rem;
+      display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:.9rem">
+      <span>🏢</span><span id="upload-dep-pill-name"></span>
+    </div>
+
+    <!-- Step 1: file + month -->
+    <div id="upload-step1">
+      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+        <div class="drop-zone-icon">📊</div>
+        <div class="drop-zone-title">اسحب ملف Excel هنا أو اضغط للاختيار</div>
+        <div class="drop-zone-sub">يدعم .xlsx — نفس تنسيق الجدول المعتمد</div>
+        <input type="file" id="file-input" accept=".xlsx,.xls" style="display:none" onchange="parseFile(this.files[0])">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">الشهر</label>
+          <select class="form-control" id="upload-month"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">السنة</label>
+          <select class="form-control" id="upload-year">
+            <option value="2025">2025</option>
+            <option value="2026" selected>2026</option>
+            <option value="2027">2027</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: preview -->
+    <div id="upload-step2" style="display:none">
+      <div class="alert-box alert-ok" id="upload-ok-msg"></div>
+      <div class="preview-box" id="upload-preview"></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeUploadModal()">إلغاء</button>
+      <button class="btn btn-ghost" id="upload-back-btn" style="display:none" onclick="uploadBack()">← رجوع</button>
+      <button class="btn btn-primary" id="upload-save-btn" style="display:none" onclick="saveSchedule()">💾 حفظ الجدول</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── EMPLOYEE SCHEDULE MODAL ── -->
+<div class="modal-overlay" id="emp-sched-modal">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-title" id="emp-sched-title">جدول الموظف</div>
+    <div id="emp-sched-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="document.getElementById('emp-sched-modal').classList.remove('open')">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="supabase.js"></script>
+<script>
+// ── STATE ──
+const MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو',
+                'يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const now = new Date();
+let CUR_MONTH = now.getMonth() + 1;
+let CUR_YEAR  = now.getFullYear();
+let currentFilter = 'all';
+let allDeps    = [];   // [{id,name,chairman_name,chairman_email,_empCount,_uploaded,_uploadedAt}]
+let parsedData = null; // parsed Excel schedule
+let uploadTargetDep = null; // dep being uploaded to
+
+// ── INIT ──
+(async function init() {
+  // Populate month selectors
+  ['month-sel','upload-month'].forEach(id => {
+    const sel = document.getElementById(id);
+    MONTHS.forEach((m, i) => {
+      const opt = new Option(m, i + 1);
+      if (i + 1 === CUR_MONTH) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  });
+  document.getElementById('year-sel').value  = CUR_YEAR;
+  document.getElementById('upload-year').value = CUR_YEAR;
+
+  await loadAll();
+})();
+
+// ── MONTH CHANGE ──
+function onMonthChange() {
+  CUR_MONTH = +document.getElementById('month-sel').value;
+  CUR_YEAR  = +document.getElementById('year-sel').value;
+  loadAll();
+}
+
+// ── LOAD ALL ──
+async function loadAll() {
+  const client = await getSb();
+  showGridSkeleton();
+
+  const [
+    { data: deps        },
+    { data: empRows     },
+    { data: scheds      },
+    { data: schedCounts },
+    snap,
+  ] = await Promise.all([
+    client.from('departments').select('*').order('name'),
+    client.from('employees').select('employee_id,department_id'),
+    client.from('monthly_schedules').select('*').eq('month', CUR_MONTH).eq('year', CUR_YEAR),
+    client.from('employee_schedules').select('department_id,employee_id')
+      .eq('month', CUR_MONTH).eq('year', CUR_YEAR),
+    getWorkspace(),
+  ]);
+
+  // Build emp count per department — 3 sources, most accurate first
+  const normDept  = s => (s||'').trim().replace(/\s+/g,' ').toLowerCase();
+  const empByDep  = {};
+  const empByName = {};
+
+  // Source A: employee_schedules (most accurate after upload — distinct per dept)
+  if (schedCounts?.length) {
+    const seen = new Set();
+    schedCounts.forEach(r => {
+      if (!r.department_id) return;
+      const key = `${r.department_id}|${r.employee_id}`;
+      if (!seen.has(key)) { seen.add(key); empByDep[r.department_id] = (empByDep[r.department_id]||0) + 1; }
+    });
+  }
+
+  // Source B: workspace (fills depts not yet in employee_schedules)
+  const wsEmps = snap?.results || [];
+  if (wsEmps.length > 0) {
+    const nameToId = {};
+    (deps||[]).forEach(d => { nameToId[normDept(d.name)] = d.id; });
+    wsEmps.forEach(r => {
+      const raw  = r.employee?.deptRaw  || '';
+      const norm = r.employee?.deptNorm || normDept(raw);
+      const mid  = nameToId[norm] || nameToId[normDept(raw)];
+      if (mid && empByDep[mid] === undefined) empByDep[mid] = (empByDep[mid]||0) + 1;
+      if (norm) empByName[norm] = (empByName[norm]||0) + 1;
+    });
+  }
+
+  // Source C: employees table (last resort)
+  if (!Object.keys(empByDep).length) {
+    (empRows||[]).forEach(e => {
+      if (e.department_id) empByDep[e.department_id] = (empByDep[e.department_id]||0) + 1;
+    });
+  }
+
+  // Upload status — PRIMARY: employee_schedules rows (reliable even if monthly_schedules log failed)
+  const uploadedDepIds = new Set();
+  (schedCounts || []).forEach(r => { if (r.department_id) uploadedDepIds.add(r.department_id); });
+
+  // SECONDARY: monthly_schedules log (for uploaded_at timestamp)
+  const uploadById   = {};
+  const uploadByName = {};
+  (scheds || []).forEach(s => {
+    if (s.department_id) uploadById[s.department_id]  = s;
+    if (s.department_name) uploadByName[s.department_name] = s;
+  });
+
+  allDeps = (deps || []).map(d => {
+    const rec      = uploadById[d.id] || uploadByName[d.name];
+    const uploaded = uploadedDepIds.has(d.id) || !!rec;
+    return {
+      ...d,
+      _empCount:   empByDep[d.id] || 0,
+      _uploaded:   uploaded,
+      _uploadedAt: rec?.uploaded_at || (uploaded ? new Date().toISOString() : null),
+      _fileName:   rec?.uploaded_by || null,
+    };
+  });
+
+  // Update KPIs
+  const depEmpTotal = Object.values(empByDep).reduce((a,b) => a+b, 0);
+  const totalEmps = Math.max((empRows||[]).length, wsEmps.length, depEmpTotal);
+  const uploaded  = allDeps.filter(d => d._uploaded).length;
+  const pending   = allDeps.length - uploaded;
+  const monthName = MONTHS[CUR_MONTH - 1];
+
+  document.getElementById('kpi-total').textContent    = allDeps.length;
+  document.getElementById('kpi-uploaded').textContent = uploaded;
+  document.getElementById('kpi-pending').textContent  = pending;
+  document.getElementById('kpi-emps').textContent     = totalEmps || '—';
+  document.getElementById('kpi-total-sub').textContent   = `${monthName} ${CUR_YEAR}`;
+  document.getElementById('kpi-uploaded-sub').textContent = uploaded === allDeps.length ? '✅ الكل رفعوا' : `${uploaded} من ${allDeps.length}`;
+  document.getElementById('kpi-pending-sub').textContent  = pending === 0 ? '✅ لا يوجد متأخرين' : `${pending} قسم لم يرفع`;
+  document.getElementById('kpi-emps-sub').textContent    = snap ? `نظام الحضور: ${wsEmps.length} موظف` : 'من قاعدة البيانات';
+
+  document.getElementById('topbar-meta').textContent =
+    `${monthName} ${CUR_YEAR} · ${allDeps.length} قسم · ${uploaded} رفعوا / ${pending} لم يرفعوا`;
+
+  renderGrid();
+}
+
+// ── RENDER GRID ──
+function renderGrid() {
+  const q      = (document.getElementById('search-input')?.value || '').trim();
+  const filter = currentFilter;
+
+  const visible = allDeps.filter(d => {
+    if (filter === 'uploaded' && !d._uploaded) return false;
+    if (filter === 'pending'  &&  d._uploaded) return false;
+    if (q && !d.name.includes(q)) return false;
+    return true;
+  });
+
+  const grid = document.getElementById('dep-grid');
+  if (!visible.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="empty-icon">🏢</div>
+      <div class="empty-title">لا توجد أقسام مطابقة</div>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = visible.map(dep => buildDepCard(dep)).join('');
+}
+
+function buildDepCard(dep) {
+  const uploaded = dep._uploaded;
+  const badge    = uploaded
+    ? `<span class="dep-badge badge-uploaded">✅ مرفوع</span>`
+    : `<span class="dep-badge badge-pending">⏳ لم يُرفع</span>`;
+
+  const uploadInfo = uploaded
+    ? `<div class="dep-upload-info">✅ رُفع في ${fmtDate(dep._uploadedAt)}</div>`
+    : `<div class="dep-upload-info pending">⏳ في انتظار جدول ${MONTHS[CUR_MONTH-1]}</div>`;
+
+  const chair = dep.chairman_name
+    ? `<div class="dep-chair"><span>👤</span><span class="dep-chair-name">${dep.chairman_name}</span>${dep.chairman_email ? `<span style="color:#9C7078;font-size:.7rem">· ${dep.chairman_email}</span>` : ''}</div>`
+    : `<div class="dep-chair" style="color:#ccc">لا يوجد رئيس قسم مسجّل</div>`;
+
+  return `
+  <div class="dep-card ${uploaded ? 'uploaded' : 'not-uploaded'}" onclick="openDepDetail(${dep.id})">
+    <div class="dep-card-top">
+      <div class="dep-card-header">
+        <div class="dep-card-name">${dep.name}</div>
+        ${badge}
+      </div>
+      ${chair}
+    </div>
+    <div class="dep-stats">
+      <div class="dep-stat"><div class="dep-stat-val">${dep._empCount}</div><div class="dep-stat-lbl">موظف</div></div>
+    </div>
+    ${uploadInfo}
+    <div class="dep-card-footer" onclick="event.stopPropagation()">
+      <button class="btn btn-ghost btn-xs" onclick="openUploadModal(${dep.id})" title="رفع جدول">📤 رفع جدول</button>
+      <button class="btn btn-ghost btn-xs" onclick="openEditDep(${dep.id})" title="تعديل">✏️ تعديل</button>
+      ${dep.chairman_email
+        ? `<button class="btn btn-ghost btn-xs" onclick="sendReminder(${dep.id})" title="إرسال تذكير">📧 تذكير</button>`
+        : ''}
+    </div>
+  </div>`;
+}
+
+function showGridSkeleton() {
+  const grid = document.getElementById('dep-grid');
+  grid.innerHTML = Array(6).fill(`
+    <div class="sk-card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:.6rem">
+        <div class="sk" style="width:140px;height:16px"></div>
+        <div class="sk" style="width:60px;height:16px;border-radius:100px"></div>
+      </div>
+      <div class="sk" style="width:110px;height:13px;margin-bottom:.4rem"></div>
+      <div class="sk" style="width:80px;height:13px"></div>
+    </div>`).join('');
+}
+
+// ── FILTER ──
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderGrid();
+}
+
+// ── DEP DETAIL VIEW ──
+async function openDepDetail(depId) {
+  const dep = allDeps.find(d => d.id === depId);
+  if (!dep) return;
+
+  document.getElementById('main-view').style.display   = 'none';
+  document.getElementById('detail-view').style.display = 'block';
+  document.getElementById('topbar-title').textContent  = dep.name;
+  document.getElementById('topbar-meta').textContent   = 'تفاصيل القسم';
+
+  const dv = document.getElementById('detail-view');
+  dv.innerHTML = `
+    <button class="back-btn" onclick="closeDepDetail()">← العودة للأقسام</button>
+    <div class="dep-detail-header">
+      <div>
+        <div class="dep-detail-name">${dep.name}</div>
+        <div class="dep-detail-sub">${dep.chairman_name ? `رئيس القسم: ${dep.chairman_name}` : 'لا يوجد رئيس قسم مسجّل'}</div>
+      </div>
+      <div class="dep-detail-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openUploadModal(${dep.id});event.stopPropagation()">📤 رفع جدول</button>
+        <button class="btn btn-ghost btn-sm" onclick="openEditDep(${dep.id});event.stopPropagation()">✏️ تعديل</button>
+        ${dep.chairman_email ? `<button class="btn btn-ghost btn-sm" onclick="sendReminder(${dep.id});event.stopPropagation()">📧 تذكير</button>` : ''}
+      </div>
+    </div>
+    <div id="emp-table-area"><div style="text-align:center;padding:2rem;color:#9C7078">⏳ جاري تحميل الموظفين...</div></div>`;
+
+  // ── Load employees for this department ──
+  const client = await getSb();
+  const schedByEmp = {};   // { employee_id: { "dayNum": shiftCode } }
+  let emps = [];
+
+  // SOURCE 1: employee_schedules — written by upload, has department_id + day(int)
+  const { data: dbSched } = await client
+    .from('employee_schedules')
+    .select('employee_id, day, shift_code')
+    .eq('department_id', depId)
+    .eq('month', CUR_MONTH)
+    .eq('year',  CUR_YEAR);
+
+  if (dbSched?.length) {
+    dbSched.forEach(s => {
+      const eid = String(s.employee_id);
+      if (!schedByEmp[eid]) schedByEmp[eid] = {};
+      if (s.day != null) schedByEmp[eid][String(s.day)] = s.shift_code;
+    });
+    const empIds = [...new Set(dbSched.map(s => String(s.employee_id)))];
+    const { data: dbEmps } = await client.from('employees')
+      .select('employee_id, name, shift_type').in('employee_id', empIds);
+    const empMap = {};
+    (dbEmps || []).forEach(e => { empMap[String(e.employee_id)] = e; });
+    emps = empIds.map(eid => ({
+      employee_id: eid,
+      name:        empMap[eid]?.name || eid,
+      shift_type:  empMap[eid]?.shift_type || '8hr',
+      _totals:     {},
+    })).sort((a,b) => a.name.localeCompare(b.name, 'ar'));
+  }
+
+  // SOURCE 2: hr_workspace snapshot (fallback)
+  if (emps.length === 0) {
+    const snap  = await getWorkspace();
+    const wsAll = snap?.results || [];
+    const normStr     = s => (s||'').trim().replace(/\s+/g,' ').toLowerCase();
+    const depNameNorm = normStr(dep.name);
+    const wsEmps = wsAll.filter(r => {
+      const rNorm = r.employee?.deptNorm || normStr(r.employee?.deptRaw || '');
+      return rNorm === depNameNorm || normStr(r.employee?.deptRaw || '') === depNameNorm;
+    });
+    if (wsEmps.length > 0) {
+      wsEmps.forEach(r => {
+        const id = String(r.employee.deviceId);
+        schedByEmp[id] = {};
+        const daysObj = r.days || r.employee?.days || {};
+        Object.entries(daysObj).forEach(([day, code]) => {
+          if (code) schedByEmp[id][String(parseInt(day, 10))] = code;
+        });
+      });
+      emps = wsEmps.map(r => ({
+        employee_id: String(r.employee.deviceId),
+        name:        r.employee.name || String(r.employee.deviceId),
+        shift_type:  r.employee.type || (r.totals?.scheduledHours >= 11 ? '12hr' : '8hr'),
+        _totals:     r.totals || {},
+      })).sort((a,b) => a.name.localeCompare(b.name, 'ar'));
+    }
+  }
+
+  // SOURCE 3: employees table (last resort)
+  if (emps.length === 0) {
+    const { data: dbEmps } = await client.from('employees')
+      .select('employee_id, name, shift_type').eq('department_id', depId).order('name');
+    if (dbEmps?.length) {
+      emps = dbEmps.map(e => ({
+        employee_id: String(e.employee_id),
+        name: e.name, shift_type: e.shift_type || '8hr', _totals: {},
+      }));
+    }
+  }
+
+  // ── Render employee table ──
+  const area = document.getElementById('emp-table-area');
+  if (!emps.length) {
+    area.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">👥</div>
+      <div class="empty-title">لا يوجد موظفون في هذا القسم</div>
+      <div style="font-size:.78rem;margin-top:.3rem;color:#9C7078">ارفع جدول هذا القسم في نظام الحضور ثم اضغط مزامنة</div>
+    </div>`;
+    return;
+  }
+
+  // Store in window map — avoids Arabic/special chars in onclick HTML attributes
+  window._empSchedMap = {};
+  emps.forEach(emp => {
+    window._empSchedMap[emp.employee_id] = { name: emp.name, days: schedByEmp[emp.employee_id] || {} };
+  });
+
+  area.innerHTML = `
+    <div class="emp-list-card">
+      <div class="emp-list-header">
+        <div class="emp-list-title">👥 موظفو القسم — ${emps.length} موظف</div>
+        <div style="font-size:.72rem;opacity:.8">اضغط على اسم الموظف لعرض جدوله</div>
+      </div>
+      <table>
+        <thead><tr>
+          <th>الاسم</th><th>الرقم الوظيفي</th><th>نوع الدوام</th>
+          <th>أيام مجدولة</th><th>ساعات عمل</th>
+        </tr></thead>
+        <tbody>
+          ${emps.map(emp => {
+            const id       = emp.employee_id;
+            const days     = schedByEmp[id] || {};
+            const dayCount = Object.keys(days).length;
+            const workedH  = emp._totals?.workedHours ? emp._totals.workedHours.toFixed(1) + 'h' : '—';
+            const safeId   = encodeURIComponent(id);
+            return `<tr onclick="showEmpSchedule(decodeURIComponent('${safeId}'))" style="cursor:pointer">
+              <td class="emp-name-cell">${emp.name}</td>
+              <td style="font-family:monospace;font-size:.8rem">${id}</td>
+              <td><span class="shift-badge">${emp.shift_type || '8hr'}</span></td>
+              <td style="font-weight:700;color:${dayCount>0?'#2E8B57':'#9C7078'}">${dayCount > 0 ? dayCount + ' يوم' : '—'}</td>
+              <td style="font-size:.8rem;color:#5C0A15">${workedH}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+function closeDepDetail() {
+  document.getElementById('main-view').style.display   = 'block';
+  document.getElementById('detail-view').style.display = 'none';
+  document.getElementById('topbar-title').textContent  = 'الأقسام';
+  document.getElementById('topbar-meta').textContent   = `${MONTHS[CUR_MONTH-1]} ${CUR_YEAR}`;
+}
+
+// ── EMPLOYEE SCHEDULE MODAL ──
+function showEmpSchedule(empId) {
+  const rec     = (window._empSchedMap || {})[empId] || {};
+  const days    = rec.days || {};
+  const empName = rec.name || empId;
+  const daysInMonth = new Date(CUR_YEAR, CUR_MONTH, 0).getDate();
+
+  document.getElementById('emp-sched-title').textContent = `📋 جدول ${empName} — ${MONTHS[CUR_MONTH-1]} ${CUR_YEAR}`;
+
+  let html = `<div style="font-size:.78rem;color:#9C7078;margin-bottom:.5rem">الرقم الوظيفي: ${empId}</div>`;
+  html += '<div class="sched-grid">';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const code = days[String(d)];   // keys stored as strings
+    const cls  = !code ? 'no-data' : (code === 'OFF' || code === 'اوف') ? 'off' : '';
+    html += `<div class="sched-day ${cls}">
+      <div class="sched-day-num">${d}</div>
+      <div class="sched-day-code">${code || '—'}</div>
+    </div>`;
+  }
+  html += '</div>';
+
+  if (!Object.keys(days).length) {
+    html += `<div class="alert-box alert-warn" style="margin-top:.75rem">
+      <span>⚠️</span> لم يُرفع جدول لهذا الموظف في ${MONTHS[CUR_MONTH-1]} ${CUR_YEAR}
+    </div>`;
+  }
+
+  document.getElementById('emp-sched-body').innerHTML = html;
+  document.getElementById('emp-sched-modal').classList.add('open');
+}
+function closeDepDetail() {
+  document.getElementById('main-view').style.display   = 'block';
+  document.getElementById('detail-view').style.display = 'none';
+  document.getElementById('topbar-title').textContent  = 'الأقسام';
+  document.getElementById('topbar-meta').textContent   = `${MONTHS[CUR_MONTH-1]} ${CUR_YEAR}`;
+}
+
+
+// ── ADD / EDIT DEP MODAL ──
+function openAddDepModal() {
+  document.getElementById('dep-modal-title').textContent = '➕ إضافة قسم';
+  document.getElementById('dep-modal-id').value    = '';
+  document.getElementById('dep-modal-name').value  = '';
+  document.getElementById('dep-modal-chair').value = '';
+  document.getElementById('dep-modal-email').value = '';
+  document.getElementById('dep-modal').classList.add('open');
+}
+
+function openEditDep(depId) {
+  const dep = allDeps.find(d => d.id === depId);
+  if (!dep) return;
+  document.getElementById('dep-modal-title').textContent = '✏️ تعديل القسم';
+  document.getElementById('dep-modal-id').value    = dep.id;
+  document.getElementById('dep-modal-name').value  = dep.name;
+  document.getElementById('dep-modal-chair').value = dep.chairman_name || '';
+  document.getElementById('dep-modal-email').value = dep.chairman_email || '';
+  document.getElementById('dep-modal').classList.add('open');
+}
+
+function closeDepModal() {
+  document.getElementById('dep-modal').classList.remove('open');
+}
+
+async function saveDepModal() {
+  const id    = document.getElementById('dep-modal-id').value;
+  const name  = document.getElementById('dep-modal-name').value.trim();
+  const chair = document.getElementById('dep-modal-chair').value.trim();
+  const email = document.getElementById('dep-modal-email').value.trim();
+  if (!name) { showToast('أدخل اسم القسم', 'warning'); return; }
+
+  const client = await getSb();
+  const payload = { name, chairman_name: chair || null, chairman_email: email || null };
+
+  let err;
+  if (id) {
+    ({ error: err } = await client.from('departments').update(payload).eq('id', id));
+  } else {
+    ({ error: err } = await client.from('departments').insert(payload));
+  }
+  if (err) { showToast('فشل الحفظ: ' + err.message, 'danger'); return; }
+  closeDepModal();
+  showToast(id ? '✅ تم تعديل القسم' : '✅ تم إضافة القسم', 'success');
+  loadAll();
+}
+
+// ── UPLOAD MODAL ──
+function openUploadModal(depId) {
+  uploadTargetDep = allDeps.find(d => d.id === depId) || null;
+  parsedData      = null;
+
+  // Reset to step 1
+  document.getElementById('upload-step1').style.display = 'block';
+  document.getElementById('upload-step2').style.display = 'none';
+  document.getElementById('upload-save-btn').style.display = 'none';
+  document.getElementById('upload-back-btn').style.display = 'none';
+  document.getElementById('file-input').value = '';
+
+  // Show dep pill
+  const pill = document.getElementById('upload-dep-pill');
+  if (uploadTargetDep) {
+    document.getElementById('upload-dep-pill-name').textContent = uploadTargetDep.name;
+    pill.style.display = 'flex';
+    document.getElementById('upload-modal-title').textContent = `📤 رفع جدول — ${uploadTargetDep.name}`;
+  } else {
+    pill.style.display = 'none';
+    document.getElementById('upload-modal-title').textContent = '📤 رفع جدول القسم';
+  }
+
+  // Sync month selector
+  document.getElementById('upload-month').value = CUR_MONTH;
+  document.getElementById('upload-year').value  = CUR_YEAR;
+
+  document.getElementById('upload-modal').classList.add('open');
+}
+
+function closeUploadModal() {
+  document.getElementById('upload-modal').classList.remove('open');
+}
+
+function uploadBack() {
+  document.getElementById('upload-step1').style.display = 'block';
+  document.getElementById('upload-step2').style.display = 'none';
+  document.getElementById('upload-save-btn').style.display = 'none';
+  document.getElementById('upload-back-btn').style.display = 'none';
+  parsedData = null;
+}
+
+// Drag & Drop
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) parseFile(e.dataTransfer.files[0]);
+});
+
+// ── PARSE EXCEL ──
+function parseFile(file) {
+  if (!file?.name.match(/\.xlsx?$/i)) { showToast('يرجى اختيار ملف Excel', 'warning'); return; }
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb   = XLSX.read(e.target.result, { type: 'array' });
+      const ws   = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+
+      // ── Auto-detect header row ───────────────────────────────────────
+      // Scans for the row containing both an ID-type column AND day number 1
+      let headerRowIdx = -1;
+      let colSN=0, colID=1, colNAME=4, colDAYSTART=6;
+
+      for (let r = 0; r < Math.min(rows.length, 10); r++) {
+        const row = rows[r] || [];
+        const hasDay1 = row.slice(4).some(v => v === 1 || v === '1');
+        const hasId   = row.some(v => String(v||'').match(/^(S\/N|SN|PH\s*ID|ID)$/i));
+        if (hasDay1 && hasId) { headerRowIdx = r; break; }
+      }
+
+      if (headerRowIdx >= 0) {
+        const hdr = rows[headerRowIdx] || [];
+        for (let c = 0; c < hdr.length; c++) {
+          const v = String(hdr[c]||'').trim().toUpperCase().replace(/\s+/g,'');
+          if (v === 'S/N' || v === 'SN')                        colSN       = c;
+          if (v === 'PHID' || v === 'ID' || v === 'EMPLOYEEID') colID       = c;
+          if (v === 'NAME')                                       colNAME     = c;
+          if ((hdr[c] === 1 || hdr[c] === '1') && c > 4 && colDAYSTART === 6) colDAYSTART = c;
+        }
+      }
+
+      const dataStartRow = headerRowIdx >= 0 ? headerRowIdx + 2 : 4;
+      const skipVals = new Set([
+        'full','part','full time','part time','fulltime','parttime',
+        'iraqi','foreign','egyptian','nationality','name','employee',
+        'full or part time','full or part'
+      ]);
+
+      const employees = [];
+      for (let r = dataStartRow; r < rows.length; r++) {
+        const row = rows[r];
+        if (!row || row.every(v => v == null)) continue;
+        const snVal = row[colSN];
+        const empId = row[colID]   != null ? String(row[colID]).trim()   : null;
+        const name  = row[colNAME] != null ? String(row[colNAME]).trim() : null;
+        if (snVal == null || isNaN(Number(snVal))) continue;
+        if (!name || skipVals.has(name.toLowerCase())) continue;
+        if (!empId || empId === '0') continue;
+        const days = {};
+        for (let d = 0; d < 31; d++) {
+          const val = row[colDAYSTART + d];
+          const vs  = val != null ? String(val).trim() : '';
+          if (vs && vs !== '0' && /^[A-Za-zأ-ي][A-Za-z0-9أ-ي\/\-]*$/.test(vs)) days[d+1] = vs;
+        }
+        employees.push({ id: empId, name, days });
+      }
+
+      if (!employees.length) { showToast('لم يُعثر على موظفين في الملف', 'danger'); return; }
+
+      const month = +document.getElementById('upload-month').value || CUR_MONTH;
+      const year  = +document.getElementById('upload-year').value  || CUR_YEAR;
+
+      parsedData = { employees, month, year, fileName: file.name };
+      showUploadPreview(parsedData);
+
+    } catch(err) {
+      console.error(err);
+      showToast('فشل قراءة الملف: ' + err.message, 'danger');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function showUploadPreview(data) {
+  // Shift distribution
+  const dist = {};
+  data.employees.forEach(emp => Object.values(emp.days).forEach(c => {
+    if (c) dist[c] = (dist[c]||0)+1;
+  }));
+  const distHtml = Object.entries(dist).sort((a,b)=>b[1]-a[1]).slice(0,10)
+    .map(([k,v]) => `<span class="shift-tag">${k}: ${v}</span>`).join('');
+
+  document.getElementById('upload-ok-msg').innerHTML =
+    `✅ تم قراءة الملف بنجاح — <strong>${data.fileName}</strong>`;
+
+  document.getElementById('upload-preview').innerHTML = `
+    <div class="preview-row">
+      <span class="preview-label">عدد الموظفين</span>
+      <span class="preview-val">${data.employees.length} موظف</span>
+    </div>
+    <div class="preview-row">
+      <span class="preview-label">الشهر</span>
+      <span class="preview-val">${MONTHS[data.month-1]} ${data.year}</span>
+    </div>
+    <div class="preview-row">
+      <span class="preview-label">القسم</span>
+      <span class="preview-val">${uploadTargetDep?.name || '—'}</span>
+    </div>
+    <div class="sep"></div>
+    <div style="font-size:.76rem;color:#5C3840;font-weight:700;margin-bottom:.4rem">توزيع الشيفتات:</div>
+    <div class="shift-dist">${distHtml}</div>
+    <div style="max-height:140px;overflow-y:auto;margin-top:.75rem;border:1px solid #EDD8DB;border-radius:8px">
+      <table style="font-size:.76rem">
+        <thead><tr><th>الاسم</th><th>الرقم</th><th>أيام</th></tr></thead>
+        <tbody>${data.employees.slice(0,15).map(e => `
+          <tr><td>${e.name}</td>
+              <td style="font-family:monospace">${e.id||'—'}</td>
+              <td style="color:#2E8B57;font-weight:700">${Object.keys(e.days).length}</td>
+          </tr>`).join('')}
+          ${data.employees.length>15?`<tr><td colspan="3" style="text-align:center;color:#9C7078">... و ${data.employees.length-15} آخرين</td></tr>`:''}
+        </tbody>
+      </table>
+    </div>`;
+
+  document.getElementById('upload-step1').style.display  = 'none';
+  document.getElementById('upload-step2').style.display  = 'block';
+  document.getElementById('upload-save-btn').style.display = 'inline-flex';
+  document.getElementById('upload-back-btn').style.display = 'inline-flex';
+}
+
+// ── SAVE SCHEDULE ──
+async function saveSchedule() {
+  if (!parsedData || !uploadTargetDep) { showToast('بيانات ناقصة', 'warning'); return; }
+
+  const btn = document.getElementById('upload-save-btn');
+  btn.disabled = true; btn.textContent = '⏳ جاري الحفظ...';
+
+  try {
+    const { month, year, employees } = parsedData;
+    const depId   = uploadTargetDep.id;
+    const depName = uploadTargetDep.name;
+
+    // De-duplicate employees by ID (keep last occurrence)
+    const empMap = {};
+    employees.forEach(e => { if (e.id) empMap[String(e.id).trim()] = e; });
+    const uniqueEmployees = Object.values(empMap);
+
+    // Send to Laravel API — handles delete + re-insert + employee upsert atomically
+    const result = await hrApi.uploadSchedule(depId, depName, month, year,
+      uniqueEmployees.map(e => ({
+        employee_id: String(e.id).trim(),
+        name:        e.name.trim(),
+        days:        e.days,
+      }))
+    );
+
+    closeUploadModal();
+    showToast(`✅ تم رفع جدول ${uniqueEmployees.length} موظف — ${result.schedule_rows} خلية`, 'success');
+    loadAll();
+
+  } catch(err) {
+    console.error(err);
+    showToast('فشل الحفظ: ' + (err.message||err), 'danger');
+  } finally {
+    btn.disabled = false; btn.textContent = '💾 حفظ الجدول';
+  }
+}
+
+// ── REMINDERS ──
+async function sendReminder(depId) {
+  const dep = allDeps.find(d => d.id === depId);
+  if (!dep?.chairman_email) { showToast('لا يوجد بريد إلكتروني لهذا القسم', 'warning'); return; }
+  try {
+    const result = await hrApi.sendReminder(depId, CUR_MONTH, CUR_YEAR);
+    showToast(result.success ? `📧 تم الإرسال إلى ${dep.chairman_email}` : (result.message||'فشل الإرسال'), result.success ? 'success' : 'danger');
+  } catch(e) { showToast('فشل الإرسال: ' + e.message, 'danger'); }
+}
+
+async function sendAllReminders() {
+  const pending = allDeps.filter(d => !d._uploaded && d.chairman_email);
+  if (!pending.length) { showToast('لا يوجد أقسام متأخرة لديها بريد إلكتروني', 'warning'); return; }
+  try {
+    const result = await hrApi.sendAllReminders(CUR_MONTH, CUR_YEAR);
+    showToast(`✅ تم إرسال ${result.sent} تذكير`, 'success');
+  } catch(e) { showToast('فشل الإرسال: ' + e.message, 'danger'); }
+}
+
+// ── HELPERS ──
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('ar-IQ', {day:'numeric',month:'short',year:'numeric'});
+}
+
+function showToast(msg, type='success') {
+  const el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = `toast toast-${type} on`;
+  setTimeout(() => el.classList.remove('on'), 2800);
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(ov => {
+  ov.addEventListener('click', e => {
+    if (e.target === ov) ov.classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>

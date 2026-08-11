@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MonthlySchedule extends Model
 {
-    protected $table = 'monthly_schedules';
+    use HasFactory;
 
     protected $fillable = [
         'department_id',
@@ -18,6 +20,14 @@ class MonthlySchedule extends Model
 
     protected $casts = [
         'month' => 'integer',
-        'year'  => 'integer',
+        'year' => 'integer',
     ];
+
+    /**
+     * Get the department
+     */
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
+    }
 }
