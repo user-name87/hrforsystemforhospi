@@ -186,6 +186,24 @@ const hrApi = {
     return apiPost('/violations', data);
   },
 
+  // ── DAILY VIOLATION REPORT (07:00 → 06:00 attendance day) ─────
+  async getDailyViolations(date, params = {}) {
+    const q = new URLSearchParams(params).toString();
+    return apiGet(`/daily-violations/${date}${q ? '?' + q : ''}`);
+  },
+
+  async generateDailyViolations(date, params = {}) {
+    return apiPost(`/daily-violations/${date}/generate`, params);
+  },
+
+  async notifyDailyViolations(date, params = {}) {
+    return apiPost(`/daily-violations/${date}/notify`, params);
+  },
+
+  async getViolationMessage(violationId) {
+    return apiGet(`/daily-violations/message/${violationId}`);
+  },
+
   // ── DISCIPLINARY ──────────────────────────────────────────────
   async getDisciplinary(employeeId) {
     return apiGet(`/disciplinary/${employeeId}`);

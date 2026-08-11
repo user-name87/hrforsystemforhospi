@@ -15,6 +15,7 @@
     { sect: { ar: 'العمليات', en: 'Operations' } },
     { href: 'Al-Mujtaba_HR_Attendance_System.html', icon: '📊', ar: 'التقارير والرفع', en: 'Reports & Upload' },
     { href: 'daily-attendance.html', icon: '📅', ar: 'الموقف اليومي', en: 'Daily Status' },
+    { href: 'daily-violations.html', icon: '⚠️', ar: 'المخالفات اليومية', en: 'Daily Violations' },
     { href: 'disciplinary-action.html', icon: '⚖️', ar: 'الإجراءات التأديبية', en: 'Disciplinary' },
     { href: 'forms.html', icon: '📋', ar: 'النماذج الرسمية', en: 'Official Forms' }
   ];

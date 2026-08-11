@@ -8,8 +8,8 @@ use App\Models\Fingerprint;
 use App\Models\Leave;
 use App\Models\ShiftException;
 use App\Models\DutyCarryover;
+use App\Support\ViolationPolicy;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 
 /**
  * AttendanceCalculatorService
@@ -23,13 +23,11 @@ class AttendanceCalculatorService
     // Shift codes considered as "off / no work expected"
     private const OFF_CODES = ['O', 'OFF', 'H', 'HOL', 'V', 'VAC', 'R', 'REST'];
 
-    // Late thresholds in minutes (for violation categorisation)
-    private const LATE_TIER_1 = 15;
-    private const LATE_TIER_2 = 30;
-    private const LATE_TIER_3 = 60;
-
     // Maximum allowed hours per day (base + OT combined)
     private const MAX_DAILY_HOURS = 12;
+
+    // Anything shorter than a full hour beyond the shift is not paid as overtime.
+    private const MIN_OT_MINUTES = 60;
 
     /**
      * Main entry point.
@@ -178,29 +176,18 @@ class AttendanceCalculatorService
             $punchCalc = $this->calcPunches($punches);
             $workedMin = $punchCalc['workedMin'];
 
-            // Get expected start time from schedule code
-            $expectedStart = $this->getExpectedStart($schedCode);
+            $expectedIn  = ShiftWindow::expectedStartAt($date, $schedCode);
+            $expectedOut = ShiftWindow::expectedEndAt($date, $schedCode, $effectiveShiftHours);
+            $firstPunch  = $punches[0];
+            $lastPunch   = end($punches);
 
-            // Late calculation
-            $lateMin = 0;
-            if ($expectedStart && $punchCalc['checkIn']) {
-                $checkInTime = Carbon::createFromFormat('H:i', $punchCalc['checkIn']);
-                $expected    = Carbon::createFromFormat('H:i', $expectedStart);
-                $lateMin     = max(0, $checkInTime->diffInMinutes($expected, false) * -1);
-                // diffInMinutes(false) = negative if checkIn is AFTER expected
-                $lateMin     = max(0, $checkInTime->diffInMinutes($expected) * ($checkInTime->gt($expected) ? 1 : 0));
-            }
+            $lateMin = $expectedIn && $firstPunch->gt($expectedIn)
+                ? (int) $expectedIn->diffInMinutes($firstPunch)
+                : 0;
 
-            // Early leave calculation
-            $earlyMin = 0;
-            $expectedEnd = $this->getExpectedEnd($schedCode, $effectiveShiftHours);
-            if ($expectedEnd && $punchCalc['checkOut']) {
-                $checkOutTime = Carbon::createFromFormat('H:i', $punchCalc['checkOut']);
-                $expectedEndTime = Carbon::createFromFormat('H:i', $expectedEnd);
-                if ($checkOutTime->lt($expectedEndTime)) {
-                    $earlyMin = $checkOutTime->diffInMinutes($expectedEndTime);
-                }
-            }
+            $earlyMin = $expectedOut && $punchCalc['checkOut'] && $lastPunch->lt($expectedOut)
+                ? (int) $lastPunch->diffInMinutes($expectedOut)
+                : 0;
 
             // OT calculation for standard shift employees (7/8hr)
             $otMin = 0;
@@ -209,6 +196,9 @@ class AttendanceCalculatorService
                 // Cap: total (base + OT) cannot exceed MAX_DAILY_HOURS
                 $maxOtAllowed = (self::MAX_DAILY_HOURS * 60) - $effectiveShiftMin;
                 $otMin = min($rawOt, $maxOtAllowed);
+                if ($otMin < self::MIN_OT_MINUTES) {
+                    $otMin = 0;
+                }
             }
 
             if ($lateMin > 0) {
@@ -252,7 +242,7 @@ class AttendanceCalculatorService
 
         // ── 6. Required hours ────────────────────────────────────────────
         // Working days = scheduled days (not off)
-        $workingDays   = count(array_filter($days, fn($d) => !in_array($d['status'], ['off'])));
+        $workingDays   = count(array_filter($days, fn($d) => !in_array($d['status'], ['off', 'off_with_work'])));
         $requiredMin   = $workingDays * $effectiveShiftMin;
 
         // For residents / specialists: use contract hours if available
@@ -386,41 +376,30 @@ class AttendanceCalculatorService
         ];
     }
 
-    // ── Punch pair → check-in, check-out, worked minutes ─────────────────
+    /**
+     * First / last punch of an attendance day and the minutes between them.
+     * The punches already carry their date, so an overnight shift needs no fixing up.
+     *
+     * @param  array<int,Carbon>  $punches
+     */
     private function calcPunches(array $punches): array
     {
         if (empty($punches)) {
             return ['checkIn' => null, 'checkOut' => null, 'workedMin' => 0];
         }
 
-        // Sort punches by time
-        usort($punches, fn($a, $b) => strcmp($a->punch_time, $b->punch_time));
-
-        $first = $punches[0]->punch_time;
-        $last  = end($punches)->punch_time;
+        $first = $punches[0];
+        $last  = end($punches);
 
         if (count($punches) === 1) {
             // Only one punch — can't calculate worked time reliably
-            return ['checkIn' => $first, 'checkOut' => null, 'workedMin' => 0];
+            return ['checkIn' => $first->format('H:i'), 'checkOut' => null, 'workedMin' => 0];
         }
-
-        $checkIn  = substr($first, 0, 5);
-        $checkOut = substr($last, 0, 5);
-
-        $inCarbon  = Carbon::createFromFormat('H:i', $checkIn);
-        $outCarbon = Carbon::createFromFormat('H:i', $checkOut);
-
-        // Handle overnight shifts (e.g. night shift 22:00 → 06:00)
-        if ($outCarbon->lt($inCarbon)) {
-            $outCarbon->addDay();
-        }
-
-        $workedMin = $inCarbon->diffInMinutes($outCarbon);
 
         return [
-            'checkIn'   => $checkIn,
-            'checkOut'  => $checkOut,
-            'workedMin' => $workedMin,
+            'checkIn'   => $first->format('H:i'),
+            'checkOut'  => $last->format('H:i'),
+            'workedMin' => (int) $first->diffInMinutes($last),
         ];
     }
 
@@ -438,47 +417,43 @@ class AttendanceCalculatorService
     private function buildViolationSummary(array $days, Employee $employee): array
     {
         $violations = [];
+
         foreach ($days as $day) {
             if ($day['lateMin'] > 0) {
-                $tier = $this->lateTier($day['lateMin']);
-                $violations[] = [
-                    'date' => $day['date'],
-                    'type' => 'late',
-                    'minutes' => $day['lateMin'],
-                    'tier'    => $tier,
-                    'description' => $this->lateTierDescription($tier),
-                ];
+                $violations[] = $this->summaryRow($day['date'], 'late', $day['lateMin']);
             }
+
+            if ($day['earlyMin'] > 0) {
+                $violations[] = $this->summaryRow($day['date'], 'early_leave', $day['earlyMin']);
+            }
+
             if ($day['status'] === 'absent') {
                 $violations[] = [
-                    'date' => $day['date'],
-                    'type' => 'absent',
-                    'minutes' => 0,
-                    'tier' => null,
-                    'description' => 'غياب بدون إذن',
+                    'date'        => $day['date'],
+                    'type'        => 'absent',
+                    'minutes'     => 0,
+                    'tier'        => null,
+                    'article'     => ViolationPolicy::article(null),
+                    'description' => ViolationPolicy::typeLabel('absent'),
                 ];
             }
         }
+
         return $violations;
     }
 
-    private function lateTier(int $minutes): int
+    private function summaryRow(string $date, string $type, int $minutes): array
     {
-        if ($minutes <= self::LATE_TIER_1) return 1;
-        if ($minutes <= self::LATE_TIER_2) return 2;
-        if ($minutes <= self::LATE_TIER_3) return 3;
-        return 4;
-    }
+        $row = ViolationPolicy::rowForMinutes($minutes);
 
-    private function lateTierDescription(int $tier): string
-    {
-        return match($tier) {
-            1 => 'تأخير حتى 15 دقيقة',
-            2 => 'تأخير 15-30 دقيقة',
-            3 => 'تأخير 30-60 دقيقة',
-            4 => 'تأخير أكثر من 60 دقيقة',
-            default => '—',
-        };
+        return [
+            'date'        => $date,
+            'type'        => $type,
+            'minutes'     => $minutes,
+            'tier'        => $row,
+            'article'     => ViolationPolicy::article($row),
+            'description' => ViolationPolicy::rowDescription($row),
+        ];
     }
 
     // ── Data loaders ──────────────────────────────────────────────────────
@@ -492,20 +467,38 @@ class AttendanceCalculatorService
             ->toArray();
     }
 
+    /**
+     * Punches grouped by the attendance day they belong to (07:00 → 06:00 next
+     * morning), so a night shift keeps its check-out on the day it started.
+     *
+     * @return array<int,array<int,Carbon>> day of month => punch moments
+     */
     private function loadFingerprints(string $empId, int $month, int $year): array
     {
+        $firstDay = Carbon::create($year, $month, 1)->startOfDay();
+        $lastDay  = $firstDay->copy()->endOfMonth();
+
         $punches = Fingerprint::where('employee_id', $empId)
-            ->where('month', $month)
-            ->where('year', $year)
-            ->orderBy('punch_date')
-            ->orderBy('punch_time')
+            ->whereBetween('punch_date', [
+                $firstDay->copy()->subDay()->toDateString(),
+                $lastDay->copy()->addDay()->toDateString(),
+            ])
             ->get();
 
         $byDay = [];
         foreach ($punches as $p) {
-            $day = (int)$p->punch_date->day;
-            $byDay[$day][] = $p;
+            $moment = Carbon::parse($p->punch_date->toDateString() . ' ' . $p->punch_time);
+            $day    = ShiftWindow::dayFor($moment);
+
+            if ($day->month !== $month || $day->year !== $year) continue;
+
+            $byDay[$day->day][] = $moment;
         }
+
+        foreach ($byDay as &$moments) {
+            usort($moments, fn (Carbon $a, Carbon $b) => $a <=> $b);
+        }
+
         return $byDay;
     }
 
@@ -538,27 +531,6 @@ class AttendanceCalculatorService
             ->where('applied_month', $month)
             ->where('applied_year', $year)
             ->first();
-    }
-
-    // ── Schedule code → expected times ───────────────────────────────────
-    // These are example times — adjust to your hospital's actual shift times
-    private function getExpectedStart(string $code): ?string
-    {
-        return match(strtoupper(trim($code))) {
-            'M', 'ص', 'S'  => '07:00',  // Morning
-            'E', 'م', 'A'  => '14:00',  // Afternoon/Evening
-            'N', 'ل', 'L'  => '21:00',  // Night
-            '12', 'D'       => '07:00',  // 12-hour day
-            default          => null,
-        };
-    }
-
-    private function getExpectedEnd(string $code, float $shiftHours): ?string
-    {
-        $start = $this->getExpectedStart($code);
-        if (!$start) return null;
-        $startCarbon = Carbon::createFromFormat('H:i', $start);
-        return $startCarbon->addHours($shiftHours)->format('H:i');
     }
 
     private function isOff(?string $code): bool

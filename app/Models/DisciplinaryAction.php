@@ -15,11 +15,14 @@ class DisciplinaryAction extends Model
         'action_type',
         'severity',
         'note',
+        'penalty',
         'created_by',
+        'notified_at',
     ];
 
     protected $casts = [
         'severity' => 'string',
+        'notified_at' => 'datetime',
     ];
 
     /**

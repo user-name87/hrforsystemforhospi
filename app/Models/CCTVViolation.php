@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CCTVViolation extends Model
 {
+    protected $table = 'cctv_violations';
+
     use HasFactory;
 
     protected $fillable = [

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تقرير المخالفات اليومي — مستشفى الإمام الحسن المجتبى (ع)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/hr-theme.css">
+<script defer src="assets/hr-shell.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal','Segoe UI',Arial,sans-serif;background:#FAF7F7;color:#2A1218;min-height:100vh;font-size:15px}
+.topbar{background:#fff;border-bottom:1px solid #EDD8DB;padding:.75rem 1.4rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(92,10,21,.07)}
+.topbar-title{font-size:.98rem;font-weight:800;color:#5C0A15}
+.topbar-meta{font-size:.73rem;color:#9C7078;margin-top:1px}
+.topbar-actions{display:flex;gap:.55rem;align-items:center;flex-wrap:wrap}
+.page-content{padding:1.3rem 1.5rem}
+.card{background:#fff;border:1px solid #EDD8DB;border-radius:14px;box-shadow:0 2px 8px rgba(92,10,21,.07);padding:1rem 1.25rem;margin-bottom:1rem}
+.card-title{font-size:.9rem;font-weight:800;color:#8C1320;margin-bottom:.7rem}
+.btn{font-family:'Tajawal',sans-serif;font-weight:700;font-size:.82rem;padding:.48rem 1rem;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;transition:all .15s;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,#C01C2C,#8C1320);color:#fff;box-shadow:0 3px 10px rgba(192,28,44,.25)}
+.btn-ghost{background:#fff;color:#8C1320;border:1px solid #DFC0C5}
+.btn-success{background:linear-gradient(135deg,#2E8B57,#1C6640);color:#fff}
+.btn-sm{font-size:.74rem;padding:.33rem .75rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.form-label{display:block;font-size:.75rem;font-weight:700;color:#8C1320;margin-bottom:.3rem}
+.form-control{font-family:'Tajawal',sans-serif;font-size:.84rem;padding:.45rem .7rem;border:1px solid #DFC0C5;border-radius:8px;background:#fff;color:#2A1218}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.8rem;margin-bottom:1rem}
+.kpi{background:#fff;border:1px solid #EDD8DB;border-radius:12px;padding:.85rem 1rem}
+.kpi-val{font-size:1.5rem;font-weight:900;color:#8C1320}
+.kpi-lbl{font-size:.74rem;color:#9C7078;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{background:#F5E6E8;color:#5C0A15;font-weight:800;padding:.5rem .6rem;text-align:start;white-space:nowrap}
+td{padding:.5rem .6rem;border-top:1px solid #F0E2E4;vertical-align:middle}
+tbody tr:hover{background:#FDF7F8}
+.tag{display:inline-block;font-size:.7rem;font-weight:800;padding:.15rem .5rem;border-radius:999px}
+.tag-late{background:#FEF3C7;color:#92400E}
+.tag-early{background:#DBEAFE;color:#1E40AF}
+.tag-absent{background:#FEE2E2;color:#991B1B}
+.tag-disciplinary{background:#EDE9FE;color:#5B21B6}
+.tag-sent{background:#DCFCE7;color:#166534}
+.tag-pending{background:#F1F5F9;color:#475569}
+.empty{padding:2rem;text-align:center;color:#9C7078;font-weight:700}
+.msg-box{white-space:pre-wrap;background:#FDF7F8;border:1px solid #EDD8DB;border-radius:10px;padding:.8rem;font-size:.8rem;line-height:1.7;margin-top:.6rem}
+.toast{position:fixed;bottom:1.2rem;inset-inline-start:1.2rem;background:#2A1218;color:#fff;padding:.7rem 1.1rem;border-radius:10px;font-size:.83rem;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:2000}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+  <div class="content-cell">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="t-title">⚠️ تقرير المخالفات اليومي</div>
+        <div class="topbar-meta" id="t-window">دورة الحضور من 07:00 صباحاً حتى 06:00 من صباح اليوم التالي</div>
+      </div>
+      <div class="topbar-actions">
+        <input type="date" id="f-date" class="form-control">
+        <select id="f-dept" class="form-control"><option value="">كل الأقسام</option></select>
+        <select id="f-type" class="form-control">
+          <option value="">كل المخالفات</option>
+          <option value="late">تأخير</option>
+          <option value="early_leave">ترك مبكر</option>
+          <option value="absent">غياب</option>
+          <option value="disciplinary">انضباطية</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" id="btn-generate">🔄 احتساب اليوم</button>
+        <button class="btn btn-primary btn-sm" id="btn-notify">📲 إرسال الإشعارات</button>
+      </div>
+    </div>
+
+    <div class="page-content">
+      <div class="kpis" id="kpis"></div>
+      <div class="card">
+        <div class="card-title" id="t-table">سجل المخالفات</div>
+        <div id="table-host"><div class="empty">اختر التاريخ ثم اضغط «احتساب اليوم».</div></div>
+      </div>
+      <div class="card" id="preview-card" style="display:none">
+        <div class="card-title">معاينة رسالة الواتساب</div>
+        <div class="msg-box" id="preview-body"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="supabase.js"></script>
+<script>
+/* Daily violation report — every number here comes from the Laravel attendance
+   engine, which judges the 07:00 → 06:00 window of the selected date. */
+(function () {
+  'use strict';
+
+  var TXT = {
+    ar: {
+      title: '⚠️ تقرير المخالفات اليومي',
+      window: 'دورة الحضور من 07:00 صباحاً حتى 06:00 من صباح اليوم التالي',
+      table: 'سجل المخالفات',
+      allDepts: 'كل الأقسام', allTypes: 'كل المخالفات',
+      generate: '🔄 احتساب اليوم', notify: '📲 إرسال الإشعارات',
+      empty: 'لا توجد مخالفات في هذا اليوم.',
+      cols: ['الموظف','الرقم الوظيفي','القسم','المخالفة','الدقائق','المادة','التكرار','الجزاء','الحالة','الرسالة'],
+      kpis: { total: 'مجموع المخالفات', late: 'تأخير', early_leave: 'ترك مبكر', absent: 'غياب', disciplinary: 'انضباطية', notified: 'تم الإشعار' },
+      types: { late: 'تأخير', early_leave: 'ترك مبكر', absent: 'غياب', disciplinary: 'انضباطية' },
+      sent: 'تم الإرسال', pending: 'بانتظار الإرسال', view: 'عرض'
+    },
+    en: {
+      title: '⚠️ Daily Violation Report',
+      window: 'Attendance day runs 07:00 → 06:00 the next morning',
+      table: 'Violations',
+      allDepts: 'All departments', allTypes: 'All violations',
+      generate: '🔄 Recalculate day', notify: '📲 Send notifications',
+      empty: 'No violations on this day.',
+      cols: ['Employee','ID','Department','Violation','Minutes','Article','Occurrence','Penalty','Status','Message'],
+      kpis: { total: 'Total violations', late: 'Late', early_leave: 'Early leave', absent: 'Absent', disciplinary: 'Disciplinary', notified: 'Notified' },
+      types: { late: 'Late', early_leave: 'Early leave', absent: 'Absent', disciplinary: 'Disciplinary' },
+      sent: 'Sent', pending: 'Pending', view: 'View'
+    }
+  };
+
+  var state = { report: null, lang: 'ar' };
+
+  function t() { return TXT[state.lang]; }
+  function el(id) { return document.getElementById(id); }
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+  }); }
+
+  function note(text) {
+    var box = el('toast');
+    box.textContent = text;
+    box.classList.add('show');
+    setTimeout(function () { box.classList.remove('show'); }, 2600);
+  }
+
+  function filters() {
+    var params = {};
+    if (el('f-dept').value) params.department_id = el('f-dept').value;
+    if (el('f-type').value) params.violation_type = el('f-type').value;
+    return params;
+  }
+
+  function renderKpis(summary) {
+    el('kpis').innerHTML = Object.keys(t().kpis).map(function (key) {
+      return '<div class="kpi"><div class="kpi-val">' + (summary[key] || 0) + '</div>' +
+             '<div class="kpi-lbl">' + t().kpis[key] + '</div></div>';
+    }).join('');
+  }
+
+  function renderTable(rows) {
+    if (!rows.length) {
+      el('table-host').innerHTML = '<div class="empty">' + t().empty + '</div>';
+      return;
+    }
+
+    var head = '<tr>' + t().cols.map(function (c) { return '<th>' + c + '</th>'; }).join('') + '</tr>';
+
+    var body = rows.map(function (r) {
+      var typeTag = '<span class="tag tag-' + (r.violation_type === 'early_leave' ? 'early' : r.violation_type) + '">' +
+                    (t().types[r.violation_type] || r.type_label) + '</span>';
+      var status = r.notified
+        ? '<span class="tag tag-sent">' + t().sent + '</span>'
+        : '<span class="tag tag-pending">' + t().pending + '</span>';
+      var action = r.source_table === 'violations'
+        ? '<button class="btn btn-ghost btn-sm" data-msg="' + r.id + '">' + t().view + '</button>'
+        : '—';
+
+      return '<tr>' +
+        '<td>' + esc(r.employee_name) + '</td>' +
+        '<td>' + esc(r.employee_id) + '</td>' +
+        '<td>' + esc(r.department) + '</td>' +
+        '<td>' + typeTag + '</td>' +
+        '<td>' + (r.minutes || 0) + '</td>' +
+        '<td>' + esc(r.article) + '</td>' +
+        '<td>' + (r.occurrence || '—') + '</td>' +
+        '<td>' + esc(r.penalty) + '</td>' +
+        '<td>' + status + '</td>' +
+        '<td>' + action + '</td>' +
+      '</tr>';
+    }).join('');
+
+    el('table-host').innerHTML = '<div style="overflow-x:auto"><table><thead>' + head +
+                                 '</thead><tbody>' + body + '</tbody></table></div>';
+
+    el('table-host').querySelectorAll('[data-msg]').forEach(function (btn) {
+      btn.addEventListener('click', function () { showMessage(btn.dataset.msg); });
+    });
+  }
+
+  async function showMessage(violationId) {
+    try {
+      var preview = await hrApi.getViolationMessage(violationId);
+      el('preview-card').style.display = '';
+      el('preview-body').textContent = preview.message;
+      el('preview-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } catch (e) { note(e.message); }
+  }
+
+  async function load() {
+    try {
+      state.report = await hrApi.getDailyViolations(el('f-date').value, filters());
+      renderKpis(state.report.summary);
+      renderTable(state.report.violations);
+      el('t-window').textContent = state.report.window.from + ' → ' + state.report.window.to;
+    } catch (e) {
+      note(e.message);
+      el('table-host').innerHTML = '<div class="empty">' + esc(e.message) + '</div>';
+    }
+  }
+
+  async function generate() {
+    el('btn-generate').disabled = true;
+    try {
+      var result = await hrApi.generateDailyViolations(el('f-date').value, filters());
+      note(result.generated + ' / ' + result.report.summary.total);
+      await load();
+    } catch (e) { note(e.message); }
+    el('btn-generate').disabled = false;
+  }
+
+  async function notifyAll() {
+    el('btn-notify').disabled = true;
+    try {
+      var result = await hrApi.notifyDailyViolations(el('f-date').value, filters());
+      note(result.sent + ' / ' + result.total);
+      await load();
+    } catch (e) { note(e.message); }
+    el('btn-notify').disabled = false;
+  }
+
+  async function loadDepartments() {
+    try {
+      var departments = await hrApi.getDepartments();
+      (departments.data || []).forEach(function (d) {
+        el('f-dept').appendChild(new Option(d.name, d.id));
+      });
+    } catch (e) { /* the filter simply stays on "all departments" */ }
+  }
+
+  function applyLang(lang) {
+    state.lang = lang === 'en' ? 'en' : 'ar';
+    el('t-title').textContent = t().title;
+    el('t-table').textContent = t().table;
+    el('f-dept').options[0].text = t().allDepts;
+    el('f-type').options[0].text = t().allTypes;
+    el('btn-generate').textContent = t().generate;
+    el('btn-notify').textContent = t().notify;
+    if (state.report) { renderKpis(state.report.summary); renderTable(state.report.violations); }
+    else el('table-host').innerHTML = '<div class="empty">' + t().empty + '</div>';
+  }
+
+  // The day only closes at 06:00, so yesterday is the sensible default.
+  var yesterday = new Date(Date.now() - 86400000);
+  el('f-date').value = yesterday.toISOString().slice(0, 10);
+
+  el('btn-generate').addEventListener('click', generate);
+  el('btn-notify').addEventListener('click', notifyAll);
+  ['f-date', 'f-dept', 'f-type'].forEach(function (id) {
+    el(id).addEventListener('change', load);
+  });
+  document.addEventListener('hr:lang', function (e) { applyLang(e.detail.lang); load(); });
+
+  applyLang((window.hrShell && window.hrShell.lang) || 'ar');
+  loadDepartments();
+  load();
+})();
+</script>
+</body>
+</html>

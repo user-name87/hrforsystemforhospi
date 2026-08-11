@@ -13,10 +13,15 @@ class Violation extends Model
     protected $fillable = [
         'employee_id',
         'violation_category',
+        'violation_type',
         'violation_row',
+        'minutes',
+        'source',
         'incident_date',
         'occurrence_number',
         'penalty',
+        'status',
+        'notified_at',
         'notes',
     ];
 
@@ -24,6 +29,8 @@ class Violation extends Model
         'incident_date' => 'date',
         'violation_row' => 'integer',
         'occurrence_number' => 'integer',
+        'minutes' => 'integer',
+        'notified_at' => 'datetime',
     ];
 
     /**

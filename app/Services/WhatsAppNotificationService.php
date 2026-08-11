@@ -4,205 +4,244 @@ namespace App\Services;
 
 use App\Models\Employee;
 use App\Models\Violation;
+use App\Models\WhatsAppLog;
+use App\Support\ViolationPolicy;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Sends the Arabic violation / disciplinary notifications over the WhatsApp
+ * Business Platform and records every attempt in the HR audit log.
+ *
+ * With WHATSAPP_ENABLED=false the message is still rendered and logged with the
+ * status "dry_run", so HR can review the exact text before the API is wired up.
+ */
 class WhatsAppNotificationService
 {
     private string $apiUrl;
-    private string $apiKey;
-    private string $senderNumber;
+    private ?string $apiKey;
+    private ?string $senderNumber;
+    private bool $enabled;
+    private int $timeout;
 
     public function __construct()
     {
-        $this->apiUrl = config('services.whatsapp.api_url', 'https://graph.facebook.com/v18.0');
-        $this->apiKey = config('services.whatsapp.api_key');
-        $this->senderNumber = config('services.whatsapp.sender_number');
+        $this->apiUrl       = (string) config('whatsapp.api_url', 'https://graph.facebook.com/v18.0');
+        $this->apiKey       = config('whatsapp.api_key');
+        $this->senderNumber = config('whatsapp.sender_number');
+        $this->enabled      = (bool) config('whatsapp.enabled', false);
+        $this->timeout      = (int) config('whatsapp.timeout', 30);
     }
 
-    /**
-     * Send violation notification to employee
-     */
     public function sendViolationNotification(Employee $employee, Violation $violation): array
     {
-        $phoneNumber = $this->formatPhoneNumber($employee->phone_number);
-        
-        if (!$phoneNumber) {
-            return [
-                'success' => false,
-                'message' => 'Employee phone number not available or invalid',
-            ];
-        }
-
-        $message = $this->buildViolationMessage($employee, $violation);
-
-        try {
-            $response = $this->sendWhatsAppMessage($phoneNumber, $message);
-
-            // Log the notification
-            Log::info('WhatsApp violation notification sent', [
-                'employee_id' => $employee->employee_id,
-                'violation_id' => $violation->id,
-                'phone' => $phoneNumber,
-                'response' => $response,
-            ]);
-
-            return [
-                'success' => true,
-                'message' => 'WhatsApp notification sent successfully',
-                'response' => $response,
-            ];
-        } catch (\Exception $e) {
-            Log::error('WhatsApp notification failed', [
-                'employee_id' => $employee->employee_id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return [
-                'success' => false,
-                'message' => 'Failed to send WhatsApp notification: ' . $e->getMessage(),
-            ];
-        }
+        return $this->deliver(
+            $employee,
+            $this->buildViolationMessage($employee, $violation),
+            'violation',
+            Violation::class,
+            $violation->id
+        );
     }
 
-    /**
-     * Send disciplinary action notification
-     */
     public function sendDisciplinaryNotification(Employee $employee, array $disciplinaryAction): array
     {
-        $phoneNumber = $this->formatPhoneNumber($employee->phone_number);
-        
-        if (!$phoneNumber) {
-            return [
-                'success' => false,
-                'message' => 'Employee phone number not available or invalid',
-            ];
-        }
-
-        $message = $this->buildDisciplinaryMessage($employee, $disciplinaryAction);
-
-        try {
-            $response = $this->sendWhatsAppMessage($phoneNumber, $message);
-
-            Log::info('WhatsApp disciplinary notification sent', [
-                'employee_id' => $employee->employee_id,
-                'action_type' => $disciplinaryAction['action_type'],
-                'phone' => $phoneNumber,
-                'response' => $response,
-            ]);
-
-            return [
-                'success' => true,
-                'message' => 'WhatsApp disciplinary notification sent successfully',
-                'response' => $response,
-            ];
-        } catch (\Exception $e) {
-            Log::error('WhatsApp disciplinary notification failed', [
-                'employee_id' => $employee->employee_id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return [
-                'success' => false,
-                'message' => 'Failed to send WhatsApp notification: ' . $e->getMessage(),
-            ];
-        }
+        return $this->deliver(
+            $employee,
+            $this->buildDisciplinaryMessage($employee, $disciplinaryAction),
+            'disciplinary',
+            $disciplinaryAction['type'] ?? null,
+            $disciplinaryAction['id'] ?? null
+        );
     }
 
     /**
-     * Send bulk daily violation notifications
+     * Notify every employee in a set of violations.
+     *
+     * @param  iterable<Violation>  $violations
      */
-    public function sendDailyViolationNotifications(array $violations): array
+    public function sendDailyViolationNotifications(iterable $violations): array
     {
         $results = [];
-        
+
         foreach ($violations as $violation) {
-            $employee = Employee::where('employee_id', $violation['employee_id'])->first();
-            if ($employee) {
-                $violationModel = Violation::find($violation['id']);
-                if ($violationModel) {
-                    $results[] = $this->sendViolationNotification($employee, $violationModel);
-                }
+            $employee = $violation->employee ?? Employee::where('employee_id', $violation->employee_id)->first();
+
+            if (!$employee) {
+                $results[] = [
+                    'success'     => false,
+                    'employee_id' => $violation->employee_id,
+                    'message'     => 'Employee not found',
+                ];
+                continue;
             }
+
+            $result = $this->sendViolationNotification($employee, $violation);
+
+            if ($result['success']) {
+                $violation->forceFill([
+                    'status'      => 'notified',
+                    'notified_at' => now(),
+                ])->save();
+            }
+
+            $results[] = $result + ['employee_id' => $employee->employee_id];
         }
 
         return [
-            'total' => count($violations),
-            'sent' => count(array_filter($results, fn($r) => $r['success'])),
-            'failed' => count(array_filter($results, fn($r) => !$r['success'])),
+            'total'   => count($results),
+            'sent'    => count(array_filter($results, fn ($r) => $r['success'])),
+            'failed'  => count(array_filter($results, fn ($r) => !$r['success'])),
             'results' => $results,
         ];
     }
 
-    /**
-     * Build Arabic violation message template
-     */
+    /** Renders the message an employee would receive without contacting WhatsApp. */
+    public function previewViolationMessage(Employee $employee, Violation $violation): array
+    {
+        return [
+            'employee_id' => $employee->employee_id,
+            'phone'       => $this->formatPhoneNumber($employee->phone_number),
+            'message'     => $this->buildViolationMessage($employee, $violation),
+        ];
+    }
+
+    private function deliver(
+        Employee $employee,
+        string $message,
+        string $kind,
+        ?string $referenceType = null,
+        ?int $referenceId = null
+    ): array {
+        $phoneNumber = $this->formatPhoneNumber($employee->phone_number);
+
+        $log = WhatsAppLog::create([
+            'employee_id'    => $employee->employee_id,
+            'phone_number'   => $phoneNumber,
+            'kind'           => $kind,
+            'reference_type' => $referenceType,
+            'reference_id'   => $referenceId,
+            'message'        => $message,
+            'status'         => 'queued',
+        ]);
+
+        if (!$phoneNumber) {
+            $log->update(['status' => 'failed', 'error' => 'رقم الهاتف غير متوفر أو غير صالح']);
+
+            return [
+                'success' => false,
+                'message' => 'Employee phone number not available or invalid',
+                'log_id'  => $log->id,
+            ];
+        }
+
+        if (!$this->enabled || !$this->apiKey || !$this->senderNumber) {
+            $log->update(['status' => 'dry_run', 'sent_at' => now()]);
+            Log::info('WhatsApp dry run', ['employee_id' => $employee->employee_id, 'kind' => $kind]);
+
+            return [
+                'success'   => true,
+                'dry_run'   => true,
+                'message'   => 'WhatsApp is disabled — message rendered and logged only',
+                'body'      => $message,
+                'phone'     => $phoneNumber,
+                'log_id'    => $log->id,
+            ];
+        }
+
+        try {
+            $response = $this->sendWhatsAppMessage($phoneNumber, $message);
+
+            $log->update([
+                'status'              => 'sent',
+                'provider_message_id' => $response['messages'][0]['id'] ?? null,
+                'sent_at'             => now(),
+            ]);
+
+            return [
+                'success'  => true,
+                'message'  => 'WhatsApp notification sent successfully',
+                'response' => $response,
+                'log_id'   => $log->id,
+            ];
+        } catch (\Exception $e) {
+            $log->update(['status' => 'failed', 'error' => $e->getMessage()]);
+            Log::error('WhatsApp notification failed', [
+                'employee_id' => $employee->employee_id,
+                'error'       => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Failed to send WhatsApp notification: ' . $e->getMessage(),
+                'log_id'  => $log->id,
+            ];
+        }
+    }
+
     private function buildViolationMessage(Employee $employee, Violation $violation): string
     {
         $violationDate = \Carbon\Carbon::parse($violation->incident_date)->format('Y/m/d');
-        $articleNumber = $this->getArticleNumber($violation->violation_row);
-        
+        $article       = ViolationPolicy::article($violation->violation_row);
+        $type          = ViolationPolicy::typeLabel($violation->violation_type ?? '', $violation->violation_row);
+        $details       = $violation->notes ?: ($violation->violation_category ?? '—');
+
         return <<<MESSAGE
-مرحباً {$employee->name}،
-نود إعلامكم بأنه تم تسجيل مخالفة وظيفية بحقكم وفقاً لسجلات الحضور واللوائح المعتمدة لدى المؤسسة.
-تفاصيل المخالفة:
-• الرقم الوظيفي: {$employee->employee_id}
-• نوع المخالفة: {$this->getViolationTypeDescription($violation)}
-• تاريخ المخالفة: {$violationDate}
-• تفاصيل المخالفة: {$violation->notes ?? '—'}
-• المادة: {$articleNumber}
-الجزاء المترتب:
-{$violation->penalty}
-تم تسجيل المخالفة والجزاء في نظام الموارد البشرية وفقاً للائحة المخالفات والجزاءات المعتمدة.
-في حال كان لديكم اعتراض أو ملاحظات على المخالفة، يرجى اتباع إجراءات الاعتراض المعتمدة لدى إدارة الموارد البشرية.
-مع كامل الاحترام،
-فريق الموارد البشرية
-MESSAGE;
+        مرحباً {$employee->name}،
+        نود إعلامكم بأنه تم تسجيل مخالفة وظيفية بحقكم وفقاً لسجلات الحضور واللوائح المعتمدة لدى المؤسسة.
+        تفاصيل المخالفة:
+        • الرقم الوظيفي: {$employee->employee_id}
+        • نوع المخالفة: {$type}
+        • تاريخ المخالفة: {$violationDate}
+        • تفاصيل المخالفة: {$details}
+        • المادة: {$article}
+        الجزاء المترتب:
+        {$violation->penalty}
+        تم تسجيل المخالفة والجزاء في نظام الموارد البشرية وفقاً للائحة المخالفات والجزاءات المعتمدة.
+        في حال كان لديكم اعتراض أو ملاحظات على المخالفة، يرجى اتباع إجراءات الاعتراض المعتمدة لدى إدارة الموارد البشرية.
+        مع كامل الاحترام،
+        فريق الموارد البشرية
+        MESSAGE;
     }
 
-    /**
-     * Build disciplinary action message
-     */
     private function buildDisciplinaryMessage(Employee $employee, array $action): string
     {
         $severityMap = [
-            'low' => 'منخفضة',
+            'low'    => 'منخفضة',
             'medium' => 'متوسطة',
-            'high' => 'عالية',
+            'high'   => 'عالية',
         ];
-        $severityText = $severityMap[$action['severity']] ?? '—';
+        $severityText = $severityMap[$action['severity'] ?? ''] ?? '—';
+        $penalty      = $action['penalty'] ?? 'يتم تحديد الجزاء من قبل إدارة الموارد البشرية';
 
         return <<<MESSAGE
-مرحباً {$employee->name}،
-نود إعلامكم بأنه تم تسجيل إجراء تأديبي بحقكم من قبل إدارة الموارد البشرية.
-تفاصيل الإجراء:
-• الرقم الوظيفي: {$employee->employee_id}
-• نوع الإجراء: {$action['action_type']}
-• درجة الخطورة: {$severityText}
-• ملاحظات: {$action['note']}
-تم تسجيل الإجراء في ملفكم الوظيفي وفقاً للوائح المعتمدة.
-في حال كان لديكم اعتراض، يرجى مراجعة إدارة الموارد البشرية.
-مع كامل الاحترام،
-فريق الموارد البشرية
-MESSAGE;
+        مرحباً {$employee->name}،
+        نود إعلامكم بأنه تم تسجيل مخالفة انضباطية بحقكم من قبل إدارة الموارد البشرية.
+        تفاصيل المخالفة:
+        • الرقم الوظيفي: {$employee->employee_id}
+        • نوع المخالفة: {$action['action_type']}
+        • درجة الخطورة: {$severityText}
+        • تفاصيل المخالفة: {$action['note']}
+        الجزاء المترتب:
+        {$penalty}
+        تم تسجيل المخالفة والجزاء في ملفكم الوظيفي وفقاً للائحة المخالفات والجزاءات المعتمدة.
+        في حال كان لديكم اعتراض أو ملاحظات، يرجى مراجعة إدارة الموارد البشرية.
+        مع كامل الاحترام،
+        فريق الموارد البشرية
+        MESSAGE;
     }
 
-    /**
-     * Send actual WhatsApp message via API
-     */
     private function sendWhatsAppMessage(string $phoneNumber, string $message): array
     {
-        // Using WhatsApp Business API format
         $payload = [
             'messaging_product' => 'whatsapp',
-            'to' => $phoneNumber,
-            'type' => 'text',
-            'text' => [
-                'body' => $message,
-            ],
+            'to'                => $phoneNumber,
+            'type'              => 'text',
+            'text'              => ['body' => $message],
         ];
 
         $response = Http::withToken($this->apiKey)
+            ->timeout($this->timeout)
             ->post("{$this->apiUrl}/{$this->senderNumber}/messages", $payload);
 
         if (!$response->successful()) {
@@ -212,74 +251,23 @@ MESSAGE;
         return $response->json();
     }
 
-    /**
-     * Format phone number for WhatsApp (ensure it has country code)
-     */
+    /** Iraqi mobile numbers in any local notation → +9647XXXXXXXXX. */
     private function formatPhoneNumber(?string $phone): ?string
     {
         if (!$phone) return null;
 
-        // Remove all non-numeric characters
-        $phone = preg_replace('/[^0-9]/', '', $phone);
+        $digits = preg_replace('/\D/', '', $phone);
 
-        // Handle Iraq phone numbers
-        // Iraq numbers: 07701234567 (11 digits) or 0770123456 (10 digits)
-        // Should become: +9647701234567 (13 digits total)
-        
-        // If starts with 07, remove the 0
-        if (substr($phone, 0, 2) === '07') {
-            $phone = substr($phone, 1);
-        }
-        
-        // If starts with 7 and has 10-11 digits, add Iraq country code
-        if (substr($phone, 0, 1) === '7' && (strlen($phone) === 10 || strlen($phone) === 11)) {
-            $phone = '964' . $phone;
+        if (str_starts_with($digits, '00964')) {
+            $digits = substr($digits, 5);
+        } elseif (str_starts_with($digits, '964')) {
+            $digits = substr($digits, 3);
+        } elseif (str_starts_with($digits, '0')) {
+            $digits = substr($digits, 1);
         }
 
-        // Add + for international format
-        if (substr($phone, 0, 1) !== '+') {
-            $phone = '+' . $phone;
-        }
+        $number = '+' . config('whatsapp.default_country_code', '964') . $digits;
 
-        // Validate phone number format (basic validation for Iraq: +9647XXXXXXXXX)
-        if (!preg_match('/^\+9647\d{9}$/', $phone)) {
-            return null;
-        }
-
-        return $phone;
-    }
-
-    /**
-     * Get violation type description in Arabic
-     */
-    private function getViolationTypeDescription(Violation $violation): string
-    {
-        $descriptions = [
-            1 => 'التأخير لغاية 15 دقيقة',
-            2 => 'التأخير 15–30 دقيقة',
-            3 => 'التأخير 30–60 دقيقة',
-            4 => 'التأخير أكثر من 60 دقيقة',
-            5 => 'التأثير على سير العمل',
-            6 => 'الخروج وترك العمل دون إذن',
-        ];
-
-        return $descriptions[$violation->violation_row] ?? ($violation->violation_category ?? 'مخالفة وظيفية');
-    }
-
-    /**
-     * Get article number based on violation row
-     */
-    private function getArticleNumber(int $row): string
-    {
-        $articles = [
-            1 => 'المادة الأولى',
-            2 => 'المادة الثانية',
-            3 => 'المادة الثالثة',
-            4 => 'المادة الرابعة',
-            5 => 'المادة الخامسة',
-            6 => 'المادة السادسة',
-        ];
-
-        return $articles[$row] ?? '—';
+        return preg_match('/^\+9647\d{9}$/', $number) ? $number : null;
     }
 }

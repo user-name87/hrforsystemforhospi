@@ -23,7 +23,8 @@ return [
     |--------------------------------------------------------------------------
     */
     
-    'enabled' => env('WHATSAPP_ENABLED', true),
+    // When false the message is rendered and audited but never sent.
+    'enabled' => env('WHATSAPP_ENABLED', false),
     
     'default_country_code' => '964', // Iraq
     

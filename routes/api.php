@@ -12,6 +12,7 @@ use App\Http\Controllers\API\ViolationController;
 use App\Http\Controllers\API\ReportController;
 use App\Http\Controllers\API\DutyCarryoverController;
 use App\Http\Controllers\API\CCTVViolationController;
+use App\Http\Controllers\API\DailyViolationController;
 use App\Http\Controllers\API\GeneralManagerController;
 
 /*
@@ -127,6 +128,12 @@ Route::get   ('cctv-violations/daily/{date}',                 [CCTVViolationCont
 Route::put   ('cctv-violations/{id}',                         [CCTVViolationController::class, 'update']);
 Route::delete('cctv-violations/{id}',                         [CCTVViolationController::class, 'destroy']);
 Route::post  ('cctv-violations/{id}/convert-to-leave',        [CCTVViolationController::class, 'convertToUnpaidLeave']);
+
+// ── DAILY VIOLATION REPORT (07:00 → 06:00 attendance day) ───────────────
+Route::get   ('daily-violations/message/{violationId}',       [DailyViolationController::class, 'previewMessage']);
+Route::get   ('daily-violations/{date}',                      [DailyViolationController::class, 'index']);
+Route::post  ('daily-violations/{date}/generate',             [DailyViolationController::class, 'generate']);
+Route::post  ('daily-violations/{date}/notify',               [DailyViolationController::class, 'notify']);
 
 // ── GENERAL MANAGER DASHBOARD ──────────────────────────────────────────────
 Route::get   ('gm/dashboard',                                  [GeneralManagerController::class, 'dashboard']);
