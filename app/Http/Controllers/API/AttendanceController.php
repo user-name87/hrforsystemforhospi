@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\Fingerprint;
 use App\Models\Leave;
+use App\Models\CCTVViolation;
 use App\Services\AttendanceCalculatorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -163,5 +164,106 @@ class AttendanceController extends Controller
         if (in_array($raw, ['pending_gm', 'gm', 'موافق hr'])) return 'pending_gm';
         if (in_array($raw, ['rejected', 'مرفوض'])) return 'rejected';
         return 'pending_dept'; // default = not yet approved
+    }
+
+    // GET /api/attendance/daily-position/{date}?department_id=
+    // Get daily position report (الموقف اليومي) including CCTV violations as unpaid leave
+    public function getDailyPositionReport(string $date, Request $request): JsonResponse
+    {
+        $dateObj = Carbon::parse($date);
+        $month = $dateObj->month;
+        $year = $dateObj->year;
+
+        $query = Employee::with('department');
+
+        if ($request->filled('department_id')) {
+            $query->where('department_id', $request->department_id);
+        }
+
+        $employees = $query->get();
+
+        // Get CCTV violations for this date with salary deductions
+        $cctvViolations = CCTVViolation::whereDate('violation_date', $date)
+            ->where('penalty_days', '>', 0)
+            ->get()
+            ->keyBy('employee_id');
+
+        // Get all leaves for this date
+        $leaves = Leave::whereDate('leave_date', $date)
+            ->where('status', 'approved')
+            ->get()
+            ->keyBy('employee_id');
+
+        // Get fingerprints for this date
+        $fingerprints = Fingerprint::whereDate('punch_date', $date)
+            ->get()
+            ->groupBy('employee_id');
+
+        $results = [];
+        $stats = [
+            'total_staff' => $employees->count(),
+            'actual_attendance' => 0,
+            'absences' => 0,
+            'leaves_with_salary' => 0,
+            'leaves_without_salary' => 0,
+            'cctv_deductions' => 0,
+        ];
+
+        foreach ($employees as $emp) {
+            $empId = $emp->employee_id;
+            $hasLeave = isset($leaves[$empId]);
+            $hasCCTV = isset($cctvViolations[$empId]);
+            $hasPunches = isset($fingerprints[$empId]) && count($fingerprints[$empId]) > 0;
+
+            $status = 'present';
+            $leaveType = null;
+            $notes = null;
+
+            if ($hasCCTV) {
+                // CCTV violation with salary deduction = unpaid leave
+                $status = 'unpaid_leave_cctv';
+                $leaveType = 'unpaid';
+                $notes = 'إجازة بدون راتب - مخالفة CCTV: ' . $cctvViolations[$empId]->description;
+                $stats['leaves_without_salary']++;
+                $stats['cctv_deductions']++;
+            } elseif ($hasLeave) {
+                $leave = $leaves[$empId];
+                $status = 'leave';
+                $leaveType = $leave->leave_type;
+                $notes = $leave->leave_type;
+                
+                if ($leave->leave_type === 'unpaid') {
+                    $stats['leaves_without_salary']++;
+                } else {
+                    $stats['leaves_with_salary']++;
+                }
+            } elseif (!$hasPunches) {
+                $status = 'absent';
+                $stats['absences']++;
+            } else {
+                $stats['actual_attendance']++;
+            }
+
+            $results[] = [
+                'employee_id' => $empId,
+                'name' => $emp->name,
+                'department' => $emp->department?->name ?? '—',
+                'status' => $status,
+                'leave_type' => $leaveType,
+                'notes' => $notes,
+                'check_in' => $hasPunches ? $fingerprints[$empId]->first()->punch_time : null,
+                'check_out' => $hasPunches ? $fingerprints[$empId]->last()->punch_time : null,
+                'cctv_violation' => $hasCCTV ? [
+                    'description' => $cctvViolations[$empId]->description,
+                    'penalty_days' => $cctvViolations[$empId]->penalty_days,
+                ] : null,
+            ];
+        }
+
+        return response()->json([
+            'date' => $date,
+            'statistics' => $stats,
+            'employees' => $results,
+        ]);
     }
 }

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DutyCarryover extends Model
 {
-    protected $table = 'duty_carryover';
+    use HasFactory;
 
     protected $fillable = [
         'employee_id',
@@ -19,13 +20,16 @@ class DutyCarryover extends Model
     ];
 
     protected $casts = [
+        'from_month' => 'integer',
+        'from_year' => 'integer',
         'surplus_shifts' => 'integer',
-        'from_month'     => 'integer',
-        'from_year'      => 'integer',
-        'applied_month'  => 'integer',
-        'applied_year'   => 'integer',
+        'applied_month' => 'integer',
+        'applied_year' => 'integer',
     ];
 
+    /**
+     * Get the employee
+     */
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');

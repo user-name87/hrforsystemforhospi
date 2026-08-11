@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الاستثناءات — مستشفى الإمام الحسن المجتبى (ع)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/hr-theme.css">
+<script defer src="assets/hr-shell.js"></script>
+<style>
+/* LAYOUT — fixed sidebar + offset come from assets/hr-theme.css */
+
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal','Segoe UI',Arial,sans-serif;background:#FAF7F7;color:#2A1218;direction:rtl;min-height:100vh;font-size:15px}
+
+/* ── LAYOUT ── */
+
+
+
+/* ── SIDEBAR ── */
+
+
+
+
+
+
+
+
+
+
+
+/* ── TOPBAR ── */
+.topbar{background:#fff;border-bottom:1px solid #EDD8DB;padding:.75rem 1.4rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(92,10,21,.07)}
+.topbar-title{font-size:.98rem;font-weight:800;color:#5C0A15}
+.topbar-meta{font-size:.73rem;color:#9C7078;margin-top:1px}
+.topbar-actions{display:flex;gap:.55rem}
+
+/* ── PAGE CONTENT ── */
+.page-content{padding:1.3rem 1.5rem}
+
+/* ── TABS ── */
+.tabs-bar{display:flex;border-bottom:2px solid #EDD8DB;margin-bottom:1.2rem;overflow-x:auto;gap:2px}
+.tab-btn{background:none;border:none;padding:.58rem 1.1rem;font-family:'Tajawal',sans-serif;font-size:.88rem;font-weight:700;color:#9C7078;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .15s}
+.tab-btn:hover{color:#C01C2C}
+.tab-btn.active{color:#8C1320;border-bottom-color:#C01C2C;font-weight:800}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ── CARDS ── */
+.card{background:#fff;border:1px solid #EDD8DB;border-radius:14px;box-shadow:0 2px 8px rgba(92,10,21,.07);padding:1rem 1.25rem;margin-bottom:1rem}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;padding-bottom:.6rem;border-bottom:1px solid #EDD8DB}
+.card-title{font-size:.9rem;font-weight:800;color:#8C1320;display:flex;align-items:center;gap:.38rem}
+
+/* ── BUTTONS ── */
+.btn{font-family:'Tajawal',sans-serif;font-weight:700;font-size:.82rem;padding:.48rem 1rem;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;text-decoration:none;transition:all .15s;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,#C01C2C,#8C1320);color:#fff;box-shadow:0 3px 10px rgba(192,28,44,.25)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(192,28,44,.35)}
+.btn-ghost{background:#fff;color:#8C1320;border:1px solid #DFC0C5}
+.btn-ghost:hover{background:#F5E6E8;border-color:#E8C5CA}
+.btn-success{background:linear-gradient(135deg,#2E8B57,#1C6640);color:#fff}
+.btn-sm{font-size:.74rem;padding:.33rem .75rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ── FORMS ── */
+.form-label{display:block;font-size:.75rem;font-weight:700;color:#8C1320;margin-bottom:.3rem}
+.form-control{width:100%;font-family:'Tajawal',sans-serif;font-size:.84rem;padding:.48rem .78rem;border:1px solid #DFC0C5;border-radius:8px;background:#fff;color:#2A1218;transition:border .15s,box-shadow .15s;direction:rtl}
+.form-control:focus{outline:none;border-color:#C01C2C;box-shadow:0 0 0 3px rgba(192,28,44,.1)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.form-group{margin-bottom:.8rem}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto;border-radius:10px;border:1px solid #EDD8DB}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+thead th{background:linear-gradient(135deg,#5C0A15,#8C1320);color:#fff;padding:.58rem .8rem;text-align:right;font-weight:700;font-size:.72rem;white-space:nowrap}
+tbody tr{border-bottom:1px solid #EDD8DB;transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#F5E6E8}
+tbody td{padding:.58rem .8rem;color:#5C3840;vertical-align:middle}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;padding:.17rem .52rem;border-radius:100px;font-size:.68rem;font-weight:700;white-space:nowrap}
+.badge-info{background:#E6F3FA;color:#1A6FA0}
+.badge-success{background:#E8F5EE;color:#2E8B57}
+.badge-danger{background:#F5E6E8;color:#C01C2C}
+.badge-warning{background:#FEF9E7;color:#B8860B}
+.badge-muted{background:#F0ECF0;color:#9C7078}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:2.5rem 1rem;color:#9C7078}
+.empty-icon{font-size:2.5rem;margin-bottom:.6rem;opacity:.35}
+.empty-title{font-size:.9rem;font-weight:700;color:#5C3840}
+
+/* ── INFO BOX ── */
+.info-box{background:#E6F3FA;border:1px solid #BDE0F5;border-radius:10px;padding:.85rem 1rem;margin-bottom:.9rem;font-size:.83rem;color:#1A6FA0;line-height:1.7}
+.info-box.warn{background:#FEF9E7;border-color:#F0D080;color:#7A5A10}
+.info-box.green{background:#E8F5EE;border-color:#A8DFC4;color:#1C6640}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(42,18,24,.55);z-index:500;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:18px;padding:1.45rem;width:100%;max-width:540px;box-shadow:0 20px 60px rgba(92,10,21,.22);max-height:92vh;overflow-y:auto}
+.modal-title{font-size:.98rem;font-weight:800;color:#8C1320;margin-bottom:.95rem}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.3rem;left:50%;transform:translateX(-50%) translateY(16px);padding:.6rem 1.25rem;border-radius:12px;font-weight:700;font-size:.84rem;opacity:0;transition:all .25s;z-index:9999;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast-success{background:#2E8B57;color:#fff}
+.toast-danger{background:#C01C2C;color:#fff}
+
+/* ── KPI ── */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.65rem;margin-bottom:1rem}
+.kpi-box{background:#fff;border:1px solid #EDD8DB;border-radius:12px;padding:.72rem .9rem;text-align:center}
+.kpi-val{font-size:1.6rem;font-weight:900;color:#8C1320;line-height:1}
+.kpi-lbl{font-size:.66rem;color:#9C7078;margin-top:.2rem;font-weight:600}
+
+/* Progress bar */
+.progress-bar{height:8px;background:#EDD8DB;border-radius:4px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;border-radius:4px;transition:.3s}</style>
+</head>
+<body>
+<div class="page-wrapper">
+  <!-- SIDEBAR -->
+  <!-- CONTENT -->
+  <div class="content-cell">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">🏥 الاستثناءات</div>
+        <div class="topbar-meta">المقيمون · الأطباء الأخصائيون · واجب الكيمياء</div>
+      </div>
+      <div class="topbar-actions">
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <label style="font-size:.76rem;font-weight:700;color:#8C1320">الشهر:</label>
+          <select id="glob-month" class="form-control" style="width:auto;padding:.32rem .6rem">
+            <option value="1">يناير</option><option value="2">فبراير</option>
+            <option value="3">مارس</option><option value="4">أبريل</option>
+            <option value="5">مايو</option><option value="6">يونيو</option>
+            <option value="7">يوليو</option><option value="8">أغسطس</option>
+            <option value="9">سبتمبر</option><option value="10">أكتوبر</option>
+            <option value="11">نوفمبر</option><option value="12">ديسمبر</option>
+          </select>
+          <select id="glob-year" class="form-control" style="width:auto;padding:.32rem .6rem">
+            <option value="2024">2024</option><option value="2025">2025</option>
+            <option value="2026" selected>2026</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content">
+      <!-- MAIN TABS -->
+      <div class="tabs-bar">
+        <button class="tab-btn active" data-tab="residents">👨‍⚕️ المقيمون</button>
+        <button class="tab-btn" data-tab="specialists">🩺 الأخصائيون</button>
+        <button class="tab-btn" data-tab="chemo">⚗️ واجب الكيمياء / المزج</button>
+        <button class="tab-btn" data-tab="shift-exc">⚡ استثناءات الوردية</button>
+      </div>
+
+      <!-- ═══════════ TAB 1: RESIDENTS ═══════════ -->
+      <div class="tab-panel active" id="tab-residents">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">👨‍⚕️ عقود الأطباء المقيمين</div>
+            <button class="btn btn-primary btn-sm" onclick="openContractModal('resident')">+ إضافة عقد</button>
+          </div>
+          <div class="info-box">
+            الأطباء المقيمون يُحسب حضورهم بالساعات فقط، مقارنةً بالساعات المتفق عليها في العقد الشهري. لا يُطبق نظام الورديات عليهم.
+            <br><strong>المعادلة:</strong> إجمالي ساعات الحضور الفعلية ≥ ساعات العقد الشهري = مكتمل.
+          </div>
+          <div id="residents-contracts-list">
+            <div class="empty-state"><div class="empty-icon">👨‍⚕️</div><div class="empty-title">جاري التحميل...</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📊 ملخص حضور المقيمين — <span id="res-month-label">—</span></div>
+            <button class="btn btn-ghost btn-sm" onclick="loadResidentsSummary()">🔄 تحديث</button>
+          </div>
+          <div id="residents-summary">
+            <div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">اضغط «تحديث» لعرض ملخص الشهر</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ TAB 2: SPECIALISTS ═══════════ -->
+      <div class="tab-panel" id="tab-specialists">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🩺 عقود الأطباء الأخصائيين</div>
+            <button class="btn btn-primary btn-sm" onclick="openContractModal('specialist')">+ إضافة عقد</button>
+          </div>
+          <div class="info-box">
+            الأطباء الأخصائيون يُحسب حضورهم بالساعات الفعلية مقابل الساعات المتفق عليها شهرياً في العقد. يمكن أن تختلف ساعات العقد من طبيب لآخر.
+          </div>
+          <div id="specialists-contracts-list">
+            <div class="empty-state"><div class="empty-icon">🩺</div><div class="empty-title">جاري التحميل...</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📊 ملخص حضور الأخصائيين — <span id="spec-month-label">—</span></div>
+            <button class="btn btn-ghost btn-sm" onclick="loadSpecialistsSummary()">🔄 تحديث</button>
+          </div>
+          <div id="specialists-summary">
+            <div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">اضغط «تحديث» لعرض ملخص الشهر</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ TAB 3: CHEMO/MIX ═══════════ -->
+      <div class="tab-panel" id="tab-chemo">
+        <div class="info-box warn">
+          <strong>⚗️ واجب تحضير الكيمياء (Chemo Mixing)</strong><br>
+          موظفو أقسام BMT البالغين وPED البالغين الذين يؤدون واجب تحضير الكيمياء يحصلون على تخفيض في أيام دوامهم إلى <strong>23 يوماً شهرياً</strong> بدلاً من 26.
+          <br>الوردية الفعلية: <strong>7 ساعات</strong> (بدلاً من 8 ساعات) حتى في حالة كتابة 8 ساعات في الجدول.
+          <br><strong>المعادلة:</strong> ساعات مطلوبة = 7 ساعة × 23 يوم = <strong>161 ساعة</strong>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">⚗️ موظفو واجب الكيمياء — <span id="chemo-month-label">—</span></div>
+            <div style="display:flex;gap:.45rem">
+              <button class="btn btn-ghost btn-sm" onclick="autoDetectChemo()">🔍 اكتشاف تلقائي</button>
+              <button class="btn btn-primary btn-sm" onclick="openChemoModal()">+ إضافة يدوي</button>
+            </div>
+          </div>
+
+          <div class="info-box" style="margin-bottom:.85rem">
+            يمكن استخدام <strong>الاكتشاف التلقائي</strong> لفحص ملف الجدول المرفوع وتحديد الموظفين الذين لديهم أيام دوام أقل من 26 يوماً تلقائياً.
+          </div>
+
+          <div class="form-row" style="margin-bottom:.85rem">
+            <div class="form-group" style="margin:0">
+              <label class="form-label">القسم</label>
+              <select id="chemo-dept-filter" class="form-control" onchange="loadChemoDuty()">
+                <option value="">-- جميع الأقسام --</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="chemo-duty-list">
+            <div class="empty-state"><div class="empty-icon">⚗️</div><div class="empty-title">جاري التحميل...</div></div>
+          </div>
+        </div>
+
+        <!-- Email confirmation section -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📧 إرسال تأكيد البريد الإلكتروني</div>
+          </div>
+          <p style="font-size:.82rem;color:#9C7078;margin-bottom:.75rem">
+            إرسال بريد إلكتروني لرؤساء الأقسام لتأكيد تخفيض الأيام بسبب واجب الكيمياء.
+          </p>
+          <button class="btn btn-primary" onclick="sendAllChemoEmails()">📧 إرسال للجميع</button>
+        </div>
+      </div>
+
+      <!-- ═══════════ TAB 4: SHIFT EXCEPTIONS ═══════════ -->
+      <div class="tab-panel" id="tab-shift-exc">
+        <div class="info-box">
+          <strong>⚡ استثناءات الوردية الشهرية</strong><br>
+          إذا كانت وردية الموظف الرسمية 8 ساعات لكن لهذا الشهر صارت 7 ساعات — سجّل ذلك هنا.
+          النظام سيحسب كل أيام الشهر على أساس الساعات الجديدة بدلاً من ساعات الوردية الأصلية.
+          <br><strong>تأثير:</strong> يغير إجمالي الساعات المطلوبة وحساب الوقت الإضافي.
+          <br><strong>مثال:</strong> موظف لديه 26 يوم × 8 ساعة = 208 ساعة مطلوبة.
+          بعد الاستثناء: 26 يوم × 7 ساعة = 182 ساعة مطلوبة. الفارق = 26 ساعة.
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">⚡ الاستثناءات المسجلة — <span id="exc-month-label">—</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openShiftExcModal()">+ إضافة استثناء</button>
+          </div>
+          <div id="shift-exceptions-list">
+            <div class="empty-state"><div class="empty-icon">⚡</div><div class="empty-title">جاري التحميل...</div></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /page-content -->
+  </div><!-- /content-cell -->
+</div><!-- /page-wrapper -->
+
+<!-- ══════ CONTRACT MODAL (Resident / Specialist) ══════ -->
+<div class="modal-overlay" id="contract-modal">
+  <div class="modal">
+    <div class="modal-title" id="contract-modal-title">📄 إضافة عقد طبيب</div>
+    <input type="hidden" id="contract-type-hidden">
+    <input type="hidden" id="contract-edit-id">
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">رقم الموظف / الاسم</label>
+        <input type="text" id="ct-emp-search" class="form-control" placeholder="ابحث..." oninput="ctSearchEmp(this.value)">
+        <div id="ct-emp-results" style="max-height:140px;overflow-y:auto;border:1px solid #EDD8DB;border-radius:8px;margin-top:.3rem;display:none"></div>
+        <input type="hidden" id="ct-emp-id">
+        <div id="ct-emp-selected" style="font-size:.78rem;color:#2E8B57;margin-top:.25rem;font-weight:700"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">القسم</label>
+        <select id="ct-dept" class="form-control">
+          <option value="">-- اختر القسم --</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">الساعات الشهرية المتفق عليها</label>
+        <input type="number" id="ct-hours" class="form-control" placeholder="مثال: 160" min="1" max="744">
+      </div>
+      <div class="form-group">
+        <label class="form-label">نوع العقد</label>
+        <select id="ct-type-sel" class="form-control">
+          <option value="resident">مقيم</option>
+          <option value="specialist">أخصائي</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">تاريخ البداية</label>
+        <input type="date" id="ct-start" class="form-control">
+      </div>
+      <div class="form-group">
+        <label class="form-label">تاريخ النهاية (اختياري)</label>
+        <input type="date" id="ct-end" class="form-control">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">ملاحظات</label>
+      <textarea id="ct-notes" class="form-control" rows="2" placeholder="أي ملاحظات إضافية..."></textarea>
+    </div>
+
+    <div style="display:flex;gap:.55rem;justify-content:flex-end;margin-top:.85rem">
+      <button class="btn btn-ghost" onclick="closeContractModal()">إلغاء</button>
+      <button class="btn btn-primary" id="ct-save-btn" onclick="saveContract()">💾 حفظ العقد</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ CHEMO DUTY MODAL ══════ -->
+<div class="modal-overlay" id="chemo-modal">
+  <div class="modal">
+    <div class="modal-title">⚗️ إضافة موظف واجب الكيمياء</div>
+
+    <div class="form-group">
+      <label class="form-label">الموظف</label>
+      <input type="text" id="ch-emp-search" class="form-control" placeholder="ابحث بالاسم أو الرقم..." oninput="chSearchEmp(this.value)">
+      <div id="ch-emp-results" style="max-height:140px;overflow-y:auto;border:1px solid #EDD8DB;border-radius:8px;margin-top:.3rem;display:none"></div>
+      <input type="hidden" id="ch-emp-id">
+      <div id="ch-emp-selected" style="font-size:.78rem;color:#2E8B57;margin-top:.25rem;font-weight:700"></div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">القسم الأصلي</label>
+        <select id="ch-home-dept" class="form-control"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">قسم الكيمياء</label>
+        <select id="ch-chemo-dept" class="form-control">
+          <option value="">-- قسم الكيمياء --</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="info-box green" style="margin-bottom:.75rem">
+      الأيام المخفضة: <strong>23 يوماً</strong> (بدلاً من 26) — 7 ساعات/يوم — إجمالي مطلوب: <strong>161 ساعة</strong>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">الأيام الأصلية قبل الواجب</label>
+      <input type="number" id="ch-orig-days" class="form-control" value="26" min="1" max="31">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">ملاحظات</label>
+      <textarea id="ch-notes" class="form-control" rows="2" placeholder="أي ملاحظات..."></textarea>
+    </div>
+
+    <div style="display:flex;gap:.55rem;justify-content:flex-end;margin-top:.85rem">
+      <button class="btn btn-ghost" onclick="closeChemoModal()">إلغاء</button>
+      <button class="btn btn-primary" id="ch-save-btn" onclick="saveChemoDuty()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SHIFT EXCEPTION MODAL ══════ -->
+<div class="modal-overlay" id="shift-exc-modal">
+  <div class="modal">
+    <div class="modal-title">⚡ إضافة استثناء وردية</div>
+
+    <div class="form-group">
+      <label class="form-label">الموظف</label>
+      <input type="text" id="se-emp-search" class="form-control" placeholder="ابحث بالاسم أو الرقم..." oninput="seSearchEmp(this.value)">
+      <div id="se-emp-results" style="max-height:140px;overflow-y:auto;border:1px solid #EDD8DB;border-radius:8px;margin-top:.3rem;display:none"></div>
+      <input type="hidden" id="se-emp-id">
+      <div id="se-emp-selected" style="font-size:.78rem;color:#2E8B57;margin-top:.25rem;font-weight:700"></div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">ساعات الوردية الجديدة</label>
+        <input type="number" id="se-new-hrs" class="form-control" min="0.5" max="24" step="0.5" placeholder="مثال: 7">
+      </div>
+      <div class="form-group">
+        <label class="form-label">السبب</label>
+        <input type="text" id="se-reason" class="form-control" placeholder="مثال: واجب كيمياء، مزج IV...">
+      </div>
+    </div>
+
+    <div id="se-preview" style="display:none" class="info-box"></div>
+
+    <div style="display:flex;gap:.55rem;justify-content:flex-end;margin-top:.85rem">
+      <button class="btn btn-ghost" onclick="closeShiftExcModal()">إلغاء</button>
+      <button class="btn btn-primary" id="se-save-btn" onclick="saveShiftException()">💾 حفظ الاستثناء</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="supabase.js"></script>
+<script>
+// ── helpers ──────────────────────────────────────────────────────
+const MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const now = new Date();
+
+function getMonth() { return +document.getElementById('glob-month').value; }
+function getYear()  { return +document.getElementById('glob-year').value; }
+function monthLabel() { return `${MONTHS[getMonth()-1]} ${getYear()}`; }
+
+// toast() and fDate() come from supabase.js — redeclaring them here would
+// clash with its top-level bindings and kill this whole script at parse time.
+
+// ── init ──────────────────────────────────────────────────────────
+// Set current month/year
+document.getElementById('glob-month').value = now.getMonth() + 1;
+document.getElementById('glob-year').value  = now.getFullYear();
+
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Department list (shared across tabs)
+let allDepts = [];
+async function loadDepts() {
+  try {
+    const { data } = await (await getSb()).from('departments').select('id,name').order('name');
+    allDepts = data || [];
+    // Populate dept selects
+    ['chemo-dept-filter', 'ct-dept', 'ch-home-dept', 'ch-chemo-dept'].forEach(id => {
+      const sel = document.getElementById(id);
+      if (!sel) return;
+      const firstOpt = sel.options[0];
+      sel.innerHTML = '';
+      if (firstOpt) sel.appendChild(firstOpt);
+      allDepts.forEach(d => sel.appendChild(new Option(d.name, d.id)));
+    });
+  } catch(e) { console.error(e); }
+}
+
+// ── CONTRACTS (Residents & Specialists) ──────────────────────────
+async function loadContracts(type) {
+  const el = document.getElementById(type === 'resident' ? 'residents-contracts-list' : 'specialists-contracts-list');
+  try {
+    const res = await hrApi.getContracts({ type });
+    const contracts = res || [];
+    if (!contracts.length) {
+      el.innerHTML = `<div class="empty-state"><div class="empty-icon">📄</div><div class="empty-title">لا توجد عقود مسجلة</div></div>`;
+      return;
+    }
+    el.innerHTML = `<div class="table-wrap"><table>
+      <thead><tr>
+        <th>الموظف</th><th>القسم</th><th>الساعات الشهرية</th>
+        <th>بداية العقد</th><th>نهاية العقد</th><th>الحالة</th><th></th>
+      </tr></thead>
+      <tbody>${contracts.map(c => {
+        const today = new Date().toISOString().slice(0,10);
+        const active = !c.end_date || c.end_date >= today;
+        return `<tr>
+          <td style="font-weight:700">${c.employee?.name || c.employee_id}</td>
+          <td><span class="badge badge-info">${c.department?.name || c.departments?.name || '—'}</span></td>
+          <td style="font-weight:800;color:#8C1320">${c.monthly_hours} ساعة</td>
+          <td>${fDate(c.start_date)}</td>
+          <td>${c.end_date ? fDate(c.end_date) : '—'}</td>
+          <td><span class="badge ${active ? 'badge-success' : 'badge-muted'}">${active ? 'فعّال' : 'منتهي'}</span></td>
+          <td>
+            <button class="btn btn-ghost btn-sm" onclick="deleteContract(${c.id})">حذف</button>
+          </td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>`;
+  } catch(e) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-title" style="color:#C01C2C">خطأ في التحميل: ${e.message}</div></div>`;
+  }
+}
+
+async function loadResidentsSummary() {
+  const el = document.getElementById('residents-summary');
+  document.getElementById('res-month-label').textContent = monthLabel();
+  el.innerHTML = '<div style="text-align:center;padding:1rem;color:#9C7078">⏳ جاري التحميل...</div>';
+  await loadDoctorSummary('resident', el);
+}
+
+async function loadSpecialistsSummary() {
+  const el = document.getElementById('specialists-summary');
+  document.getElementById('spec-month-label').textContent = monthLabel();
+  el.innerHTML = '<div style="text-align:center;padding:1rem;color:#9C7078">⏳ جاري التحميل...</div>';
+  await loadDoctorSummary('specialist', el);
+}
+
+async function loadDoctorSummary(type, el) {
+  try {
+    const res = await hrApi.getContractSummary(getMonth(), getYear());
+    const doctors = (res.doctors || []).filter(d => d.classification === type);
+    if (!doctors.length) {
+      el.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">لا توجد بيانات لهذا الشهر</div></div>`;
+      return;
+    }
+
+    // KPI row
+    const total   = doctors.length;
+    const met     = doctors.filter(d => d.met).length;
+    const noContr = doctors.filter(d => !d.has_contract).length;
+
+    el.innerHTML = `
+      <div class="kpi-row" style="margin-bottom:1rem">
+        <div class="kpi-box"><div class="kpi-val">${total}</div><div class="kpi-lbl">إجمالي</div></div>
+        <div class="kpi-box"><div class="kpi-val" style="color:#2E8B57">${met}</div><div class="kpi-lbl">أكملوا الساعات</div></div>
+        <div class="kpi-box"><div class="kpi-val" style="color:#C01C2C">${noContr}</div><div class="kpi-lbl">بدون عقد</div></div>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>الموظف</th><th>القسم</th><th>الساعات المطلوبة</th>
+          <th>الساعات الفعلية</th><th>الفرق</th><th>العقد النشط</th><th></th>
+        </tr></thead>
+        <tbody>${doctors.map(d => {
+          const bal = d.balance_hours ?? 0;
+          return `<tr>
+          <td style="font-weight:700">${d.name}</td>
+          <td><span class="badge badge-info">${d.department || '—'}</span></td>
+          <td style="font-weight:800;color:#8C1320">${d.required_hours} ساعة</td>
+          <td style="font-weight:700">${(d.worked_hours ?? 0).toFixed ? d.worked_hours.toFixed(1) : d.worked_hours} ساعة</td>
+          <td><span class="badge ${d.met ? 'badge-success' : 'badge-danger'}">${bal >= 0 ? '+' : ''}${bal}</span></td>
+          <td>${d.has_contract
+            ? `<span class="badge badge-success">✓ ${d.contract?.monthly_hours}h</span>`
+            : `<span class="badge badge-danger">لا يوجد عقد</span>`}</td>
+          <td><button class="btn btn-ghost btn-sm" onclick="openContractModal('${type}','${d.employee_id}')">+ عقد</button></td>
+        </tr>`;}).join('')}
+        </tbody>
+      </table></div>`;
+  } catch(e) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-title" style="color:#C01C2C">خطأ: ${e.message}</div></div>`;
+  }
+}
+
+// ── CONTRACT MODAL ────────────────────────────────────────────────
+let ctSearchTimer;
+function openContractModal(type = 'resident', prefilledEmpId = null) {
+  document.getElementById('contract-type-hidden').value = type;
+  document.getElementById('contract-edit-id').value = '';
+  document.getElementById('contract-modal-title').textContent =
+    type === 'resident' ? '📄 إضافة عقد مقيم' : '📄 إضافة عقد أخصائي';
+  document.getElementById('ct-type-sel').value = type;
+  document.getElementById('ct-emp-search').value = '';
+  document.getElementById('ct-emp-id').value = prefilledEmpId || '';
+  document.getElementById('ct-emp-selected').textContent = prefilledEmpId ? `الموظف: ${prefilledEmpId}` : '';
+  document.getElementById('ct-hours').value = type === 'resident' ? '160' : '176';
+  document.getElementById('ct-start').value = new Date().toISOString().slice(0,10);
+  document.getElementById('ct-end').value = '';
+  document.getElementById('ct-notes').value = '';
+  document.getElementById('ct-emp-results').style.display = 'none';
+  document.getElementById('contract-modal').classList.add('open');
+}
+function closeContractModal() { document.getElementById('contract-modal').classList.remove('open'); }
+
+function ctSearchEmp(val) {
+  clearTimeout(ctSearchTimer);
+  const box = document.getElementById('ct-emp-results');
+  if (!val.trim()) { box.style.display = 'none'; return; }
+  ctSearchTimer = setTimeout(async () => {
+    try {
+      const res = await hrApi.getEmployees({ search: val.trim() });
+      const emps = res.data || [];
+      if (!emps.length) { box.innerHTML = '<div style="padding:.6rem 1rem;color:#9C7078;font-size:.82rem">لا توجد نتائج</div>'; }
+      else box.innerHTML = emps.slice(0,6).map(e =>
+        `<div onclick="ctSelectEmp('${e.employee_id}','${e.name}')"
+          style="padding:.5rem 1rem;cursor:pointer;font-size:.82rem;border-bottom:1px solid #EDD8DB"
+          onmouseover="this.style.background='#F5E6E8'" onmouseout="this.style.background=''">
+          <strong>${e.name}</strong> <span style="color:#9C7078;font-size:.74rem">${e.employee_id}</span>
+        </div>`).join('');
+      box.style.display = 'block';
+    } catch(e) { console.error(e); }
+  }, 300);
+}
+
+function ctSelectEmp(id, name) {
+  document.getElementById('ct-emp-id').value = id;
+  document.getElementById('ct-emp-search').value = `${name} — ${id}`;
+  document.getElementById('ct-emp-selected').textContent = `✓ ${name}`;
+  document.getElementById('ct-emp-results').style.display = 'none';
+}
+
+async function saveContract() {
+  const empId = document.getElementById('ct-emp-id').value;
+  const hours = +document.getElementById('ct-hours').value;
+  const type  = document.getElementById('ct-type-sel').value;
+  const start = document.getElementById('ct-start').value;
+  if (!empId) { alert('يرجى اختيار موظف'); return; }
+  if (!hours || hours < 1) { alert('يرجى إدخال الساعات الشهرية'); return; }
+
+  const deptSel = document.getElementById('ct-dept');
+  const deptId = deptSel.value ? +deptSel.value : null;
+
+  const btn = document.getElementById('ct-save-btn');
+  btn.disabled = true; btn.textContent = '⏳ جاري الحفظ...';
+
+  try {
+    await hrApi.saveContract({
+      employee_id: empId,
+      contract_type: type,
+      department_id: deptId,
+      monthly_hours: hours,
+      start_date: start || new Date().toISOString().slice(0,10),
+      end_date: document.getElementById('ct-end').value || null,
+      notes: document.getElementById('ct-notes').value.trim(),
+    });
+    toast('✅ تم حفظ العقد بنجاح');
+    closeContractModal();
+    loadContracts(type);
+  } catch(e) {
+    alert('فشل الحفظ: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = '💾 حفظ العقد';
+  }
+}
+
+async function deleteContract(id) {
+  if (!confirm('هل تريد حذف هذا العقد؟')) return;
+  try {
+    await hrApi.deleteContract(id);
+    toast('تم الحذف');
+    loadContracts('resident');
+    loadContracts('specialist');
+  } catch(e) { alert('خطأ: ' + e.message); }
+}
+
+// ── CHEMO DUTY ────────────────────────────────────────────────────
+async function loadChemoDuty() {
+  const el   = document.getElementById('chemo-duty-list');
+  const dept = document.getElementById('chemo-dept-filter').value;
+  document.getElementById('chemo-month-label').textContent = monthLabel();
+  el.innerHTML = '<div style="text-align:center;padding:1rem;color:#9C7078">⏳ جاري التحميل...</div>';
+  try {
+    const duties = await hrApi.getChemoDuty(getMonth(), getYear(), dept || undefined);
+    if (!duties.length) {
+      el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚗️</div>
+        <div class="empty-title">لا يوجد موظفون لواجب الكيمياء هذا الشهر</div></div>`;
+      return;
+    }
+    el.innerHTML = `<div class="table-wrap"><table>
+      <thead><tr>
+        <th>الموظف</th><th>القسم الأصلي</th><th>الأيام الأصلية</th>
+        <th>الأيام بعد الواجب</th><th>الحالة</th><th>البريد</th><th></th>
+      </tr></thead>
+      <tbody>${duties.map(d => `<tr>
+        <td style="font-weight:700">${d.employee?.name || d.employee_id}</td>
+        <td><span class="badge badge-info">${d.home_department?.name || '—'}</span></td>
+        <td>${d.original_days || 26}</td>
+        <td style="font-weight:800;color:#C01C2C">${d.reduced_days || 23}</td>
+        <td><span class="badge ${d.confirmed ? 'badge-success' : 'badge-warning'}">
+          ${d.confirmed ? '✓ مؤكد' : 'في الانتظار'}</span></td>
+        <td><span class="badge ${d.email_sent ? 'badge-success' : 'badge-muted'}">
+          ${d.email_sent ? '✓ أُرسل' : 'لم يُرسل'}</span></td>
+        <td style="display:flex;gap:.35rem;flex-wrap:wrap">
+          ${!d.confirmed ? `<button class="btn btn-success btn-sm" onclick="confirmChemo(${d.id})">تأكيد</button>` : ''}
+          ${!d.email_sent ? `<button class="btn btn-ghost btn-sm" onclick="sendChemoEmail(${d.id})">📧 إرسال</button>` : ''}
+          <button class="btn btn-ghost btn-sm" style="color:#C01C2C" onclick="deleteChemo(${d.id})">حذف</button>
+        </td>
+      </tr>`).join('')}
+      </tbody></table></div>`;
+  } catch(e) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-title" style="color:#C01C2C">خطأ: ${e.message}</div></div>`;
+  }
+}
+
+async function autoDetectChemo() {
+  const deptId = document.getElementById('chemo-dept-filter').value;
+  if (!deptId) { alert('يرجى اختيار قسم أولاً للاكتشاف التلقائي'); return; }
+  try {
+    const res = await hrApi.autoDetectChemoDuty(deptId, getMonth(), getYear());
+    if (res.count > 0) {
+      toast(`✅ تم اكتشاف ${res.count} موظف بأيام مخفضة`);
+    } else {
+      toast('لا يوجد موظفون بأيام مخفضة في هذا القسم', 'success');
+    }
+    loadChemoDuty();
+  } catch(e) { alert('خطأ: ' + e.message); }
+}
+
+async function confirmChemo(id) {
+  try {
+    await hrApi.confirmChemoDuty(id, "hr");
+    toast('✅ تم تأكيد واجب الكيمياء');
+    loadChemoDuty();
+  } catch(e) { alert('خطأ: ' + e.message); }
+}
+
+async function sendChemoEmail(id) {
+  try {
+    const res = await hrApi.sendChemoDutyEmail(id);
+    toast(res.message || '✅ تم إرسال البريد الإلكتروني');
+    loadChemoDuty();
+  } catch(e) { alert('خطأ: ' + e.message); }
+}
+
+async function sendAllChemoEmails() {
+  if (!confirm('هل تريد إرسال بريد التأكيد لجميع الموظفين غير المؤكدين؟')) return;
+  try {
+    const res = await hrApi.sendAllChemoDutyEmails(getMonth(), getYear());
+    toast(`✅ تم الإرسال لـ ${res.sent} موظف`);
+    loadChemoDuty();
+  } catch(e) { alert('خطأ: ' + e.message); }
+}
+
+async function deleteChemo(id) {
+  if (!confirm('هل تريد حذف هذا السجل؟')) return;
+  try {
+    await hrApi.deleteChemoDuty(id);
+    toast('تم الحذف');
+    loadChemoDuty();
+  } catch(e) { alert('خطأ: ' + e.message); }
+}
+
+// CHEMO MODAL
+let chSearchTimer;
+function openChemoModal() {
+  document.getElementById('ch-emp-search').value = '';
+  document.getElementById('ch-emp-id').value = '';
+  document.getElementById('ch-emp-selected').textContent = '';
+  document.getElementById('ch-emp-results').style.display = 'none';
+  document.getElementById('ch-notes').value = '';
+  document.getElementById('ch-orig-days').value = '26';
+  document.getElementById('chemo-modal').classList.add('open');
+}
+function closeChemoModal() { document.getElementById('chemo-modal').classList.remove('open'); }
+
+function chSearchEmp(val) {
+  clearTimeout(chSearchTimer);
+  const box = document.getElementById('ch-emp-results');
+  if (!val.trim()) { box.style.display='none'; return; }
+  chSearchTimer = setTimeout(async () => {
+    try {
+      const res = await hrApi.getEmployees({ search: val.trim() });
+      const emps = res.data || [];
+      box.innerHTML = emps.slice(0,6).map(e =>
+        `<div onclick="chSelectEmp('${e.employee_id}','${e.name}',${e.department_id||'null'})"
+          style="padding:.5rem 1rem;cursor:pointer;font-size:.82rem;border-bottom:1px solid #EDD8DB"
+          onmouseover="this.style.background='#F5E6E8'" onmouseout="this.style.background=''">
+          <strong>${e.name}</strong> <span style="color:#9C7078">${e.employee_id}</span>
+        </div>`).join('') || '<div style="padding:.6rem 1rem;color:#9C7078">لا توجد نتائج</div>';
+      box.style.display = 'block';
+    } catch(e) {}
+  }, 300);
+}
+function chSelectEmp(id, name, deptId) {
+  document.getElementById('ch-emp-id').value = id;
+  document.getElementById('ch-emp-search').value = `${name} — ${id}`;
+  document.getElementById('ch-emp-selected').textContent = `✓ ${name}`;
+  if (deptId) document.getElementById('ch-home-dept').value = deptId;
+  document.getElementById('ch-emp-results').style.display = 'none';
+}
+async function saveChemoDuty() {
+  const empId   = document.getElementById('ch-emp-id').value;
+  const homeDept= document.getElementById('ch-home-dept').value;
+  if (!empId) { alert('يرجى اختيار موظف'); return; }
+  if (!homeDept) { alert('يرجى اختيار القسم الأصلي'); return; }
+  const btn = document.getElementById('ch-save-btn');
+  btn.disabled = true; btn.textContent = '⏳...';
+  try {
+    await hrApi.saveChemoDuty({
+      employee_id: empId,
+      home_department_id: +homeDept,
+      chemo_department_id: +document.getElementById('ch-chemo-dept').value || null,
+      month: getMonth(), year: getYear(),
+      original_days: +document.getElementById('ch-orig-days').value || 26,
+      notes: document.getElementById('ch-notes').value.trim(),
+    });
+    toast('✅ تم الحفظ');
+    closeChemoModal();
+    loadChemoDuty();
+  } catch(e) { alert('فشل: ' + e.message); }
+  finally { btn.disabled = false; btn.textContent = '💾 حفظ'; }
+}
+
+// ── SHIFT EXCEPTIONS ──────────────────────────────────────────────
+async function loadShiftExceptions() {
+  const el = document.getElementById('shift-exceptions-list');
+  document.getElementById('exc-month-label').textContent = monthLabel();
+  el.innerHTML = '<div style="text-align:center;padding:1rem;color:#9C7078">⏳ جاري التحميل...</div>';
+  try {
+    const excs = await hrApi.getExceptions(getMonth(), getYear());
+    if (!excs.length) {
+      el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚡</div><div class="empty-title">لا توجد استثناءات لهذا الشهر</div></div>`;
+      return;
+    }
+    el.innerHTML = `<div class="table-wrap"><table>
+      <thead><tr>
+        <th>الموظف</th><th>القسم</th><th>الساعات الأصلية</th>
+        <th>الساعات الجديدة</th><th>الساعات المطلوبة</th><th>السبب</th><th></th>
+      </tr></thead>
+      <tbody>${excs.map(e => `<tr>
+        <td style="font-weight:700">${e.employee?.name || e.employee_id}</td>
+        <td><span class="badge badge-info">${e.employee?.department?.name || e.employee?.departments?.name || '—'}</span></td>
+        <td>${e.original_hours}h</td>
+        <td style="font-weight:800;color:#C01C2C">${e.exception_hours}h</td>
+        <td id="exc-req-${e.id}">…</td>
+        <td style="color:#9C7078;font-size:.76rem">${e.reason || '—'}</td>
+        <td><button class="btn btn-ghost btn-sm" style="color:#C01C2C" onclick="deleteException(${e.id})">حذف</button></td>
+      </tr>`).join('')}
+      </tbody></table></div>`;
+
+    // Required hours after the exception — 26 days × 7h = 182h style breakdown
+    excs.forEach(async e => {
+      const cell = document.getElementById(`exc-req-${e.id}`);
+      if (!cell) return;
+      try {
+        const res = await hrApi.previewException(e.employee_id, getMonth(), getYear(), e.exception_hours);
+        const p = res.preview;
+        cell.innerHTML = p
+          ? `<strong>${p.new_required_hrs}h</strong> <span style="color:#9C7078;font-size:.72rem">(${p.original_required_hrs}h − ${p.difference_hrs}h)</span>`
+          : '—';
+      } catch(err) { cell.textContent = '—'; }
+    });
+  } catch(e) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-title" style="color:#C01C2C">خطأ: ${e.message}</div></div>`;
+  }
+}
+
+let seSearchTimer;
+function openShiftExcModal() {
+  document.getElementById('se-emp-search').value = '';
+  document.getElementById('se-emp-id').value = '';
+  document.getElementById('se-emp-selected').textContent = '';
+  document.getElementById('se-emp-results').style.display = 'none';
+  document.getElementById('se-new-hrs').value = '';
+  document.getElementById('se-reason').value = '';
+  document.getElementById('se-preview').style.display = 'none';
+  document.getElementById('shift-exc-modal').classList.add('open');
+}
+function closeShiftExcModal() { document.getElementById('shift-exc-modal').classList.remove('open'); }
+
+function seSearchEmp(val) {
+  clearTimeout(seSearchTimer);
+  const box = document.getElementById('se-emp-results');
+  if (!val.trim()) { box.style.display='none'; return; }
+  seSearchTimer = setTimeout(async () => {
+    try {
+      const res = await hrApi.getEmployees({ search: val.trim() });
+      const emps = res.data || [];
+      box.innerHTML = emps.slice(0,6).map(e =>
+        `<div onclick="seSelectEmp('${e.employee_id}','${e.name}','${e.shift_type||'8hr'}')"
+          style="padding:.5rem 1rem;cursor:pointer;font-size:.82rem;border-bottom:1px solid #EDD8DB"
+          onmouseover="this.style.background='#F5E6E8'" onmouseout="this.style.background=''">
+          <strong>${e.name}</strong> <span style="color:#9C7078">${e.employee_id} · ${e.shift_type||'8hr'}</span>
+        </div>`).join('') || '<div style="padding:.6rem 1rem;color:#9C7078">لا توجد نتائج</div>';
+      box.style.display = 'block';
+    } catch(e) {}
+  }, 300);
+}
+function seSelectEmp(id, name, shift) {
+  document.getElementById('se-emp-id').value = id;
+  document.getElementById('se-emp-search').value = `${name} — ${id}`;
+  document.getElementById('se-emp-selected').textContent = `✓ ${name} (وردية: ${shift})`;
+  const defHrs = shift === '12hr' ? 11 : shift === '7hr' ? 6 : 7;
+  document.getElementById('se-new-hrs').value = defHrs;
+  document.getElementById('se-emp-results').style.display = 'none';
+  sePreview();
+}
+
+async function sePreview() {
+  const empId = document.getElementById('se-emp-id').value;
+  const newHrs = parseFloat(document.getElementById('se-new-hrs').value);
+  const prev = document.getElementById('se-preview');
+  if (!empId || !newHrs) { prev.style.display='none'; return; }
+  try {
+    const res = await hrApi.previewException(empId, getMonth(), getYear(), newHrs);
+    const p = res.preview;
+    if (!p) { prev.style.display='none'; return; }
+    prev.innerHTML = `أيام مجدولة: <strong>${p.working_days}</strong> · 
+      أصلي: <strong>${p.original_required_hrs}h</strong> → 
+      جديد: <strong style="color:#C01C2C">${p.new_required_hrs}h</strong> · 
+      الفارق: <strong>${p.difference_hrs}h</strong>`;
+    prev.style.display = 'block';
+  } catch(e) { prev.style.display='none'; }
+}
+document.getElementById('se-new-hrs').addEventListener('input', sePreview);
+
+async function saveShiftException() {
+  const empId  = document.getElementById('se-emp-id').value;
+  const newHrs = parseFloat(document.getElementById('se-new-hrs').value);
+  if (!empId) { alert('يرجى اختيار موظف'); return; }
+  if (!newHrs || newHrs < 0.5) { alert('يرجى إدخال ساعات صحيحة'); return; }
+  const btn = document.getElementById('se-save-btn');
+  btn.disabled = true; btn.textContent = '⏳...';
+  try {
+    await hrApi.saveException(empId, getMonth(), getYear(), newHrs, document.getElementById('se-reason').value.trim());
+    toast('✅ تم حفظ الاستثناء');
+    closeShiftExcModal();
+    loadShiftExceptions();
+  } catch(e) { alert('فشل: ' + e.message); }
+  finally { btn.disabled = false; btn.textContent = '💾 حفظ الاستثناء'; }
+}
+
+async function deleteException(id) {
+  if (!confirm('حذف هذا الاستثناء؟')) return;
+  try {
+    await hrApi.deleteException(id);
+    toast('تم الحذف');
+    loadShiftExceptions();
+  } catch(e) { alert('خطأ: ' + e.message); }
+}
+
+// ── Close modals on overlay click ────────────────────────────────
+['contract-modal','chemo-modal','shift-exc-modal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => {
+    if (e.target === document.getElementById(id)) document.getElementById(id).classList.remove('open');
+  });
+});
+
+// ── Month/year change → reload ────────────────────────────────────
+['glob-month','glob-year'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    loadResidentsSummary();
+    loadSpecialistsSummary();
+    loadChemoDuty();
+    loadShiftExceptions();
+  });
+});
+
+// ── INITIAL LOAD ─────────────────────────────────────────────────
+async function init() {
+  await loadDepts();
+  loadContracts('resident');
+  loadContracts('specialist');
+  loadResidentsSummary();
+  loadSpecialistsSummary();
+  loadChemoDuty();
+  loadShiftExceptions();
+}
+init();
+</script>
+</body>
+</html>

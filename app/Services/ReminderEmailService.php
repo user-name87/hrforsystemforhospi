@@ -13,6 +13,34 @@ class ReminderEmailService
         9=>'سبتمبر',10=>'أكتوبر',11=>'نوفمبر',12=>'ديسمبر',
     ];
 
+    /**
+     * Polite request, sent on the 26th, asking a head of department for next
+     * month's schedule before the month starts.
+     */
+    public function sendScheduleRequest(Department $dep, int $month, int $year): array
+    {
+        if (!$dep->chairman_email) {
+            return ['success' => false, 'message' => 'لا يوجد بريد إلكتروني لهذا القسم'];
+        }
+
+        $monthName = self::MONTHS_AR[$month] ?? $month;
+
+        try {
+            Mail::send([], [], function ($message) use ($dep, $monthName, $year) {
+                $message->to($dep->chairman_email, $dep->chairman_name ?? $dep->name)
+                    ->subject("طلب جدول دوام {$dep->name} — {$monthName} {$year}")
+                    ->html($this->buildRequestHtml($dep, $monthName, $year));
+            });
+
+            return [
+                'success' => true,
+                'message' => "تم إرسال طلب الجدول إلى {$dep->chairman_email}",
+            ];
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => 'فشل الإرسال: ' . $e->getMessage()];
+        }
+    }
+
     public function sendToOne(Department $dep, int $month, int $year): array
     {
         if (!$dep->chairman_email) {
@@ -52,11 +80,47 @@ class ReminderEmailService
         return $results;
     }
 
+    private function buildRequestHtml(Department $dep, string $monthName, int $year): string
+    {
+        $chairName = $dep->chairman_name ?? 'السيد/ة رئيس القسم';
+        $depName   = $dep->name;
+
+        return $this->wrap(<<<HTML
+            <p>السلام عليكم ورحمة الله وبركاته،</p>
+            <p>الأستاذ/ة <strong>{$chairName}</strong>، رئيس قسم <strong>{$depName}</strong></p>
+            <div class="highlight">
+              <strong>📅 طلب جدول:</strong> يرجى التكرم برفع جدول دوام قسمكم لشهر
+              <strong>{$monthName} {$year}</strong> قبل بداية الشهر.
+            </div>
+            <p>يساعدنا استلام الجدول في وقته على احتساب الحضور والدوام الإضافي بدقة
+               وإصدار التقارير الشهرية في موعدها.</p>
+            <p>شاكرين لكم حسن تعاونكم.</p>
+            <p>مع التحيات،<br><strong>قسم الموارد البشرية</strong></p>
+        HTML);
+    }
+
     private function buildEmailHtml(Department $dep, string $monthName, int $year): string
     {
         $chairName = $dep->chairman_name ?? 'السيد/ة رئيس القسم';
         $depName   = $dep->name;
 
+        return $this->wrap(<<<HTML
+            <p>السلام عليكم ورحمة الله وبركاته،</p>
+            <p>الأستاذ/ة <strong>{$chairName}</strong>، رئيس قسم <strong>{$depName}</strong></p>
+            <div class="highlight">
+              <strong>⚠️ تذكير:</strong> لم يتم رفع جدول دوام قسمكم لشهر
+              <strong>{$monthName} {$year}</strong> حتى الآن.
+            </div>
+            <p>يُرجى رفع الجدول في أقرب وقت ممكن من خلال نظام الموارد البشرية،
+               حتى يتسنى معالجة بيانات الحضور وحساب الرواتب في الوقت المحدد.</p>
+            <p>في حال واجهتكم أي مشكلة، يُرجى التواصل مع قسم الموارد البشرية.</p>
+            <p>مع التحيات،<br><strong>قسم الموارد البشرية</strong></p>
+        HTML);
+    }
+
+    /** Wraps a message body in the hospital's branded RTL email shell. */
+    private function wrap(string $body): string
+    {
         return <<<HTML
         <!DOCTYPE html>
         <html dir="rtl" lang="ar">
@@ -80,19 +144,10 @@ class ReminderEmailService
         <div class="container">
           <div class="header">
             <h1>مستشفى الإمام الحسن المجتبى (ع)</h1>
-            <p>نظام الموارد البشرية — تذكير تلقائي</p>
+            <p>نظام الموارد البشرية — رسالة تلقائية</p>
           </div>
           <div class="body">
-            <p>السلام عليكم ورحمة الله وبركاته،</p>
-            <p>الأستاذ/ة <strong>{$chairName}</strong>، رئيس قسم <strong>{$depName}</strong></p>
-            <div class="highlight">
-              <strong>⚠️ تذكير:</strong> لم يتم رفع جدول دوام قسمكم لشهر
-              <strong>{$monthName} {$year}</strong> حتى الآن.
-            </div>
-            <p>يُرجى رفع الجدول في أقرب وقت ممكن من خلال نظام الموارد البشرية،
-               حتى يتسنى معالجة بيانات الحضور وحساب الرواتب في الوقت المحدد.</p>
-            <p>في حال واجهتكم أي مشكلة، يُرجى التواصل مع قسم الموارد البشرية.</p>
-            <p>مع التحيات،<br><strong>قسم الموارد البشرية</strong></p>
+            {$body}
           </div>
           <div class="footer">
             هذا البريد تلقائي من نظام HR — مستشفى الإمام الحسن المجتبى (ع)
