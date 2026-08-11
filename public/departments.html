@@ -916,7 +916,14 @@ function parseFile(file) {
         if (hasDay1 && hasId) { headerRowIdx = r; break; }
       }
 
-      if (headerRowIdx >= 0) {
+      // Without that header row the sheet is not a monthly schedule — guessing
+      // column positions here silently imports a staff list as a schedule.
+      if (headerRowIdx < 0) {
+        showToast('هذا الملف ليس جدولاً شهرياً — يجب أن يحتوي على عمود (ID / PH ID) وأعمدة أيام الشهر (1—31)', 'danger');
+        return;
+      }
+
+      {
         const hdr = rows[headerRowIdx] || [];
         for (let c = 0; c < hdr.length; c++) {
           const v = String(hdr[c]||'').trim().toUpperCase().replace(/\s+/g,'');
@@ -927,7 +934,7 @@ function parseFile(file) {
         }
       }
 
-      const dataStartRow = headerRowIdx >= 0 ? headerRowIdx + 2 : 4;
+      const dataStartRow = headerRowIdx + 2;
       const skipVals = new Set([
         'full','part','full time','part time','fulltime','parttime',
         'iraqi','foreign','egyptian','nationality','name','employee',
@@ -948,12 +955,20 @@ function parseFile(file) {
         for (let d = 0; d < 31; d++) {
           const val = row[colDAYSTART + d];
           const vs  = val != null ? String(val).trim() : '';
-          if (vs && vs !== '0' && /^[A-Za-zأ-ي][A-Za-z0-9أ-ي\/\-]*$/.test(vs)) days[d+1] = vs;
+          // Shift codes are short tokens (M, N, OFF, M1, 12H) — anything longer
+          // is a stray text column, not a day cell.
+          if (vs && vs !== '0' && /^[A-Za-zأ-ي][A-Za-z0-9أ-ي\/\-]{0,3}$/.test(vs)) days[d+1] = vs;
         }
         employees.push({ id: empId, name, days });
       }
 
       if (!employees.length) { showToast('لم يُعثر على موظفين في الملف', 'danger'); return; }
+
+      // A schedule whose rows carry no shift codes is a staff list, not a schedule.
+      if (!employees.some(emp => Object.keys(emp.days).length)) {
+        showToast('لا توجد رموز ورديات في الملف — تأكد من رفع جدول الشهر وليس قائمة الموظفين', 'danger');
+        return;
+      }
 
       const month = +document.getElementById('upload-month').value || CUR_MONTH;
       const year  = +document.getElementById('upload-year').value  || CUR_YEAR;

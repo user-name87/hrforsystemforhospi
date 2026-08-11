@@ -695,7 +695,8 @@ function handleFile(file) {
 function parseLeaves(rows, fname) {
   allLeaves = rows.map(r => {
     // Detect columns dynamically (supports Arabic & English headers)
-    const id        = r['ID'] || r['id'] || r['Employee'] || '';
+    // `Employee` is the staff number (HR-EMP-…); `ID` is the leave document (HR-LAP-…).
+    const id        = r['Employee'] || r['employee_id'] || r['رقم الموظف'] || '';
     const name      = r['Employee Name'] || r['employee_name'] || r['اسم الموظف'] || '';
     const type      = r['Leave Type'] || r['leave_type'] || r['نوع الاجازة'] || '';
     const dept      = r['Department'] || r['department'] || r['القسم'] || '';

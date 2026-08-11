@@ -226,6 +226,24 @@ tbody td{padding:.58rem .8rem;color:#5C3840;vertical-align:middle;white-space:no
 <script>
 const API_BASE = 'http://localhost:8000/api';
 
+const VIOLATION_LABELS = {
+  late: 'تأخير عن الدوام',
+  early_leave: 'ترك العمل مبكراً',
+  absent: 'غياب بدون إجازة',
+  disciplinary: 'مخالفة انضباطية',
+  cctv: 'مخالفة مرصودة بكاميرات المراقبة'
+};
+
+function violationLabel(v) {
+  return VIOLATION_LABELS[v.violation_type] || v.violation_category || v.description || '—';
+}
+
+function fDate(value) {
+  if (!value) return '—';
+  const d = new Date(value);
+  return isNaN(d) ? value : d.toLocaleDateString('ar-IQ', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
 let currentDate = new Date().toISOString().split('T')[0];
 
 // Load departments
@@ -322,9 +340,9 @@ async function loadDailyViolations() {
           <span class="badge ${v.source === 'cctv' ? 'badge-warning' : 'badge-danger'}">
             ${v.source === 'cctv' ? 'CCTV' : 'حضور'}
           </span>
-          ${v.violation_type || v.description || '—'}
+          ${violationLabel(v)}
         </td>
-        <td>${v.incident_date || v.violation_date || '—'}</td>
+        <td>${fDate(v.incident_date || v.violation_date)}</td>
         <td>${v.penalty || (v.penalty_days ? `خصم ${v.penalty_days} يوم` : '—')}</td>
         <td>
           <button class="btn btn-ghost btn-sm" onclick="viewEmployee('${v.employee_id}')">عرض</button>
@@ -413,8 +431,8 @@ async function viewEmployee(employeeId) {
               <tbody>
                 ${data.violations.map(v => `
                   <tr>
-                    <td>${v.incident_date}</td>
-                    <td>${v.violation_category || '—'}</td>
+                    <td>${fDate(v.incident_date)}</td>
+                    <td>${violationLabel(v)}</td>
                     <td>${v.penalty || '—'}</td>
                   </tr>
                 `).join('')}
